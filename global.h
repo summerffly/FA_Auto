@@ -30,6 +30,7 @@ const char *CMD_SA = "sa";
 
 const char *CMD_DK = "dk";
 const char *CMD_NS = "ns";
+const char *CMD_LOTTERY = "lottery";
 
 const char *CMD_TEST = "test";
 

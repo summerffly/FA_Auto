@@ -366,6 +366,21 @@ int main(int argc, char **argv, char *env[])
         }
 
         /* * * * * * * * * * * * * * * * * * * * * * */
+        /* * * * * * *   计算lottery收支  * * * * * * */
+        /* * * * * * * * * * * * * * * * * * * * * * */
+        else if( strncmp(sm_command, CMD_LOTTERY, strlen(CMD_LOTTERY)) == 0 )
+        {
+            int line_this = FA_Search_Line("lottery.md", "# lottery");
+            int line_next = FA_Search_Line("lottery.md", "## Total");
+            int line_tag = FA_Search_Line("FA_TVT.md", "## lottery");
+            
+            int money_sum = FA_Line_Calculator("lottery.md", line_this, line_next);
+
+            FA_Sum_Modify("lottery.md", (line_next+2), money_sum, 2);
+            FA_Sum_Modify("FA_TVT.md", (line_tag+1), money_sum, 1);
+        }
+
+        /* * * * * * * * * * * * * * * * * * * * * * */
         /* * * * * * * *      TEST     * * * * * * * */
         /* * * * * * * * * * * * * * * * * * * * * * */
         else if( strncmp(sm_command, CMD_TEST, strlen(CMD_TEST)) == 0 )

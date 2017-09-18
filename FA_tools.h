@@ -457,6 +457,11 @@ int FA_Sum_Check_TVT(const int *sz_month_tag, const int sz_month_size)
             money_sum += sm_StrMoneyFind_Top(strLine[i]);
             continue;
         }
+        else if(i == FA_Search_Line("FA_TVT.md", "## lottery"))
+        {
+            money_sum += sm_StrMoneyFind_Title(strLine[i+1]);
+            continue;
+        }
         else if(i == FA_Search_Line("FA_TVT.md", "## DK"))
         {
             money_sum += sm_StrMoneyFind_Title(strLine[i+1]);
@@ -530,6 +535,11 @@ int FA_Sum_Update_TVT(const int *sz_month_tag, const int sz_month_size)
         if(i == FA_Search_Line("FA_TVT.md", "原始财富"))
         {
             money_sum += sm_StrMoneyFind_Top(strLine[i]);
+            continue;
+        }
+        else if(i == FA_Search_Line("FA_TVT.md", "## lottery"))
+        {
+            money_sum += sm_StrMoneyFind_Title(strLine[i+1]);
             continue;
         }
         else if(i == FA_Search_Line("FA_TVT.md", "## DK"))
