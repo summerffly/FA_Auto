@@ -22,6 +22,8 @@ const char *CMD_SC_TVT = "check-tvt";         // FA_Sum_Check_TVT
 const char *CMD_SU_MN = "update-month";     // FA_Sum_Update_Month
 const char *CMD_SU_TVT = "update-tvt";        // FA_Sum_Update_TVT
 
+const char *CMD_SU_EXMN = "update-ex-month";        // FA_Sum_Update_ExMonth
+
 const char *CMD_LIFE = "life";
 const char *CMD_BOOK = "book";
 const char *CMD_TB = "tb";

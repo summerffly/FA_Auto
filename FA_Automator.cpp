@@ -12,12 +12,13 @@ using namespace std;
 int main(int argc, char **argv, char *env[])
 {
     char *version = new char[10];
+    char *ex_month = new char[3];
     char *cr_month = new char[3];
     char *nx_month = new char[3];
     int *sz_month_tag = new int[12];   // tip 番茄@20170904 - 目前最大值支持12个月
     int sz_month_size = 0;
 
-    if( FA_Read_Conf(version, cr_month, nx_month) == -1 )
+    if( FA_Read_Conf(version, ex_month, cr_month, nx_month) == -1 )
     {
         return -1;
     }
@@ -34,6 +35,7 @@ int main(int argc, char **argv, char *env[])
     cout << "----------------------------------------" << endl;
     cout << "----------------------------------------" << endl;
     cout << "| |           Version: " << version << "           | |" << endl;
+    cout << "| |       Previous Month: " << ex_month << "         | |" << endl;    
     cout << "| |        Current Month: " << cr_month << "         | |" << endl;
     cout << "| |          Next Month: " << nx_month << "          | |" << endl;
     cout << "----------------------------------------" << endl;
@@ -126,6 +128,20 @@ int main(int argc, char **argv, char *env[])
             int money_sum = FA_Line_Calculator("life.M.md", line_this, line_next);
 
             FA_Sum_Update_Month(line_this, line_sz, money_sum);
+        }
+
+        /* * * * * * * * * * * * * * * * * * * * * * */
+        /* * * * * * *  更新上个月度收支  * * * * * * * */
+        /* * * * * * * * * * * * * * * * * * * * * * */
+        else if( strncmp(sm_command, CMD_SU_EXMN, strlen(CMD_SU_EXMN)) == 0 )
+        {
+            string ex_month_str("## life.M");
+            ex_month_str += ex_month;
+
+            int line_this = FA_Search_Line("life.M.md", ex_month_str.c_str());
+            int line_sz = FA_Search_Line("FA_TVT.md", ex_month_str.c_str());
+            
+            FA_Sum_Update_ExMonth(line_this, line_sz);
         }
 
         /* * * * * * * * * * * * * * * * * * * * * * */

@@ -19,7 +19,7 @@ int FA_Line_Calculator(const char *file_name, const int line_start, const int li
 /*--------------------  TOOLS @ 番茄  --------------------*/
 
 // tip 番茄@20170817 - 直接对内存进行操作，需要注意风险，特别是更改格式以后
-int FA_Read_Conf(char *version, char *cr_month, char *nx_month)
+int FA_Read_Conf(char *version, char *ex_month, char *cr_month, char *nx_month)
 {
     char buffer[64];
     string strLine[16];
@@ -44,6 +44,11 @@ int FA_Read_Conf(char *version, char *cr_month, char *nx_month)
         if(sm_StrCnt(strLine[line_index], "Current Version") == 0)
         {
             memmove(version, buffer+18, 4);
+            continue;
+        }
+        else if(sm_StrCnt(strLine[line_index], "Previous Month") == 0)
+        {
+            memmove(ex_month, buffer+17, 3);            
             continue;
         }
         else if(sm_StrCnt(strLine[line_index], "Current Month") == 0)
@@ -420,6 +425,67 @@ int FA_Sum_Update_Month(const int line_tag_life, const int line_tag_sz, const in
         {
             cout << "line_" << i << " // " << strLine_life[i].c_str() << endl;            
             sm_StrMoneyModify_Month(strLine_life[i], (money_in+money_sum));  
+            strLine_sz[line_tag_sz+3] = strLine_life[i];            
+            cout << "----------------------------------------" << endl;  
+            cout << ">>>            SUM UPDATED           <<<" << endl;
+            cout << "----------------------------------------" << endl;  
+            cout << "line_" << (i-2) << " // " << strLine_life[i-2].c_str() << endl;            
+            cout << "line_" << (i-1) << " // " << strLine_life[i-1].c_str() << endl;            
+            cout << "line_" << i << " // " << strLine_life[i].c_str() << endl;            
+            cout << "----------------------------------------" << endl;              
+            continue;
+        }
+    }
+
+    WirteFile("life.M.md", strLine_life, line_index_life);       
+    WirteFile("FA_TVT.md", strLine_sz, line_index_sz);       
+    
+    return 0;
+}
+
+
+int FA_Sum_Update_ExMonth(const int line_tag_life, const int line_tag_sz)
+{
+    string strLine_life[MAX_LINE];    
+    string strLine_sz[MAX_LINE];    
+    int line_index_life = 1;
+    int line_index_sz = 1;
+    
+    int money_in = 0;
+    int money_out = 0;
+    int money_rest = 0;    
+    
+    if( ReadFile("life.M.md", strLine_life, line_index_life) == -1 )
+    {
+        return -1;
+    }
+
+    if( ReadFile("FA_TVT.md", strLine_sz, line_index_sz) == -1 )
+    {
+        return -1;
+    }
+
+    for(int i = 1; i <= line_index_life; i++)
+    {
+        if(i == (line_tag_life+1))
+        {
+            cout << "----------------------------------------" << endl;              
+            cout << "line_" << i << " // " << strLine_life[i].c_str() << endl;            
+            money_in = sm_StrMoneyFind_Month(strLine_life[i]);
+            strLine_sz[line_tag_sz+1] = strLine_life[i];
+            continue;
+        }
+        if(i == (line_tag_life+2))
+        {
+            cout << "line_" << i << " // " << strLine_life[i].c_str() << endl;            
+            money_out = sm_StrMoneyFind_Month(strLine_life[i]);
+            strLine_sz[line_tag_sz+2] = strLine_life[i];
+            continue;
+        }
+        if(i == (line_tag_life+3))
+        {
+            cout << "line_" << i << " // " << strLine_life[i].c_str() << endl;            
+            sm_StrMoneyModify_Month(strLine_life[i], (money_in + money_out));  
             strLine_sz[line_tag_sz+3] = strLine_life[i];            
             cout << "----------------------------------------" << endl;  
             cout << ">>>            SUM UPDATED           <<<" << endl;
