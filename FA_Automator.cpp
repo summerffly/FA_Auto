@@ -1,5 +1,5 @@
 
-/*----------  CODE_ORIGIN @ 番茄  ----------*/
+/*--------------------  CODE_ORIGIN @ 番茄  --------------------*/
 
 #include "global.h"
 #include "FA_tools.h"
@@ -7,111 +7,294 @@
 using namespace std;
 
 
+/*--------------------  MAIN  --------------------*/
+
 int main(int argc, char **argv, char *env[])
 {
+    char *version = new char[10];
+    char *cr_month = new char[3];
+    char *nx_month = new char[3];
+    int *sz_month_tag = new int[12];
+    int sz_month_size = 1;
+
+    if( FA_Read_Conf(version, cr_month, nx_month) == -1 )
+    {
+        return -1;
+    }
+
+    if( FA_Read_Month_Tag(sz_month_tag, sz_month_size) == -1 )
+    {
+        return -1;
+    }    
+
     cout << "----------------------------------------" << endl;
     cout << "----------------------------------------" << endl;
     cout << "| |       FA_Automator System        | |" << endl;
     cout << "| |      >>>  番茄_summer  <<<       | |" << endl;
     cout << "----------------------------------------" << endl;
     cout << "----------------------------------------" << endl;
-    
-    
+    cout << "| |           Version: " << version << "           | |" << endl;
+    cout << "| |        Current Month: " << cr_month << "         | |" << endl;
+    cout << "| |          Next Month: " << nx_month << "          | |" << endl;
+    cout << "----------------------------------------" << endl;
+    cout << "----------------------------------------" << endl;
+
+
+    // CMD循环模式
     while(1)
     {
-        char sm_command[MAX_COMMAND];
+        char sm_command[MAX_COMMAND];            
         cout << "CMD >>> ";
         cin >> sm_command;
-        
-        if( strncmp(sm_command, CMD_DOWN, sizeof(CMD_DOWN)-1) == 0 )
+
+        /* * * * * * * * * * * * * * * * * * * * * * */
+        /* * * * * * * *    关闭系统    * * * * * * * */
+        /* * * * * * * * * * * * * * * * * * * * * * */
+        if( strncmp(sm_command, CMD_SD, strlen(CMD_SD)) == 0 )
         {
             cout << "----------------------------------------" << endl;
-            cout << "|----- Summer's FA_Automator DOWN -----|" << endl;
+            cout << "|-----    FA_Automator SHUTDOWN   -----|" << endl;
             cout << "----------------------------------------" << endl;
             break;
         }
-        
-        if( strncmp(sm_command, CMD_PT_SZ, sizeof(CMD_PT_SZ)-1) == 0 )
+
+        /* * * * * * * * * * * * * * * * * * * * * * */
+        /* * * * * * * *   显示md文件   * * * * * * * */
+        /* * * * * * * * * * * * * * * * * * * * * * */
+        else if( strncmp(sm_command, CMD_PRINT_FILE, strlen(CMD_PRINT_FILE)) == 0 )
         {
-            FA_Print_File();
+            char file_name[32];
+
+            cout << "File >>> ";
+            cin >> file_name;
+            
+            cout << "----------------------------------------" << endl;
+            FA_Print_File(file_name);
+            cout << "----------------------------------------" << endl;            
         }
-        if( !strncmp(sm_command, CMD_PT_LN, sizeof(CMD_PT_LN)-1) )
+
+        /* * * * * * * * * * * * * * * * * * * * * * */
+        /* * * * * * * *    搜索单行    * * * * * * * */
+        /* * * * * * * * * * * * * * * * * * * * * * */
+        else if( !strncmp(sm_command, CMD_PRINT_LINE, strlen(CMD_PRINT_LINE)-1) )
         {
-            char sm_line[16];
+            char file_name[32];
+            char line_key[32];
             
-            cout << "Line >>> ";
-            cin >> sm_line;
+            cout << "File >>> ";
+            cin >> file_name;
+
+            cout << "Line-Key >>> ";
+            cin >> line_key;
+
+            FA_Print_Line(file_name, line_key);
+        }
+
+        /* * * * * * * * * * * * * * * * * * * * * * */
+        /* * * * * * * *  检查月度支出   * * * * * * * */
+        /* * * * * * * * * * * * * * * * * * * * * * */
+        else if( strncmp(sm_command, CMD_SC_MN, strlen(CMD_SC_MN)-1) == 0 )
+        {
+            string cr_month_str("## life.M");
+            cr_month_str += cr_month;
+            string nx_month_str("## life.M");
+            nx_month_str += nx_month;
+
+            int line_this = FA_Search_Line("life.M.md", cr_month_str.c_str());
+            int line_next = FA_Search_Line("life.M.md", nx_month_str.c_str());
+
+            FA_Sum_Check_Month(line_this);
             
-            if( strncmp(sm_line, CMD_BACK, sizeof(CMD_BACK)-1) == 0 )
+            cout << "CHECK " << char2int(cr_month) << "月支出: " << FA_Line_Calculator("life.M.md", line_this, line_next) << endl;       
+            cout << "----------------------------------------" << endl;            
+        }
+
+        /* * * * * * * * * * * * * * * * * * * * * * */
+        /* * * * * * * *  更新月度支出   * * * * * * * */
+        /* * * * * * * * * * * * * * * * * * * * * * */
+        else if( strncmp(sm_command, CMD_SU_MN, strlen(CMD_SU_MN)-1) == 0 )
+        {
+            string cr_month_str("## life.M");
+            cr_month_str += cr_month;
+            string nx_month_str("## life.M");
+            nx_month_str += nx_month;
+
+            int line_this = FA_Search_Line("life.M.md", cr_month_str.c_str());
+            int line_next = FA_Search_Line("life.M.md", nx_month_str.c_str());
+            int line_sz = FA_Search_Line("FA_SZ.md", cr_month_str.c_str());
+            
+            int money_sum = FA_Line_Calculator("life.M.md", line_this, line_next);
+
+            FA_Sum_Update_Month(line_this, line_sz, money_sum);
+        }
+
+        /* * * * * * * * * * * * * * * * * * * * * * */
+        /* * * * * * * *   检查SZ支出   * * * * * * * */
+        /* * * * * * * * * * * * * * * * * * * * * * */
+        else if( strncmp(sm_command, CMD_SC_SZ, strlen(CMD_SC_SZ)-1) == 0 )
+        {
+            FA_Sum_Check_SZ(sz_month_tag, sz_month_size);
+        }
+
+        /* * * * * * * * * * * * * * * * * * * * * * */
+        /* * * * * * * *   更新SZ支出   * * * * * * * */
+        /* * * * * * * * * * * * * * * * * * * * * * */
+        else if( strncmp(sm_command, CMD_SU_SZ, strlen(CMD_SU_SZ)-1) == 0 )
+        {
+            FA_Sum_Update_SZ(sz_month_tag, sz_month_size);
+        }
+
+        /* * * * * * * * * * * * * * * * * * * * * * */
+        /* * * * * * * *  更改LIFE支出  * * * * * * * */
+        /* * * * * * * * * * * * * * * * * * * * * * */
+        else if( strncmp(sm_command, CMD_LIFE, strlen(CMD_LIFE)-1) == 0 )
+        {
+            string cr_month_str("## life.M");
+            cr_month_str += cr_month;
+            string nx_month_str("## life.M");
+            nx_month_str += nx_month;
+
+            int line_this = FA_Search_Line("life.M.md", cr_month_str.c_str());
+            int line_next = FA_Search_Line("life.M.md", nx_month_str.c_str());
+
+            char line_key[32];
+            char mod_money[8];
+            int line_tag = 0;
+
+            cout << "Line-Key >>> ";
+            cin >> line_key;
+
+            line_tag = FA_Print_Line_Area("life.M.md", line_key, line_this, line_next);
+            if(line_tag < 0)
+                continue;
+
+            cout << "Mod-Money >>> ";
+            cin >> mod_money;
+
+            if(char0check(mod_money) != 0)
             {
                 continue;
             }
-            else
-            {
-                FA_Print_Line(sm_line);
-            }
+
+            FA_Line_Modify("life.M.md", line_tag, char2int(mod_money));
         }
-        else if( strncmp(sm_command, CMD_SC_SZ, sizeof(CMD_SC_SZ)-1) == 0 )
+
+        /* * * * * * * * * * * * * * * * * * * * * * */
+        /* * * * * * * *  增加BOOK支出  * * * * * * * */
+        /* * * * * * * * * * * * * * * * * * * * * * */
+        else if( strncmp(sm_command, CMD_BOOK, strlen(CMD_BOOK)-1) == 0 )
         {
-            FA_Sum_Check_SZ();
-        }
-        else if( strncmp(sm_command, CMD_SU_MN, sizeof(CMD_SU_MN)-1) == 0 )
-        {
-            FA_Sum_Update_Month();
-        }
-        else if( strncmp(sm_command, CMD_SU_SZ, sizeof(CMD_SU_SZ)-1) == 0 )
-        {
-            FA_Sum_Update_SZ();
-        }
-        else if( strncmp(sm_command, CMD_LM, sizeof(CMD_LM)-1) == 0 )
-        {
-            char sm_line[16];
-            char sm_money[8];
-            
-            cout << "Line >>> ";
-            cin >> sm_line;
-            
-            if( strncmp(sm_line, CMD_BACK, sizeof(CMD_BACK)-1) == 0 )
-            {
-                cout << "----------------------------------------" << endl;
-                continue;
-            }
-            else
-            {
-                if( FA_Print_Line(sm_line) == 1 )
-                    continue;
-            }
-            
+            char money[8];
+            char content[32];
+
+            string cr_month_str("Books.M");
+            cr_month_str += cr_month;
+            string nx_month_str("Books.M");
+            nx_month_str += nx_month;
+
             cout << "Money >>> ";
-            cin >> sm_money;
-            if( strncmp(sm_money, CMD_BACK, sizeof(CMD_BACK)-1) == 0 )
-            {
-                cout << "----------------------------------------" << endl;
+            cin >> money;
+
+            if(char0check(money) != 0)
                 continue;
-            }
-            else
-            {
-                FA_Line_Modify(sm_line, char2int(sm_money));
-                FA_Sum_Update_Month();
-                FA_Sum_Update_SZ();
-            }
+
+            cout << "Book >>> ";
+            cin >> content;
+
+            int line_this = FA_Search_Line("Books.M.md", cr_month_str.c_str());
+            int line_next = FA_Search_Line("Books.M.md", nx_month_str.c_str());
+            int line_tag = FA_Search_Line("life.M.md", cr_month_str.c_str());
+
+            FA_Line_Add("Books.M.md", (line_next-1), char2int(money), content);
+            int money_sum = FA_Line_Calculator("Books.M.md", line_this, line_next);
+            FA_Sum_Modify("Books.M.md", (line_this+1), money_sum);
+            FA_Line_Modify("life.M.md", line_tag, char2int(money));
         }
-        else if( strncmp(sm_command, CMD_TEST, sizeof(CMD_TEST)-1) == 0 )
+
+        /* * * * * * * * * * * * * * * * * * * * * * */
+        /* * * * * * * *  增加T&J支出   * * * * * * * */
+        /* * * * * * * * * * * * * * * * * * * * * * */
+        else if( strncmp(sm_command, CMD_TBJD, strlen(CMD_TBJD)-1) == 0 )
         {
-            cout << "summer_test" << endl;
+            char money[8];
+            char content[32];
+
+            string cr_month_str("T&J.M");
+            cr_month_str += cr_month;
+            string nx_month_str("T&J.M");
+            nx_month_str += nx_month;
+
+            cout << "Money >>> ";
+            cin >> money;
+
+            if(char0check(money) != 0)
+                continue;
+
+            cout << "T&J >>> ";
+            cin >> content;
+
+            int line_this = FA_Search_Line("T&J.M.md", cr_month_str.c_str());
+            int line_next = FA_Search_Line("T&J.M.md", nx_month_str.c_str());
+            int line_tag = FA_Search_Line("life.M.md", cr_month_str.c_str());
+
+            FA_Line_Add("T&J.M.md", (line_next-1), char2int(money), content);
+            int money_sum = FA_Line_Calculator("T&J.M.md", line_this, line_next);
+            FA_Sum_Modify("T&J.M.md", (line_this+1), money_sum);
+            FA_Line_Modify("life.M.md", line_tag, char2int(money));
         }
+
+        /* * * * * * * * * * * * * * * * * * * * * * */
+        /* * * * * * * *   增加SA支出   * * * * * * * */
+        /* * * * * * * * * * * * * * * * * * * * * * */
+        else if( strncmp(sm_command, CMD_SA, strlen(CMD_SA)-1) == 0 )
+        {
+            char money[8];
+            char content[32];
+
+            string cr_month_str("sa.M");
+            cr_month_str += cr_month;
+            string nx_month_str("sa.M");
+            nx_month_str += nx_month;
+
+            cout << "Money >>> ";
+            cin >> money;
+
+            if(char0check(money) != 0)
+                continue;
+
+            cout << "sa >>> ";
+            cin >> content;
+
+            int line_this = FA_Search_Line("sa.M.md", cr_month_str.c_str());
+            int line_next = FA_Search_Line("sa.M.md", nx_month_str.c_str());
+            int line_tag = FA_Search_Line("life.M.md", cr_month_str.c_str());
+            
+            FA_Line_Add("sa.M.md", (line_next-1), char2int(money), content);
+            int money_sum = FA_Line_Calculator("sa.M.md", line_this, line_next);
+            FA_Sum_Modify("sa.M.md", (line_this+1), money_sum);
+            FA_Line_Modify("life.M.md", line_tag, char2int(money));            
+        }
+
+        else if( strncmp(sm_command, CMD_TEST, strlen(CMD_TEST)-1) == 0 )
+        {
+            FA_Read_Month_Tag(sz_month_tag, sz_month_size);
+            cout << *sz_month_tag << endl;
+            cout << sz_month_size << endl;
+            continue;   
+        }
+
         else
         {
             cout << "----------------------------------------" << endl;
-            cout << ">>>  Error Command  <<<" << endl;
+            cout << ">>>           Error Command          <<<" << endl;
             cout << "----------------------------------------" << endl;
         }
     }
-    
+
     return 0;
 }
 
 
-/*----------  CODE_END @ 番茄  ----------*/
+/*--------------------  CODE_END @ 番茄  --------------------*/
 
 

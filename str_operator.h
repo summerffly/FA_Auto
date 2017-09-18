@@ -1,16 +1,54 @@
 
-/*----------  CODE_ORIGIN @ 番茄  ----------*/
+/*--------------------  CODE_ORIGIN @ 番茄  --------------------*/
 
 #include <iostream>
 #include <string>
 
 #include "global.h"
 
-
 using namespace std;
 
 
-int sm_StrCnt(string strA, string strB);     // 声明
+/*--------------------  函数声明 @ 番茄  --------------------*/
+
+int sm_StrCnt(string strA, string strB);
+
+
+/*-------------------------------------------------------------------*/
+/*--------------------  int & char处理函数 @ 番茄  --------------------*/
+/*-------------------------------------------------------------------*/
+
+/* * * * * *  char check  * * * * * */
+int char0check(const char *num_char)
+{
+    if( (num_char[0] != '+') && (num_char[0] != '-') && ((num_char[0] < '0') || ('9' < num_char[0])) )
+    {
+        cout << "----------------------------------------" << endl;
+        cout << ">>>         1st Format Error         <<<" << endl;
+        cout << "----------------------------------------" << endl;
+        return -1;
+    }
+    
+    for(int i=1; ; i++)
+    {
+        if(num_char[i] == '\0')
+            break;
+        
+        if( ('0' <= num_char[i])&(num_char[i] <= '9') )
+        {
+            continue;
+        }
+        else
+        {
+            cout << "----------------------------------------" << endl;
+            cout << ">>>         2nd Format Error         <<<" << endl;
+            cout << "----------------------------------------" << endl;
+            return -2;
+        }
+    }
+    
+    return 0;
+}
 
 
 /* * * * * *  char to int  * * * * * */
@@ -74,6 +112,85 @@ char *int2char(const int num_int)
 }
 
 
+/*-------------------------------------------------------------*/
+/*--------------------  数组判断函数 @ 番茄   --------------------*/
+/*-------------------------------------------------------------*/
+
+bool IsInArray(const int num, const int *array, const int size)
+{
+    int index = 0;
+    bool flag = false;
+
+    for(int i=0; i<=(size-1); i++)
+    {
+        if(num == array[i])
+        {
+            flag = true;
+            break;
+        }
+    }
+
+    return flag;
+}
+
+
+/*-------------------------------------------------------------*/
+/*--------------------  File处理函数 @ 番茄  --------------------*/
+/*-------------------------------------------------------------*/
+
+/* * * * * *  Check File  * * * * * */
+int CheckFile(const char *file_name)
+{
+    ifstream ifile(file_name);
+    
+    if(!ifile.is_open())
+    {
+        cout << "----------------------------------------" << endl;
+        cout << ">>>        Check File Failure        <<<" << endl;
+        cout << "----------------------------------------" << endl;
+        return -1;
+    }
+    
+    ifile.close();
+    
+    return 0;
+}
+
+
+/* * * * * *  Read File  * * * * * */
+int ReadFile(const char *file_name, string *strLine, int &line_index)
+{
+    char buffer[MAX_LINE_CHAR];
+    
+    ifstream ifile(file_name);
+
+    if(!ifile.is_open())
+    {
+        cout << "----------------------------------------" << endl;
+        cout << ">>>          Read File Error         <<<" << endl;
+        cout << "----------------------------------------" << endl;
+        return -1;
+    }
+
+    while(!ifile.eof())
+    {
+        ifile.getline(buffer, MAX_LINE_CHAR);
+        strLine[line_index] = buffer;
+
+        if(sm_StrCnt(strLine[line_index], "---") == 0)
+        {
+            break;
+        }
+        
+        line_index++;
+    }
+    
+    ifile.close();
+    
+    return 0;
+}
+
+
 /* * * * * *  Write File  * * * * * */
 int WirteFile(const char *file_name, const string *strLine, const int line_index)
 {
@@ -81,7 +198,9 @@ int WirteFile(const char *file_name, const string *strLine, const int line_index
 
     if(!ofile.is_open())
     {
-        cout << "Write File Error" << endl;
+        cout << "----------------------------------------" << endl;
+        cout << ">>>         Write File Error         <<<" << endl;
+        cout << "----------------------------------------" << endl;
         return -1;
     }
     
@@ -89,7 +208,7 @@ int WirteFile(const char *file_name, const string *strLine, const int line_index
     {
         ofile << strLine[i].c_str() << endl;
         
-        if(!sm_StrCnt(strLine[i], "---"))
+        if(sm_StrCnt(strLine[i], "---") == 0)
         {
             break;
         }
@@ -100,6 +219,9 @@ int WirteFile(const char *file_name, const string *strLine, const int line_index
     return 0;
 }
 
+/*---------------------------------------------------------------*/
+/*--------------------  string处理函数 @ 番茄  --------------------*/
+/*---------------------------------------------------------------*/
 
 /* * * * * *  string包含匹配  * * * * * */
 int sm_StrCnt(string strA, string strB)
@@ -403,6 +525,20 @@ int sm_StrMoneyModify_Line(string &str, int money_new)
 }
 
 
-/*----------  CODE_END @ 番茄  ----------*/
+/* * * * * *  string单行金额生成  * * * * * */
+string sm_StrGenerator_Line(const int money, const char *line_char)
+{
+    string str;
+    
+    str += "`- ";
+    str += int2char(money);
+    str += "` ";
+    str += line_char;
+    
+    return str;
+}
+
+
+/*--------------------  CODE_END @ 番茄  --------------------*/
 
 
