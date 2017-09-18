@@ -68,47 +68,39 @@ int FA_Read_Conf(char *version, char *cr_month, char *nx_month)
 
 // tip 番茄@20170819 - 直接对内存进行操作，需要注意风险，特别是更改格式以后
 int FA_Read_Month_Tag(int *sz_month_tag, int &sz_month_size)
-{
-    char buffer[64];
-    string strLine[16];
-
-    char *month_now = new char[3];    
-    
+{    
+    char buffer[MAX_LINE_CHAR];
+    string strLine[MAX_LINE];
     int line_index = 1;
+
+    if(sz_month_size != 0)
+    {
+        sz_month_size = 0;
+    }
     
-    ifstream ifile("FA.conf");
+    ifstream ifile("FA_TVT.md");
 
     if(!ifile.is_open())
     {
         cout << "----------------------------------------" << endl;
-        cout << ">>>          Read Conf Error         <<<" << endl;
+        cout << ">>>          Read File Error         <<<" << endl;
         cout << "----------------------------------------" << endl;
         return -1;
     }
-
-    *sz_month_tag = FA_Search_Line("FA_SZ.md", "## life.M03");
     
     while(!ifile.eof())
     {
         ifile.getline(buffer, MAX_LINE_CHAR);
         strLine[line_index] = buffer;
 
-        if(sm_StrCnt(strLine[line_index], "Current Month") == 0)
+        if(sm_StrCnt(strLine[line_index], "## life.M") == 0)
         {
-            memmove(month_now, buffer+16, 3);            
-            continue;
+            *(sz_month_tag+sz_month_size) = line_index;
+            sz_month_size++;
         }
-        
         line_index++;        
     }
 
-    for(int i=4; i<=(char2int(month_now)); i++)
-    {
-        *(sz_month_tag+i-3) = *sz_month_tag + (i-3)*5;
-    }
-    
-    sz_month_size = char2int(month_now) - 2;
-    
     ifile.close();
         
     return 0;
@@ -386,96 +378,6 @@ int FA_Sum_Check_Month(const int line_tag)
 }
 
 
-int FA_Sum_Check_SZ(const int *sz_month_tag, const int sz_month_size)
-{
-    string strLine[MAX_LINE];    
-    int line_index = 1;
-    int money_sum = 0;
-    
-    if( ReadFile("FA_SZ.md", strLine, line_index) == -1 )
-    {
-        return -1;
-    }
-
-    for(int i = 1; i <= line_index; i++)
-    {
-        if(i == FA_Search_Line("FA_SZ.md", "原始财富"))
-        {
-            money_sum += sm_StrMoneyFind_Top(strLine[i]);
-            continue;
-        }
-        else if(i == FA_Search_Line("FA_SZ.md", "home注资"))
-        {
-            money_sum += sm_StrMoneyFind_Top(strLine[i]);
-            continue;
-        }
-        else if(i == FA_Search_Line("FA_SZ.md", "## 壹公寓搬家"))
-        {
-            money_sum += sm_StrMoneyFind_Title(strLine[i+1]);
-            continue;
-        }
-        else if(i == FA_Search_Line("FA_SZ.md", "## DGtler"))
-        {
-            money_sum += sm_StrMoneyFind_Title(strLine[i+1]);
-            continue;
-        }
-        else if(i == FA_Search_Line("FA_SZ.md", "## travel"))
-        {
-            money_sum += sm_StrMoneyFind_Title(strLine[i+1]);
-            continue;
-        }
-        else if(i == FA_Search_Line("FA_SZ.md", "## lottery"))
-        {
-            money_sum += sm_StrMoneyFind_Title(strLine[i+1]);
-            continue;
-        }
-        else if(IsInArray(i, sz_month_tag, sz_month_size) == true)
-        {
-            money_sum += sm_StrMoneyFind_Month(strLine[i+3]);
-            continue;
-        }
-        else if(i == FA_Search_Line("FA_SZ.md", "当前财富"))
-        {
-            cout << "----------------------------------------" << endl;  
-            cout << "line_" << i << " // " << strLine[i].c_str() << endl;
-            cout << "Sum_Check_SZ: " << money_sum << endl;
-            cout << "----------------------------------------" << endl;
-            continue;
-        }
-        else if(i == FA_Search_Line("FA_SZ.md", "壹公寓_押金"))
-        {
-            money_sum += sm_StrMoneyFind_Line(strLine[i]);
-            continue;
-        }
-        else if(i == FA_Search_Line("FA_SZ.md", "mobike_押金"))
-        {
-            money_sum += sm_StrMoneyFind_Line(strLine[i]);
-            continue;
-        }
-        else if(i == FA_Search_Line("FA_SZ.md", "ofo_押金"))
-        {
-            money_sum += sm_StrMoneyFind_Line(strLine[i]);
-            continue;
-        }
-        else if(i == FA_Search_Line("FA_SZ.md", "蚂蚁借呗"))
-        {
-            money_sum += sm_StrMoneyFind_Top(strLine[i]);
-            continue;
-        }
-        else if(i == FA_Search_Line("FA_SZ.md", "余额宝"))
-        {
-            cout << "----------------------------------------" << endl;  
-            cout << "line_" << i << " // " << strLine[i].c_str() << endl;
-            cout << "Sum_Check_SZ: " << money_sum << endl;
-            cout << "----------------------------------------" << endl;
-            continue;
-        }
-    }
-    
-    return 0;
-}
-
-
 int FA_Sum_Update_Month(const int line_tag_life, const int line_tag_sz, const int money_sum)
 {
     string strLine_life[MAX_LINE];    
@@ -492,7 +394,7 @@ int FA_Sum_Update_Month(const int line_tag_life, const int line_tag_sz, const in
         return -1;
     }
 
-    if( ReadFile("FA_SZ.md", strLine_sz, line_index_sz) == -1 )
+    if( ReadFile("FA_TVT.md", strLine_sz, line_index_sz) == -1 )
     {
         return -1;
     }
@@ -531,51 +433,36 @@ int FA_Sum_Update_Month(const int line_tag_life, const int line_tag_sz, const in
     }
 
     WirteFile("life.M.md", strLine_life, line_index_life);       
-    WirteFile("FA_SZ.md", strLine_sz, line_index_sz);       
+    WirteFile("FA_TVT.md", strLine_sz, line_index_sz);       
     
     return 0;
 }
 
 
-int FA_Sum_Update_SZ(const int *sz_month_tag, const int sz_month_size)
+int FA_Sum_Check_TVT(const int *sz_month_tag, const int sz_month_size)
 {
     string strLine[MAX_LINE];    
     int line_index = 1;
     int money_sum = 0;
     
-    if( ReadFile("FA_SZ.md", strLine, line_index) == -1 )
+    if( ReadFile("FA_TVT.md", strLine, line_index) == -1 )
     {
         return -1;
     }
 
     for(int i = 1; i <= line_index; i++)
     {
-        if(i == FA_Search_Line("FA_SZ.md", "原始财富"))
+        if(i == FA_Search_Line("FA_TVT.md", "原始财富"))
         {
             money_sum += sm_StrMoneyFind_Top(strLine[i]);
             continue;
         }
-        else if(i == FA_Search_Line("FA_SZ.md", "home注资"))
-        {
-            money_sum += sm_StrMoneyFind_Top(strLine[i]);
-            continue;
-        }
-        else if(i == FA_Search_Line("FA_SZ.md", "## 壹公寓搬家"))
+        else if(i == FA_Search_Line("FA_TVT.md", "## DK"))
         {
             money_sum += sm_StrMoneyFind_Title(strLine[i+1]);
             continue;
         }
-        else if(i == FA_Search_Line("FA_SZ.md", "## DGtler"))
-        {
-            money_sum += sm_StrMoneyFind_Title(strLine[i+1]);
-            continue;
-        }
-        else if(i == FA_Search_Line("FA_SZ.md", "## travel"))
-        {
-            money_sum += sm_StrMoneyFind_Title(strLine[i+1]);
-            continue;
-        }
-        else if(i == FA_Search_Line("FA_SZ.md", "## lottery"))
+        else if(i == FA_Search_Line("FA_TVT.md", "## NS"))
         {
             money_sum += sm_StrMoneyFind_Title(strLine[i+1]);
             continue;
@@ -585,7 +472,82 @@ int FA_Sum_Update_SZ(const int *sz_month_tag, const int sz_month_size)
             money_sum += sm_StrMoneyFind_Month(strLine[i+3]);
             continue;
         }
-        else if(i == FA_Search_Line("FA_SZ.md", "当前财富"))
+        else if(i == FA_Search_Line("FA_TVT.md", "当前财富"))
+        {
+            cout << "----------------------------------------" << endl;  
+            cout << "line_" << i << " // " << strLine[i].c_str() << endl;
+            cout << "Sum_Check_SZ: " << money_sum << endl;
+            cout << "----------------------------------------" << endl;
+            continue;
+        }
+        else if(i == FA_Search_Line("FA_TVT.md", "押金_壹公寓"))
+        {
+            money_sum += sm_StrMoneyFind_Line(strLine[i]);
+            continue;
+        }
+        else if(i == FA_Search_Line("FA_TVT.md", "押金_mobike"))
+        {
+            money_sum += sm_StrMoneyFind_Line(strLine[i]);
+            continue;
+        }
+        else if(i == FA_Search_Line("FA_TVT.md", "押金_ofo"))
+        {
+            money_sum += sm_StrMoneyFind_Line(strLine[i]);
+            continue;
+        }
+        else if(i == FA_Search_Line("FA_TVT.md", "蚂蚁借呗"))
+        {
+            money_sum += sm_StrMoneyFind_Top(strLine[i]);
+            continue;
+        }
+        else if(i == FA_Search_Line("FA_TVT.md", "余额宝"))
+        {
+            cout << "----------------------------------------" << endl;  
+            cout << "line_" << i << " // " << strLine[i].c_str() << endl;
+            cout << "Sum_Check_SZ: " << money_sum << endl;
+            cout << "----------------------------------------" << endl;
+            continue;
+        }
+    }
+    
+    return 0;
+}
+
+
+int FA_Sum_Update_TVT(const int *sz_month_tag, const int sz_month_size)
+{
+    string strLine[MAX_LINE];    
+    int line_index = 1;
+    int money_sum = 0;
+    
+    if( ReadFile("FA_TVT.md", strLine, line_index) == -1 )
+    {
+        return -1;
+    }
+
+    for(int i = 1; i <= line_index; i++)
+    {
+        if(i == FA_Search_Line("FA_TVT.md", "原始财富"))
+        {
+            money_sum += sm_StrMoneyFind_Top(strLine[i]);
+            continue;
+        }
+        else if(i == FA_Search_Line("FA_TVT.md", "## DK"))
+        {
+            money_sum += sm_StrMoneyFind_Title(strLine[i+1]);
+            continue;
+        }
+        else if(i == FA_Search_Line("FA_TVT.md", "## NS"))
+        {
+            money_sum += sm_StrMoneyFind_Title(strLine[i+1]);
+            continue;
+        }
+        else if(IsInArray(i, sz_month_tag, sz_month_size) == true)
+        {
+            money_sum += sm_StrMoneyFind_Month(strLine[i+3]);
+            continue;
+        }
+        else if(i == FA_Search_Line("FA_TVT.md", "当前财富"))
         {
             cout << "----------------------------------------" << endl;  
             cout << "line_" << i << " // " << strLine[i].c_str() << endl;
@@ -594,27 +556,27 @@ int FA_Sum_Update_SZ(const int *sz_month_tag, const int sz_month_size)
             sm_StrMoneyModify_Top(strLine[i], money_sum);            
             continue;
         }
-        else if(i == FA_Search_Line("FA_SZ.md", "壹公寓_押金"))
+        else if(i == FA_Search_Line("FA_TVT.md", "押金_壹公寓"))
         {
             money_sum += sm_StrMoneyFind_Line(strLine[i]);
             continue;
         }
-        else if(i == FA_Search_Line("FA_SZ.md", "mobike_押金"))
+        else if(i == FA_Search_Line("FA_TVT.md", "押金_mobike"))
         {
             money_sum += sm_StrMoneyFind_Line(strLine[i]);
             continue;
         }
-        else if(i == FA_Search_Line("FA_SZ.md", "ofo_押金"))
+        else if(i == FA_Search_Line("FA_TVT.md", "押金_ofo"))
         {
             money_sum += sm_StrMoneyFind_Line(strLine[i]);
             continue;
         }
-        else if(i == FA_Search_Line("FA_SZ.md", "蚂蚁借呗"))
+        else if(i == FA_Search_Line("FA_TVT.md", "蚂蚁借呗"))
         {
             money_sum += sm_StrMoneyFind_Top(strLine[i]);
             continue;
         }
-        else if(i == FA_Search_Line("FA_SZ.md", "余额宝"))
+        else if(i == FA_Search_Line("FA_TVT.md", "余额宝"))
         {
             cout << "----------------------------------------" << endl;  
             cout << "line_" << i << " // " << strLine[i].c_str() << endl;
@@ -625,7 +587,7 @@ int FA_Sum_Update_SZ(const int *sz_month_tag, const int sz_month_size)
         }
     }
 
-    WirteFile("FA_SZ.md", strLine, line_index);   
+    WirteFile("FA_TVT.md", strLine, line_index);   
     
     cout << "----------------------------------------" << endl;
     cout << ">>>           SZ-SUM UPDATED         <<<" << endl;
@@ -740,7 +702,8 @@ int FA_Line_Calculator(const char *file_name, const int line_start, const int li
 }
 
 
-int FA_Sum_Modify(const char *file_name, const int line_id, const int money)
+// tip 番茄@20170906 - 用mod_tag来区分需要修改的项目
+int FA_Sum_Modify(const char *file_name, const int line_id, const int money, int mod_tag)
 {
     string strLine[MAX_LINE];    
     int line_index = 1;
@@ -754,7 +717,14 @@ int FA_Sum_Modify(const char *file_name, const int line_id, const int money)
     {
         if( i == line_id )
         {
-            sm_StrMoneyModify_Title(strLine[i], money);
+            if( 1 == mod_tag )
+            {
+                sm_StrMoneyModify_Title(strLine[i], money);
+            }
+            else if( 2 == mod_tag )
+            {
+                sm_StrMoneyModify_Top(strLine[i], money);
+            }
         }
     }
     
