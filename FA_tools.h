@@ -1,315 +1,589 @@
 
 /*----------  CODE_ORIGIN @ 番茄  ----------*/
 
-#include <iostream>
-#include <string>
-
 #include <fstream>
 #include <iomanip>
 
-#define MAX_COMMAND     64      // 命令最大字符数
-#define MAX_LINE_CHAR   128     // 每行最大字符数
-#define MAX_LINE        200     // 最大支持行数
+#include "global.h"
+#include "str_operator.h"
 
-
-// --------------- COMMAND Library --------------- //
-
-const char *CMD_SC_MN = "sumck-mn";     // FA_Sum_Check_Month
-const char *CMD_SC_SZ = "sumck-sz";     // FA_Sum_Check_SZ
-
-const char *CMD_SU_MN = "sumup-mn";     // FA_Sum_Update_Month
-const char *CMD_SU_SZ = "sumup-sz";     // FA_Sum_Update_SZ
-
-const char *CMD_LM = "lmod";            // FA_Line_Modify
-
-const char *CMD_DOWN = "down";
-
-
-// --------------- NAMESPACE --------------- //
 
 using namespace std;
 
 
 /*----------  TOOLS @ 番茄  ----------*/
 
-/* * * * * *  char to int  * * * * * */
-int char2int(const char *num_char)
+int FA_Print_File()
 {
-    int num_int = 0;
+    cout << "----------------------------------------" << endl;
     
-    for(int i=0; ; i++)
+    char buffer[MAX_LINE_CHAR];
+    string strLine[MAX_LINE];
+    
+    int line_index = 1;
+    
+    ifstream ifile("FA_SZ.md");
+    if(!ifile.is_open())
     {
-        if(num_char[i] == '\0')
-            break;
-        
-        num_int = (num_char[i] - 48) + num_int*10;
+        cout << "Open File Error" << endl;
+        return -1;
     }
     
-    return num_int;
-}
-
-/* * * * * *  int to char  * * * * * */
-char *int2char(const int num_int)
-{
-    char *num_char = new char[7];
-    sprintf(num_char, "%d", num_int);
-    return num_char;
-}
-
-
-/*----------  TOOLS @ 番茄  ----------*/
-
-/* * * * * *  string包含匹配  * * * * * */
-int sm_StrCnt(string strA, string strB)
-{
-    string::size_type index;
-
-    index = strA.find(strB);
-    
-    if(index == string::npos )
+    while(!ifile.eof())
     {
+        ifile.getline(buffer, MAX_LINE_CHAR);
+        strLine[line_index] = buffer;
+        
+        cout << "line_" << line_index << " // " << strLine[line_index].c_str() << endl;
+        
+        line_index++;
+        
+        if(!sm_StrCnt(strLine[line_index], "---"))
+        {
+            break;
+        }
+    }
+    
+    ifile.close();
+    
+    cout << "----------------------------------------" << endl;
+    
+    return 0;
+}
+
+int FA_Print_Line(const char *line_key)
+{
+    cout << "----------------------------------------" << endl;
+    
+    char buffer[MAX_LINE_CHAR];
+    string strLine[MAX_LINE];
+    
+    int line_index = 1;
+    int line_tag = 0;
+    
+    ifstream ifile("FA_SZ.md");
+    if(!ifile.is_open())
+    {
+        cout << "Open File Error" << endl;
         return -1;
+    }
+    
+    while(!ifile.eof())
+    {
+        ifile.getline(buffer, MAX_LINE_CHAR);
+        strLine[line_index] = buffer;
+        
+        if(sm_StrCnt(strLine[line_index], line_key) == 0)
+        {
+            cout << "line_" << line_index << " // " << strLine[line_index].c_str() << endl;
+            line_tag++;
+        }
+        
+        line_index++;
+    }
+    
+    ifile.close();
+    
+    if(line_tag != 0)
+    {
+        cout << "----------------------------------------" << endl;
+        return 0;
     }
     else
     {
-        return 0;
+        cout << ">>>  NO LINE MATCH  <<<" << endl;
+        cout << "----------------------------------------" << endl;
+        
+        return 1;
     }
+    
 }
 
 
-/* * * * * *  string原始金额查找  * * * * * */
-int sm_StrMoneyFind_Origin(string str)
+int FA_Sum_Check_Month()
 {
-    char str_char[MAX_LINE_CHAR];
+    cout << "----------------------------------------" << endl;
+
+    char line_buffer[MAX_LINE_CHAR];
+    string strLine[MAX_LINE];
     
-    strcpy(str_char, str.c_str());
-    
-    int money = 0;
-    int m_flag = 0;
-    
-    for(int i=0; ;i++)
+    ifstream ifile("FA_SZ.md");
+    if(!ifile.is_open())
     {
-        if(str_char[i] == '-')
+        cout << "Open File Error" << endl;
+        return 1;
+    }
+    
+    int month_sum = 0;
+    bool r_flag = false;
+    int line_index = 1;
+    int line_tag = 0;
+    
+    while(!ifile.eof())
+    {
+        ifile.getline(line_buffer, MAX_LINE_CHAR);
+        strLine[line_index] = line_buffer;
+        
+        if(sm_StrCnt(strLine[line_index], "8月结余") == 0)
         {
-            m_flag = -1;
+            r_flag = true;
+            line_tag = line_index++;
             continue;
         }
-        else if(str_char[i] == '+')
+        
+        if(sm_StrCnt(strLine[line_index], "Summary") == 0)
         {
-            m_flag = 1;
-            continue;
-        }
-        else if(str_char[i] == '\0')
-        {
+            r_flag = false;
+            
+            cout << "----------------------------------------" << endl;
+            cout << "line_" << line_tag << " // " << strLine[line_tag].c_str() << endl;
+            cout << "Sum_Check_Month: " << month_sum << endl;
+            cout << "----------------------------------------" << endl;
+            
             break;
         }
         
-        if(m_flag != 0)
+        if((r_flag == true) && (sm_StrCnt(strLine[line_index], "`") == 0))
         {
-            money = (str_char[i] - 48) + money*10;
+            cout << "line_" << line_index << " // " << strLine[line_index].c_str() << endl;
+            month_sum += sm_StrMoneyFind_Line(strLine[line_index]);
         }
-    }
-    
-    return (m_flag * money);
-}
-
-
-/* * * * * *  string分项金额查找  * * * * * */
-int sm_StrMoneyFind_Title(string str)
-{
-    char str_char[MAX_LINE_CHAR];
-    
-    strcpy(str_char, str.c_str());
-    
-    int money = 0;
-    int m_flag = 0;
-
-    if(str_char[2] == '-')
-    {
-        m_flag = -1;
-    }
-    else if(str_char[2] == '+')
-    {
-        m_flag = 1;
-    }
-    
-    for(int i=3; ; i++)
-    {
-        if(str_char[i] == '\0')
-            break;
         
-        money = (str_char[i] - 48) + money*10;
+        line_index++;
     }
     
-    return (m_flag * money);
+    ifile.close();
+    
+    return month_sum;
 }
 
 
-/* * * * * *  string月度金额查找  * * * * * */
-int sm_StrMoneyFind_Month(string str)
+int FA_Sum_Check_SZ()
 {
-    char str_char[MAX_LINE_CHAR];
+    cout << "----------------------------------------" << endl;
+
+    char buffer[MAX_LINE_CHAR];
+    string strLine[MAX_LINE];
     
-    strcpy(str_char, str.c_str());
-    
-    int money = 0;
-    int m_flag = 0;
-    
-    for(int i=0; ;i++)
+    ifstream ifile("FA_SZ.md");
+    if(!ifile.is_open())
     {
-        if(str_char[i] == '-')
+        cout << "Open File Error" << endl;
+        return 1;
+    }
+    
+    int money_sum = 0;
+    int line_index = 1;
+  
+    while(!ifile.eof())
+    {
+        ifile.getline(buffer, MAX_LINE_CHAR);
+        strLine[line_index] = buffer;
+        
+        if(sm_StrCnt(strLine[line_index], "原始财富") == 0)
         {
-            m_flag = -1;
+            cout << "line_" << line_index << " // " << strLine[line_index].c_str() << endl;
+            money_sum += sm_StrMoneyFind_Top(strLine[line_index]);
+            line_index++;
             continue;
         }
-        else if(str_char[i] == '+')
+        
+        if(sm_StrCnt(strLine[line_index], "home注资") == 0)
         {
-            m_flag = 1;
+            cout << "line_" << line_index << " // " << strLine[line_index].c_str() << endl;
+            money_sum += sm_StrMoneyFind_Top(strLine[line_index]);
+            line_index++;
             continue;
         }
-        else if(str_char[i] == '\0')
-        {
-            break;
-        }
         
-        if(m_flag != 0)
+        if(sm_StrCnt(strLine[line_index], "壹公寓搬家") == 0)
         {
-            money = (str_char[i] - 48) + money*10;
-        }
-    }
-    
-    return (m_flag * money);
-}
-
-
-/* * * * * *  string单行金额查找  * * * * * */
-int sm_StrMoneyFind_Line(string str)
-{
-    char str_char[MAX_LINE_CHAR];
-    
-    strcpy(str_char, str.c_str());
-    
-    int money = 0;
-    
-    for(int i=3; ;i++)
-    {
-        if(str_char[i] == '`')
-        {
-            break;
-        }
-
-        money = (str_char[i] - 48) + money*10;
-    }
-    
-    return money;
-}
-
-
-/* * * * * *    * * * * * */
-int sm_StrMoneyReplace_Line(string &str, int delta)
-{
-    char str_char[MAX_LINE_CHAR];
-    
-    strcpy(str_char, str.c_str());
-    
-    int money = 0;
-    int index = 0;
-    
-    for(int i=3; ; i++)
-    {
-        if(str_char[i] == '`')
-            break;
-        
-        money = (str_char[i] - 48) + money*10;
-        index++;
-    }
-    
-    str.erase(3, index);
-    str.insert(3, int2char(money+delta));
-    
-    return 0;
-}
-
-
-/* * * * * *    * * * * * */
-int sm_StrMoneyReplace_Title(string &str, int delta)
-{
-    char str_char[MAX_LINE_CHAR];
-    
-    strcpy(str_char, str.c_str());
-
-    int money = 0;
-    int index = 0;
-    
-    for(int i=3; ; i++)
-    {
-        if(str_char[i] == '\0')
-            break;
-        
-        money = (str_char[i] - 48) + money*10;
-        index++;
-    }
-    
-    cout << money << endl;
-    
-    str.erase(3, index);
-    str.insert(3, int2char(money+delta));
-    
-    return 0;
-}
-
-/* * * * * *    * * * * * */
-int sm_StrMoneyReplace_Month(string &str, int money_new)
-{
-    char str_char[MAX_LINE_CHAR];
-    
-    strcpy(str_char, str.c_str());
-    
-    int money = 0;
-    int m_flag = 0;
-    int index = 0;
-    int tag = 0;
-    
-    for(int i=0; ;i++)
-    {
-        if(str_char[i] == '-')
-        {
-            tag = i+1;
-            m_flag = -1;
+            cout << "line_" << line_index << " // " << strLine[line_index].c_str() << endl;
+            line_index++;
+            
+            ifile.getline(buffer, MAX_LINE_CHAR);
+            strLine[line_index] = buffer;
+            
+            cout << "line_" << line_index << " // " << strLine[line_index].c_str() << endl;
+            money_sum += sm_StrMoneyFind_Title(strLine[line_index]);
+            line_index++;
             continue;
         }
-        else if(str_char[i] == '+')
+        
+        if(sm_StrCnt(strLine[line_index], "DGtler") == 0)
         {
-            tag = i+1;
-            m_flag = 1;
+            cout << "line_" << line_index << " // " << strLine[line_index].c_str() << endl;
+            line_index++;
+            
+            ifile.getline(buffer, MAX_LINE_CHAR);
+            strLine[line_index] = buffer;
+            
+            cout << "line_" << line_index << " // " << strLine[line_index].c_str() << endl;
+            money_sum += sm_StrMoneyFind_Title(strLine[line_index]);
+            line_index++;
             continue;
         }
-        else if(str_char[i] == '\0')
+        
+        if(sm_StrCnt(strLine[line_index], "travel") == 0)
         {
-            break;
+            cout << "line_" << line_index << " // " << strLine[line_index].c_str() << endl;
+            line_index++;
+            
+            ifile.getline(buffer, MAX_LINE_CHAR);
+            strLine[line_index] = buffer;
+            
+            cout << "line_" << line_index << " // " << strLine[line_index].c_str() << endl;
+            money_sum += sm_StrMoneyFind_Title(strLine[line_index]);
+            line_index++;
+            continue;
         }
         
-        if(m_flag != 0)
+        if(sm_StrCnt(strLine[line_index], "lottery") == 0)
         {
-            money = (str_char[i] - 48) + money*10;
-            index++;
+            cout << "line_" << line_index << " // " << strLine[line_index].c_str() << endl;
+            line_index++;
+            
+            ifile.getline(buffer, MAX_LINE_CHAR);
+            strLine[line_index] = buffer;
+            
+            cout << "line_" << line_index << " // " << strLine[line_index].c_str() << endl;
+            money_sum += sm_StrMoneyFind_Title(strLine[line_index]);
+            line_index++;
+            continue;
         }
+        
+        if(sm_StrCnt(strLine[line_index], "月结余") == 0)
+        {
+            cout << "line_" << line_index << " // " << strLine[line_index].c_str() << endl;
+            money_sum += sm_StrMoneyFind_Month(strLine[line_index]);
+            line_index++;
+            continue;
+        }
+        
+        if(sm_StrCnt(strLine[line_index], "当前财富") == 0)
+        {
+            cout << "----------------------------------------" << endl;
+            cout << "line_" << line_index << " // " << strLine[line_index].c_str() << endl;
+            cout << "Sum_Check_SZ: " << money_sum << endl;
+            cout << "----------------------------------------" << endl;
+            line_index++;
+            continue;
+        }
+        
+        if(sm_StrCnt(strLine[line_index], "押金") == 0)
+        {
+            cout << "line_" << line_index << " // " << strLine[line_index].c_str() << endl;
+            money_sum += sm_StrMoneyFind_Line(strLine[line_index]);
+            line_index++;
+            continue;
+        }
+        
+        if(sm_StrCnt(strLine[line_index], "蚂蚁借呗") == 0)
+        {
+            cout << "line_" << line_index << " // " << strLine[line_index].c_str() << endl;
+            money_sum += sm_StrMoneyFind_Top(strLine[line_index]);
+            line_index++;
+            continue;
+        }
+        
+        if(sm_StrCnt(strLine[line_index], "余额宝") == 0)
+        {
+            cout << "----------------------------------------" << endl;
+            cout << "line_" << line_index << " // " << strLine[line_index].c_str() << endl;
+            cout << "Sum_Check_SZ: " << money_sum << endl;
+            cout << "----------------------------------------" << endl;
+            line_index++;
+            continue;
+        }
+        
+        line_index++;
     }
     
-    str = str.substr(0, (tag-1));
+    ifile.close();
     
+    return money_sum;
+}
+
+
+int FA_Sum_Update_Month()
+{
+    cout << "----------------------------------------" << endl;
     
-    if(money_new>=0)
+    char line_buffer[MAX_LINE_CHAR];
+    string strLine[MAX_LINE];
+    
+    ifstream ifile("FA_SZ.md");
+    if(!ifile.is_open())
     {
-        str += "+";
+        cout << "Open File Error" << endl;
+        return 1;
     }
     
-    str += int2char(money_new);
+    int month_in = 0;
+    int month_out = 0;
+    int month_rest = 0;
+    int month_sum = 0;
+    bool r_flag = false;
+    int line_index = 1;
+    int line_tag_in = 0;
+    int line_tag_out = 0;
+    int line_tag_rest = 0;
     
+    while(!ifile.eof())
+    {
+        ifile.getline(line_buffer, MAX_LINE_CHAR);
+        strLine[line_index] = line_buffer;
+        
+        if(sm_StrCnt(strLine[line_index], "8月薪资") == 0)
+        {
+            cout << "line_" << line_index << " // " << strLine[line_index].c_str() << endl;
+            month_in = sm_StrMoneyFind_Month(strLine[line_index]);
+            
+            line_tag_in = line_index++;
+            continue;
+        }
+        
+        if(sm_StrCnt(strLine[line_index], "8月支出") == 0)
+        {
+            cout << "line_" << line_index << " // " << strLine[line_index].c_str() << endl;
+            month_out = sm_StrMoneyFind_Month(strLine[line_index]);
+            
+            line_tag_out = line_index++;
+            continue;
+        }
+        
+        if(sm_StrCnt(strLine[line_index], "8月结余") == 0)
+        {
+            cout << "line_" << line_index << " // " << strLine[line_index].c_str() << endl;
+            month_rest = sm_StrMoneyFind_Month(strLine[line_index]);
+            
+            cout << "----------------------------------------" << endl;
+            
+            r_flag = true;
+            line_tag_rest = line_index++;
+            continue;
+        }
+        
+        if(sm_StrCnt(strLine[line_index], "Summary") == 0)
+        {
+            r_flag = false;
+            
+            cout << "----------------------------------------" << endl;
+            cout << "line_" << line_tag_out << " // " << strLine[line_tag_out].c_str() << endl;
+            cout << "Sum_Update_Month: " << month_sum << endl;
+            cout << "----------------------------------------" << endl;
+        }
+        
+        if((r_flag == true) && (sm_StrCnt(strLine[line_index], "`") == 0))
+        {
+            cout << "line_" << line_index << " // " << strLine[line_index].c_str() << endl;
+            month_sum += sm_StrMoneyFind_Line(strLine[line_index]);
+        }
+        
+        line_index++;
+    }
+    
+    sm_StrMoneyModify_Month(strLine[line_tag_out], month_sum);
+    sm_StrMoneyModify_Month(strLine[line_tag_rest], (month_in + month_sum));
+    
+    ifile.close();
+    
+    WirteFile("FA_SZ.md", strLine, line_index);
+    
+    return month_sum;
+}
+
+
+int FA_Sum_Update_SZ()
+{
+    cout << "----------------------------------------" << endl;
+
+    char buffer[MAX_LINE_CHAR];
+    string strLine[MAX_LINE];
+    
+    ifstream ifile("FA_SZ.md");
+    if(!ifile.is_open())
+    {
+        cout << "Open File Error" << endl;
+        return 1;
+    }
+    
+    int money_sum = 0;
+    int line_index = 1;
+   
+    while(!ifile.eof())
+    {
+        ifile.getline(buffer, MAX_LINE_CHAR);
+        strLine[line_index] = buffer;
+        
+        if(sm_StrCnt(strLine[line_index], "原始财富") == 0)
+        {
+            cout << "line_" << line_index << " // " << strLine[line_index].c_str() << endl;
+            money_sum += sm_StrMoneyFind_Top(strLine[line_index]);
+            line_index++;
+            continue;
+        }
+        
+        if(sm_StrCnt(strLine[line_index], "home注资") == 0)
+        {
+            cout << "line_" << line_index << " // " << strLine[line_index].c_str() << endl;
+            money_sum += sm_StrMoneyFind_Top(strLine[line_index]);
+            line_index++;
+            continue;
+        }
+        
+        if(sm_StrCnt(strLine[line_index], "壹公寓搬家") == 0)
+        {
+            cout << "line_" << line_index << " // " << strLine[line_index].c_str() << endl;
+            line_index++;
+            
+            ifile.getline(buffer, MAX_LINE_CHAR);
+            strLine[line_index] = buffer;
+            
+            cout << "line_" << line_index << " // " << strLine[line_index].c_str() << endl;
+            money_sum += sm_StrMoneyFind_Title(strLine[line_index]);
+            line_index++;
+            continue;
+        }
+        
+        if(sm_StrCnt(strLine[line_index], "DGtler") == 0)
+        {
+            cout << "line_" << line_index << " // " << strLine[line_index].c_str() << endl;
+            line_index++;
+            
+            ifile.getline(buffer, MAX_LINE_CHAR);
+            strLine[line_index] = buffer;
+            
+            cout << "line_" << line_index << " // " << strLine[line_index].c_str() << endl;
+            money_sum += sm_StrMoneyFind_Title(strLine[line_index]);
+            line_index++;
+            continue;
+        }
+        
+        if(sm_StrCnt(strLine[line_index], "travel") == 0)
+        {
+            cout << "line_" << line_index << " // " << strLine[line_index].c_str() << endl;
+            line_index++;
+            
+            ifile.getline(buffer, MAX_LINE_CHAR);
+            strLine[line_index] = buffer;
+            
+            cout << "line_" << line_index << " // " << strLine[line_index].c_str() << endl;
+            money_sum += sm_StrMoneyFind_Title(strLine[line_index]);
+            line_index++;
+            continue;
+        }
+        
+        if(sm_StrCnt(strLine[line_index], "lottery") == 0)
+        {
+            cout << "line_" << line_index << " // " << strLine[line_index].c_str() << endl;
+            line_index++;
+            
+            ifile.getline(buffer, MAX_LINE_CHAR);
+            strLine[line_index] = buffer;
+            
+            cout << "line_" << line_index << " // " << strLine[line_index].c_str() << endl;
+            money_sum += sm_StrMoneyFind_Title(strLine[line_index]);
+            line_index++;
+            continue;
+        }
+        
+        if(sm_StrCnt(strLine[line_index], "月结余") == 0)
+        {
+            cout << "line_" << line_index << " // " << strLine[line_index].c_str() << endl;
+            money_sum += sm_StrMoneyFind_Month(strLine[line_index]);
+            line_index++;
+            continue;
+        }
+        
+        if(sm_StrCnt(strLine[line_index], "当前财富") == 0)
+        {
+            cout << "----------------------------------------" << endl;
+            cout << "line_" << line_index << " // " << strLine[line_index].c_str() << endl;
+            cout << "Sum_Update_SZ: " << money_sum << endl;
+            cout << "----------------------------------------" << endl;
+            sm_StrMoneyModify_Top(strLine[line_index], money_sum);
+            
+            line_index++;
+            continue;
+        }
+        
+        if(sm_StrCnt(strLine[line_index], "押金") == 0)
+        {
+            cout << "line_" << line_index << " // " << strLine[line_index].c_str() << endl;
+            money_sum += sm_StrMoneyFind_Line(strLine[line_index]);
+            line_index++;
+            continue;
+        }
+        
+        if(sm_StrCnt(strLine[line_index], "蚂蚁借呗") == 0)
+        {
+            cout << "line_" << line_index << " // " << strLine[line_index].c_str() << endl;
+            money_sum += sm_StrMoneyFind_Top(strLine[line_index]);
+            line_index++;
+            continue;
+        }
+        
+        if(sm_StrCnt(strLine[line_index], "余额宝") == 0)
+        {
+            cout << "----------------------------------------" << endl;
+            cout << "line_" << line_index << " // " << strLine[line_index].c_str() << endl;
+            cout << "Sum_Update_SZ: " << money_sum << endl;
+            cout << "----------------------------------------" << endl;
+            sm_StrMoneyModify_Top(strLine[line_index], money_sum);
+            
+            line_index++;
+            continue;
+        }
+        
+        line_index++;
+    }
+    
+    ifile.close();
+    
+    WirteFile("FA_SZ.md", strLine, line_index);
+    
+    return money_sum;
+}
+
+
+int FA_Line_Modify(const char *line_id, int money_mod)
+{
+    cout << "----------------------------------------" << endl;
+
+    char buffer[MAX_LINE_CHAR];
+    string strLine[MAX_LINE];
+    
+    int line_index = 1;
+    
+    ifstream ifile("FA_SZ.md");
+    if(!ifile.is_open())
+    {
+        cout << "Open File Error" << endl;
+        return -1;
+    }
+        
+    while(!ifile.eof())
+    {
+        ifile.getline(buffer, MAX_LINE_CHAR);
+        strLine[line_index] = buffer;
+            
+        if(sm_StrCnt(strLine[line_index], line_id) == 0)
+        {
+            cout << "line_" << line_index << " // " << strLine[line_index].c_str() << endl;
+            int money_new = sm_StrMoneyFind_Line(strLine[line_index]) - money_mod;
+            sm_StrMoneyModify_Line(strLine[line_index], money_new);
+        }
+        line_index++;
+    }
+        
+    ifile.close();
+    
+    WirteFile("FA_SZ.md", strLine, line_index);
+        
     return 0;
 }
 
 
 /*----------  CODE_END @ 番茄  ----------*/
-
 
