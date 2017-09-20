@@ -3,6 +3,7 @@
 
 #include <fstream>
 #include <iomanip>
+#include <regex>
 
 #include "global.h"
 #include "str_operator.h"
@@ -21,12 +22,23 @@ int FA_Line_Calculator(const char *file_name, const int line_start, const int li
 // tip 番茄@20170817 - 直接对内存进行操作，需要注意风险，特别是更改格式以后
 int FA_Read_Conf(char *version, char *ex_month, char *cr_month, char *nx_month)
 {
+    string pattern_cv = "^Current Version = \\d.\\d$";
+    regex RE_cv(pattern_cv);
+
+    string pattern_pm = "^Previous Month = \\d{2}$";
+    regex RE_pm(pattern_pm);
+
+    string pattern_cm = "^Current Month = \\d{2}$";
+    regex RE_cm(pattern_cm);
+
+    string pattern_nm = "^Next Month = \\d{2}$";
+    regex RE_nm(pattern_nm);
+
     char buffer[64];
     string strLine[16];
-    
     int line_index = 1;
     
-    ifstream ifile("FA.conf");
+    ifstream ifile("./FA.conf");
 
     if(!ifile.is_open())
     {
@@ -41,22 +53,22 @@ int FA_Read_Conf(char *version, char *ex_month, char *cr_month, char *nx_month)
         ifile.getline(buffer, MAX_LINE_CHAR);
         strLine[line_index] = buffer;
         
-        if(sm_StrCnt(strLine[line_index], "Current Version") == 0)
+        if( regex_match(strLine[line_index], RE_cv) )
         {
             memmove(version, buffer+18, 4);
             continue;
         }
-        else if(sm_StrCnt(strLine[line_index], "Previous Month") == 0)
+        else if( regex_match(strLine[line_index], RE_pm) )
         {
             memmove(ex_month, buffer+17, 3);            
             continue;
         }
-        else if(sm_StrCnt(strLine[line_index], "Current Month") == 0)
+        else if( regex_match(strLine[line_index], RE_cm) )
         {
             memmove(cr_month, buffer+16, 3);            
             continue;
         }
-        else if(sm_StrCnt(strLine[line_index], "Next Month") == 0)
+        else if( regex_match(strLine[line_index], RE_nm) )
         {
             memmove(nx_month, buffer+13, 3);              
             continue;
@@ -65,47 +77,6 @@ int FA_Read_Conf(char *version, char *ex_month, char *cr_month, char *nx_month)
         line_index++;
     }
     
-    ifile.close();
-        
-    return 0;
-}
-
-
-// tip 番茄@20170819 - 直接对内存进行操作，需要注意风险，特别是更改格式以后
-int FA_Read_Month_Tag(int *sz_month_tag, int &sz_month_size)
-{    
-    char buffer[MAX_LINE_CHAR];
-    string strLine[MAX_LINE];
-    int line_index = 1;
-
-    if(sz_month_size != 0)
-    {
-        sz_month_size = 0;
-    }
-    
-    ifstream ifile("FA_TVT.md");
-
-    if(!ifile.is_open())
-    {
-        cout << "----------------------------------------" << endl;
-        cout << ">>>          Read File Error         <<<" << endl;
-        cout << "----------------------------------------" << endl;
-        return -1;
-    }
-    
-    while(!ifile.eof())
-    {
-        ifile.getline(buffer, MAX_LINE_CHAR);
-        strLine[line_index] = buffer;
-
-        if(sm_StrCnt(strLine[line_index], "## life.M") == 0)
-        {
-            *(sz_month_tag+sz_month_size) = line_index;
-            sz_month_size++;
-        }
-        line_index++;        
-    }
-
     ifile.close();
         
     return 0;
@@ -505,8 +476,11 @@ int FA_Sum_Update_ExMonth(const int line_tag_life, const int line_tag_sz)
 }
 
 
-int FA_Sum_Check_TVT(const int *sz_month_tag, const int sz_month_size)
+int FA_Sum_Check_TVT()
 {
+    string pattern_month = "^## life.M\\d{2}$";
+    regex RE_month(pattern_month);
+
     string strLine[MAX_LINE];    
     int line_index = 1;
     int money_sum = 0;
@@ -538,7 +512,7 @@ int FA_Sum_Check_TVT(const int *sz_month_tag, const int sz_month_size)
             money_sum += sm_StrMoneyFind_Title(strLine[i+1]);
             continue;
         }
-        else if(IsInArray(i, sz_month_tag, sz_month_size) == true)
+        else if( regex_match(strLine[i], RE_month) )
         {
             money_sum += sm_StrMoneyFind_Month(strLine[i+3]);
             continue;
@@ -585,8 +559,11 @@ int FA_Sum_Check_TVT(const int *sz_month_tag, const int sz_month_size)
 }
 
 
-int FA_Sum_Update_TVT(const int *sz_month_tag, const int sz_month_size)
+int FA_Sum_Update_TVT()
 {
+    string pattern_month = "^## life.M\\d{2}$";
+    regex RE_month(pattern_month);
+
     string strLine[MAX_LINE];    
     int line_index = 1;
     int money_sum = 0;
@@ -618,7 +595,7 @@ int FA_Sum_Update_TVT(const int *sz_month_tag, const int sz_month_size)
             money_sum += sm_StrMoneyFind_Title(strLine[i+1]);
             continue;
         }
-        else if(IsInArray(i, sz_month_tag, sz_month_size) == true)
+        else if( regex_match(strLine[i], RE_month) )
         {
             money_sum += sm_StrMoneyFind_Month(strLine[i+3]);
             continue;

@@ -15,18 +15,11 @@ int main(int argc, char **argv, char *env[])
     char *ex_month = new char[3];
     char *cr_month = new char[3];
     char *nx_month = new char[3];
-    int *sz_month_tag = new int[12];   // tip 番茄@20170904 - 目前最大值支持12个月
-    int sz_month_size = 0;
 
     if( FA_Read_Conf(version, ex_month, cr_month, nx_month) == -1 )
     {
         return -1;
     }
-    
-    if( FA_Read_Month_Tag(sz_month_tag, sz_month_size) == -1 )
-    {
-        return -1;
-    }    
 
     cout << "----------------------------------------" << endl;
     cout << "----------------------------------------" << endl;
@@ -145,19 +138,19 @@ int main(int argc, char **argv, char *env[])
         }
 
         /* * * * * * * * * * * * * * * * * * * * * * */
-        /* * * * * * * *   检查SZ支出   * * * * * * * */
+        /* * * * * * * *   检查TVT支出  * * * * * * * */
         /* * * * * * * * * * * * * * * * * * * * * * */
         else if( strncmp(sm_command, CMD_SC_TVT, strlen(CMD_SC_TVT)) == 0 )
         {
-            FA_Sum_Check_TVT(sz_month_tag, sz_month_size);
+            FA_Sum_Check_TVT();
         }
 
         /* * * * * * * * * * * * * * * * * * * * * * */
-        /* * * * * * * *   更新SZ支出   * * * * * * * */
+        /* * * * * * * *   更新TVT支出  * * * * * * * */
         /* * * * * * * * * * * * * * * * * * * * * * */
         else if( strncmp(sm_command, CMD_SU_TVT, strlen(CMD_SU_TVT)) == 0 )
         {
-            FA_Sum_Update_TVT(sz_month_tag, sz_month_size);
+            FA_Sum_Update_TVT();
         }
 
         /* * * * * * * * * * * * * * * * * * * * * * */
@@ -401,11 +394,6 @@ int main(int argc, char **argv, char *env[])
         /* * * * * * * * * * * * * * * * * * * * * * */
         else if( strncmp(sm_command, CMD_TEST, strlen(CMD_TEST)) == 0 )
         {
-            FA_Read_Month_Tag(sz_month_tag, sz_month_size);
-            for(int i=0; i < sz_month_size; i++)
-            {
-                cout << *(sz_month_tag+i) << endl;
-            }
             continue;   
         }
 
