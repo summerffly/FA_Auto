@@ -3,7 +3,6 @@
 
 #include <fstream>
 #include <iomanip>
-#include <regex>
 
 #include "global.h"
 #include "str_operator.h"
@@ -22,18 +21,6 @@ int FA_Line_Calculator(const char *file_name, const int line_start, const int li
 // tip 番茄@20170817 - 直接对内存进行操作，需要注意风险，特别是更改格式以后
 int FA_Read_Conf(char *version, char *ex_month, char *cr_month, char *nx_month)
 {
-    string pattern_cv = "^Current Version = \\d.\\d$";
-    regex RE_cv(pattern_cv);
-
-    string pattern_pm = "^Previous Month = \\d{2}$";
-    regex RE_pm(pattern_pm);
-
-    string pattern_cm = "^Current Month = \\d{2}$";
-    regex RE_cm(pattern_cm);
-
-    string pattern_nm = "^Next Month = \\d{2}$";
-    regex RE_nm(pattern_nm);
-
     char buffer[64];
     string strLine[16];
     int line_index = 1;
@@ -108,6 +95,10 @@ int FA_Print_Line(const char *file_name, const char *line_key)
     int line_index = 1;               // 每一行的标志 从1开始计数 返回0可能有别的用途
     int line_counter = 0;             // 匹配行的计数器
     int line_tag[MAX_LINE] = {0};     // 匹配行的标志
+
+    string str_key = line_key;
+    string pattern_key = "^.*" + str_key + ".*$";
+    regex RE_key(pattern_key);
    
     if( ReadFile(file_name, strLine, line_index) == -1 )
     {
@@ -116,7 +107,7 @@ int FA_Print_Line(const char *file_name, const char *line_key)
 
     for(int i = 1; i <= line_index; i++)
     {
-        if(sm_StrCnt(strLine[i], line_key) == 0)
+        if( regex_match(strLine[i], RE_key) )
         {
             line_counter++;
             line_tag[line_counter] = i;
@@ -163,6 +154,10 @@ int FA_Print_Line_Area(const char *file_name, const char *line_key, const int li
     int line_index = 1;               // 每一行的标志 从1开始计数 返回0可能有别的用途
     int line_counter = 0;             // 匹配行的计数器
     int line_tag[MAX_LINE] = {0};     // 匹配行的标志
+
+    string str_key = line_key;
+    string pattern_key = "^.*" + str_key + ".*$";
+    regex RE_key(pattern_key);
    
     if( ReadFile(file_name, strLine, line_index) == -1 )
     {
@@ -171,7 +166,7 @@ int FA_Print_Line_Area(const char *file_name, const char *line_key, const int li
 
     for(int i = line_start; i <= line_end; i++)
     {
-        if(sm_StrCnt(strLine[i], line_key) == 0)
+        if( regex_match(strLine[i], RE_key) )
         {
             line_counter++;
             line_tag[line_counter] = i;
@@ -218,6 +213,10 @@ int FA_Search_Line(const char *file_name, const char *line_key)
     int line_index = 1;       // 每一行的标志 从1开始计数 返回0可能有别的用途
     int line_counter = 0;     // 匹配行的计数器
     int line_tag = 0;         // 匹配行的标志
+
+    string str_key = line_key;
+    string pattern_key = "^.*" + str_key + ".*$";
+    regex RE_key(pattern_key);
     
     if( ReadFile(file_name, strLine, line_index) == -1 )
     {
@@ -226,7 +225,7 @@ int FA_Search_Line(const char *file_name, const char *line_key)
 
     for(int i = 1; i <= line_index; i++)
     {
-        if(sm_StrCnt(strLine[i], line_key) == 0)
+        if( regex_match(strLine[i], RE_key) )
         {
             if( line_counter == 0 )
             {
@@ -266,6 +265,10 @@ int FA_Search_Line_Area(const char *file_name, const char *line_key, const int l
     int line_index = 1;       // 每一行的标志 从1开始计数 返回0可能有别的用途
     int line_counter = 0;     // 匹配行的计数器
     int line_tag = 0;         // 匹配行的标志
+
+    string str_key = line_key;
+    string pattern_key = "^.*" + str_key + ".*$";
+    regex RE_key(pattern_key);
     
     if( ReadFile(file_name, strLine, line_index) == -1 )
     {
@@ -274,7 +277,7 @@ int FA_Search_Line_Area(const char *file_name, const char *line_key, const int l
 
     for(int i = line_start; i <= line_end; i++)
     {
-        if(sm_StrCnt(strLine[i], line_key) == 0)
+        if( regex_match(strLine[i], RE_key) )
         {
             if( line_counter == 0 )
             {
@@ -478,9 +481,6 @@ int FA_Sum_Update_ExMonth(const int line_tag_life, const int line_tag_sz)
 
 int FA_Sum_Check_TVT()
 {
-    string pattern_month = "^## life.M\\d{2}$";
-    regex RE_month(pattern_month);
-
     string strLine[MAX_LINE];    
     int line_index = 1;
     int money_sum = 0;
@@ -492,22 +492,22 @@ int FA_Sum_Check_TVT()
 
     for(int i = 1; i <= line_index; i++)
     {
-        if(i == FA_Search_Line("FA_TVT.md", "原始财富"))
+        if( regex_match(strLine[i], RE_ofi) )
         {
             money_sum += sm_StrMoneyFind_Top(strLine[i]);
             continue;
         }
-        else if(i == FA_Search_Line("FA_TVT.md", "## lottery"))
+        else if( regex_match(strLine[i], RE_lottery) )
         {
             money_sum += sm_StrMoneyFind_Title(strLine[i+1]);
             continue;
         }
-        else if(i == FA_Search_Line("FA_TVT.md", "## DK"))
+        else if( regex_match(strLine[i], RE_dk) )
         {
             money_sum += sm_StrMoneyFind_Title(strLine[i+1]);
             continue;
         }
-        else if(i == FA_Search_Line("FA_TVT.md", "## NS"))
+        else if( regex_match(strLine[i], RE_ns) )
         {
             money_sum += sm_StrMoneyFind_Title(strLine[i+1]);
             continue;
@@ -517,7 +517,7 @@ int FA_Sum_Check_TVT()
             money_sum += sm_StrMoneyFind_Month(strLine[i+3]);
             continue;
         }
-        else if(i == FA_Search_Line("FA_TVT.md", "当前财富"))
+        else if( regex_match(strLine[i], RE_cfi) )
         {
             cout << "----------------------------------------" << endl;  
             cout << "line_" << i << " // " << strLine[i].c_str() << endl;
@@ -525,27 +525,27 @@ int FA_Sum_Check_TVT()
             cout << "----------------------------------------" << endl;
             continue;
         }
-        else if(i == FA_Search_Line("FA_TVT.md", "押金_壹公寓"))
+        else if( regex_match(strLine[i], RE_de_one) )
         {
             money_sum += sm_StrMoneyFind_Line(strLine[i]);
             continue;
         }
-        else if(i == FA_Search_Line("FA_TVT.md", "押金_mobike"))
+        else if( regex_match(strLine[i], RE_de_mobike) )
         {
             money_sum += sm_StrMoneyFind_Line(strLine[i]);
             continue;
         }
-        else if(i == FA_Search_Line("FA_TVT.md", "押金_ofo"))
+        else if( regex_match(strLine[i], RE_de_ofo) )
         {
             money_sum += sm_StrMoneyFind_Line(strLine[i]);
             continue;
         }
-        else if(i == FA_Search_Line("FA_TVT.md", "蚂蚁借呗"))
+        else if( regex_match(strLine[i], RE_loan) )
         {
             money_sum += sm_StrMoneyFind_Top(strLine[i]);
             continue;
         }
-        else if(i == FA_Search_Line("FA_TVT.md", "余额宝"))
+        else if( regex_match(strLine[i], RE_alirest) )
         {
             cout << "----------------------------------------" << endl;  
             cout << "line_" << i << " // " << strLine[i].c_str() << endl;
@@ -561,9 +561,6 @@ int FA_Sum_Check_TVT()
 
 int FA_Sum_Update_TVT()
 {
-    string pattern_month = "^## life.M\\d{2}$";
-    regex RE_month(pattern_month);
-
     string strLine[MAX_LINE];    
     int line_index = 1;
     int money_sum = 0;
@@ -575,22 +572,22 @@ int FA_Sum_Update_TVT()
 
     for(int i = 1; i <= line_index; i++)
     {
-        if(i == FA_Search_Line("FA_TVT.md", "原始财富"))
+        if( regex_match(strLine[i], RE_ofi) )
         {
             money_sum += sm_StrMoneyFind_Top(strLine[i]);
             continue;
         }
-        else if(i == FA_Search_Line("FA_TVT.md", "## lottery"))
+        else if( regex_match(strLine[i], RE_lottery) )
         {
             money_sum += sm_StrMoneyFind_Title(strLine[i+1]);
             continue;
         }
-        else if(i == FA_Search_Line("FA_TVT.md", "## DK"))
+        else if( regex_match(strLine[i], RE_dk) )
         {
             money_sum += sm_StrMoneyFind_Title(strLine[i+1]);
             continue;
         }
-        else if(i == FA_Search_Line("FA_TVT.md", "## NS"))
+        else if( regex_match(strLine[i], RE_ns) )
         {
             money_sum += sm_StrMoneyFind_Title(strLine[i+1]);
             continue;
@@ -600,7 +597,7 @@ int FA_Sum_Update_TVT()
             money_sum += sm_StrMoneyFind_Month(strLine[i+3]);
             continue;
         }
-        else if(i == FA_Search_Line("FA_TVT.md", "当前财富"))
+        else if( regex_match(strLine[i], RE_cfi) )
         {
             cout << "----------------------------------------" << endl;  
             cout << "line_" << i << " // " << strLine[i].c_str() << endl;
@@ -609,27 +606,27 @@ int FA_Sum_Update_TVT()
             sm_StrMoneyModify_Top(strLine[i], money_sum);            
             continue;
         }
-        else if(i == FA_Search_Line("FA_TVT.md", "押金_壹公寓"))
+        else if( regex_match(strLine[i], RE_de_one) )
         {
             money_sum += sm_StrMoneyFind_Line(strLine[i]);
             continue;
         }
-        else if(i == FA_Search_Line("FA_TVT.md", "押金_mobike"))
+        else if( regex_match(strLine[i], RE_de_mobike) )
         {
             money_sum += sm_StrMoneyFind_Line(strLine[i]);
             continue;
         }
-        else if(i == FA_Search_Line("FA_TVT.md", "押金_ofo"))
+        else if( regex_match(strLine[i], RE_de_ofo) )
         {
             money_sum += sm_StrMoneyFind_Line(strLine[i]);
             continue;
         }
-        else if(i == FA_Search_Line("FA_TVT.md", "蚂蚁借呗"))
+        else if( regex_match(strLine[i], RE_loan) )
         {
             money_sum += sm_StrMoneyFind_Top(strLine[i]);
             continue;
         }
-        else if(i == FA_Search_Line("FA_TVT.md", "余额宝"))
+        else if( regex_match(strLine[i], RE_alirest) )
         {
             cout << "----------------------------------------" << endl;  
             cout << "line_" << i << " // " << strLine[i].c_str() << endl;
@@ -726,6 +723,9 @@ int FA_Line_Add(const char *file_name, const int line_id, const int money, const
 
 int FA_Line_Calculator(const char *file_name, const int line_start, const int line_end)
 {
+    string pattern = "^`.*$";
+    regex RE(pattern);
+
     if( line_start >= line_end )
     {
         cout << "----------------------------------------" << endl;
@@ -745,7 +745,7 @@ int FA_Line_Calculator(const char *file_name, const int line_start, const int li
 
     for(int i = line_start; i <= line_end; i++)
     {
-        if(sm_StrCnt(strLine[i], "`") == 0)
+        if( regex_match(strLine[i], RE) )
         {
             month_sum += sm_StrMoneyFind_Line(strLine[i]);            
         }

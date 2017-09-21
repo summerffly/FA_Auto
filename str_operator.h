@@ -8,12 +8,6 @@
 
 using namespace std;
 
-
-/*--------------------  函数声明 @ 番茄  --------------------*/
-
-int sm_StrCnt(string strA, string strB);
-
-
 /*-------------------------------------------------------------------*/
 /*--------------------  int & char处理函数 @ 番茄  --------------------*/
 /*-------------------------------------------------------------------*/
@@ -155,7 +149,7 @@ int ReadFile(const char *file_name, string *strLine, int &line_index)
         ifile.getline(buffer, MAX_LINE_CHAR);
         strLine[line_index] = buffer;
 
-        if(sm_StrCnt(strLine[line_index], "---") == 0)
+        if( regex_match(strLine[line_index], RE_end) )
         {
             break;
         }
@@ -186,7 +180,7 @@ int WirteFile(const char *file_name, const string *strLine, const int line_index
     {
         ofile << strLine[i].c_str() << endl;
         
-        if(sm_StrCnt(strLine[i], "---") == 0)
+        if( regex_match(strLine[i], RE_end) )
         {
             break;
         }
@@ -200,24 +194,6 @@ int WirteFile(const char *file_name, const string *strLine, const int line_index
 /*---------------------------------------------------------------*/
 /*--------------------  string处理函数 @ 番茄  --------------------*/
 /*---------------------------------------------------------------*/
-
-/* * * * * *  string包含匹配  * * * * * */
-int sm_StrCnt(string strA, string strB)
-{
-    string::size_type index;
-
-    index = strA.find(strB);
-    
-    if(index == string::npos )
-    {
-        return -1;
-    }
-    else
-    {
-        return 0;
-    }
-}
-
 
 /* * * * * *  string最高层金额查找  * * * * * */
 int sm_StrMoneyFind_Top(string str)
