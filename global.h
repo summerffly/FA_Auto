@@ -55,8 +55,11 @@ regex RE_de_mobike(pattern_de_mobike);
 string pattern_de_ofo = "^.*押金_ofo$";
 regex RE_de_ofo(pattern_de_ofo);
 
-string pattern_loan = "^蚂蚁借呗.*$";
+string pattern_loan = "^.*蚂蚁借呗$";
 regex RE_loan(pattern_loan);
+
+string pattern_bank = "^广发银行.*$";
+regex RE_bank(pattern_bank);
 
 string pattern_alirest = "^余额宝.*$";
 regex RE_alirest(pattern_alirest);
@@ -87,6 +90,9 @@ const char *CMD_SA = "sa";
 const char *CMD_DK = "dk";
 const char *CMD_NS = "ns";
 const char *CMD_LOTTERY = "lottery";
+
+const char *CMD_BALANCE = "balance";          // 广发银行-- 余额宝++
+const char *CMD_REBALANCE = "rebalance";      // 广发银行++ 余额宝--
 
 const char *CMD_TEST = "test";
 

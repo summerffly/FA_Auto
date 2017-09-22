@@ -542,12 +542,17 @@ int FA_Sum_Check_TVT()
         }
         else if( regex_match(strLine[i], RE_loan) )
         {
-            money_sum += sm_StrMoneyFind_Top(strLine[i]);
+            money_sum += sm_StrMoneyFind_Line(strLine[i]);
+            continue;
+        }
+        else if( regex_match(strLine[i], RE_bank) )
+        {
+            cout << "line_" << i << " // " << strLine[i].c_str() << endl;
+            money_sum -= sm_StrMoneyFind_Top(strLine[i]);
             continue;
         }
         else if( regex_match(strLine[i], RE_alirest) )
         {
-            cout << "----------------------------------------" << endl;  
             cout << "line_" << i << " // " << strLine[i].c_str() << endl;
             cout << "Sum_Check_SZ: " << money_sum << endl;
             cout << "----------------------------------------" << endl;
@@ -623,12 +628,17 @@ int FA_Sum_Update_TVT()
         }
         else if( regex_match(strLine[i], RE_loan) )
         {
-            money_sum += sm_StrMoneyFind_Top(strLine[i]);
+            money_sum += sm_StrMoneyFind_Line(strLine[i]);
+            continue;
+        }
+        else if( regex_match(strLine[i], RE_bank) )
+        {
+            cout << "line_" << i << " // " << strLine[i].c_str() << endl;
+            money_sum -= sm_StrMoneyFind_Top(strLine[i]);
             continue;
         }
         else if( regex_match(strLine[i], RE_alirest) )
         {
-            cout << "----------------------------------------" << endl;  
             cout << "line_" << i << " // " << strLine[i].c_str() << endl;
             cout << "Sum_Check_SZ: " << money_sum << endl;
             cout << "----------------------------------------" << endl;
@@ -788,6 +798,58 @@ int FA_Sum_Modify(const char *file_name, const int line_id, const int money, int
     
     cout << "----------------------------------------" << endl;
     cout << ">>>            SUM MODIFIED          <<<" << endl;
+    cout << "----------------------------------------" << endl;
+    
+    return 0;
+}
+
+int FA_Balance(const char *file_name, const int line_a, const int line_b, const int money_mod, const bool bFlag)
+{
+    string strLine[MAX_LINE];    
+    int line_index = 1;
+    
+    if( ReadFile(file_name, strLine, line_index) == -1 )
+    {
+        return -1;
+    }
+
+    for(int i = 1; i <= line_index; i++)
+    {
+        if( i == line_a )
+        {
+            if( bFlag == true )
+            {
+                int money_new = sm_StrMoneyFind_Top(strLine[i]) - money_mod;
+                sm_StrMoneyModify_Top(strLine[i], money_new);
+            }
+            else
+            {
+                int money_new = sm_StrMoneyFind_Top(strLine[i]) + money_mod;
+                sm_StrMoneyModify_Top(strLine[i], money_new);
+            }
+        }
+        if( i == line_b )
+        {
+            if( bFlag == true )
+            {
+                int money_new = sm_StrMoneyFind_Top(strLine[i]) + money_mod;
+                sm_StrMoneyModify_Top(strLine[i], money_new);
+            }
+            else
+            {
+                int money_new = sm_StrMoneyFind_Top(strLine[i]) - money_mod;
+                sm_StrMoneyModify_Top(strLine[i], money_new);
+            }
+        }
+    }
+        
+    if(WirteFile(file_name, strLine, line_index) == -1)
+    {
+        return -2;
+    }
+    
+    cout << "----------------------------------------" << endl;
+    cout << ">>>             BALANCED             <<<" << endl;
     cout << "----------------------------------------" << endl;
     
     return 0;

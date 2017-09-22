@@ -390,6 +390,44 @@ int main(int argc, char **argv, char *env[])
         }
 
         /* * * * * * * * * * * * * * * * * * * * * * */
+        /* * * * * * * *   balance操作  * * * * * * * */
+        /* * * * * * * * * * * * * * * * * * * * * * */
+        else if( strncmp(sm_command, CMD_BALANCE, strlen(CMD_BALANCE)) == 0 )
+        {
+            char money[8];
+
+            cout << "Money >>> ";
+            cin >> money;
+
+            if(char0check(money) != 0)
+                continue;
+
+            int line_bank = FA_Search_Line("FA_TVT.md", "广发银行");
+            int line_alirest = FA_Search_Line("FA_TVT.md", "余额宝");
+
+            FA_Balance("FA_TVT.md", line_bank, line_alirest, char2int(money), true);
+        }
+
+        /* * * * * * * * * * * * * * * * * * * * * * */
+        /* * * * * * *    rebalance操作   * * * * * * */
+        /* * * * * * * * * * * * * * * * * * * * * * */
+        else if( strncmp(sm_command, CMD_REBALANCE, strlen(CMD_REBALANCE)) == 0 )
+        {
+            char money[8];
+
+            cout << "Money >>> ";
+            cin >> money;
+
+            if(char0check(money) != 0)
+                continue;
+
+            int line_bank = FA_Search_Line("FA_TVT.md", "广发银行");
+            int line_alirest = FA_Search_Line("FA_TVT.md", "余额宝");
+
+            FA_Balance("FA_TVT.md", line_bank, line_alirest, char2int(money), false);
+        }
+
+        /* * * * * * * * * * * * * * * * * * * * * * */
         /* * * * * * * *      TEST     * * * * * * * */
         /* * * * * * * * * * * * * * * * * * * * * * */
         else if( strncmp(sm_command, CMD_TEST, strlen(CMD_TEST)) == 0 )
