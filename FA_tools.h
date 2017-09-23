@@ -856,6 +856,41 @@ int FA_Balance(const char *file_name, const int line_a, const int line_b, const 
 }
 
 
+int FA_BackUp(const char *file_name)
+{
+    string strLine[MAX_LINE];    
+    int line_index = 1;
+    
+    if( ReadFile(file_name, strLine, line_index) == -1 )
+    {
+        return -1;
+    }
+    
+    string str;
+    str += "./FA_TVT.bak/";
+    str += file_name;
+
+    if(WirteFile(str.c_str(), strLine, line_index) == -1)
+    {
+        return -2;
+    }
+    
+    if( strncmp(file_name, "FA_TVT.md", strlen("FA_TVT.md")) == 0 )
+    {
+        cout << "----------------------------------------" << endl;
+    }
+    
+    cout << ">>> " << file_name << "   BACK UPED" << endl;
+
+    if( strncmp(file_name, "lottery.md", strlen("lottery.md")) == 0 )
+    {
+        cout << "----------------------------------------" << endl;
+    }
+    
+    return 0;
+}
+
+
 /*--------------------  CODE_END @ 番茄  --------------------*/
 
 

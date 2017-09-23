@@ -94,6 +94,8 @@ const char *CMD_LOTTERY = "lottery";
 const char *CMD_BALANCE = "balance";          // 广发银行-- 余额宝++
 const char *CMD_REBALANCE = "rebalance";      // 广发银行++ 余额宝--
 
+const char *CMD_BACKUP = "bakup";
+
 const char *CMD_TEST = "test";
 
 const char *CMD_SD = "sd";

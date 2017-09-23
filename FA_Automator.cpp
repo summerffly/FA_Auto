@@ -428,6 +428,22 @@ int main(int argc, char **argv, char *env[])
         }
 
         /* * * * * * * * * * * * * * * * * * * * * * */
+        /* * * * * * *     BackUp操作     * * * * * * */
+        /* * * * * * * * * * * * * * * * * * * * * * */
+        else if( strncmp(sm_command, CMD_BACKUP, strlen(CMD_BACKUP)) == 0 )
+        {
+            FA_BackUp("FA_TVT.md");
+            FA_BackUp("life.M.md");
+            FA_BackUp("Books.M.md");
+            FA_BackUp("KEEP.M.md");
+            FA_BackUp("TB.M.md");
+            FA_BackUp("sa.M.md");
+            FA_BackUp("DK.md");
+            FA_BackUp("NS.md");
+            FA_BackUp("lottery.md");
+        }
+
+        /* * * * * * * * * * * * * * * * * * * * * * */
         /* * * * * * * *      TEST     * * * * * * * */
         /* * * * * * * * * * * * * * * * * * * * * * */
         else if( strncmp(sm_command, CMD_TEST, strlen(CMD_TEST)) == 0 )
