@@ -695,33 +695,11 @@ int FA_Line_Modify(const char *file_name, const int line_id, const int money_mod
 
 
 // tip 番茄@20170818 - money默认为消费，默认为减法操作
-int FA_Line_Add(const char *file_name, const int line_id, const int money, const char *line_char)
+int FA_Line_Add(const char *file_name, const int line_id, const bool pnFlag, const unsigned int value, const char *line_char)
 {
-    string strLine[MAX_LINE];    
-    int line_index = 1;
-    
-    if( ReadFile(file_name, strLine, line_index) == -1 )
-    {
-        return -1;
-    }
+    string strInsertLine = sm_StrGenerator_Line(pnFlag, value, line_char);
 
-    for(int i = 1; i <= line_index; i++)
-    {
-        if( i == line_id )
-        {
-            line_index++;            
-            for(int j = line_index; j > i; j--)
-            {
-                strLine[j] = strLine[j-1];
-            }
-            strLine[i] = sm_StrGenerator_Line(money, line_char);
-        }
-    }
-        
-    if(WirteFile(file_name, strLine, line_index) == -1)
-    {
-        return -2;
-    }
+    InsertFile(file_name, strInsertLine, line_id);
     
     cout << "----------------------------------------" << endl;
     cout << ">>>            LINE ADDED            <<<" << endl;

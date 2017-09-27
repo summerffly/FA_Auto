@@ -110,7 +110,9 @@ char *int2char(const int num_int)
 /*--------------------  File处理函数 @ 番茄  --------------------*/
 /*-------------------------------------------------------------*/
 
-/* * * * * *  Check File  * * * * * */
+/* * * * * * * * * * * * * * * * * * 
+           检查文件存在 
+* * * * * * * * * * * * * * * * * */
 int CheckFile(const char *file_name)
 {
     ifstream ifile(file_name);
@@ -129,7 +131,9 @@ int CheckFile(const char *file_name)
 }
 
 
-/* * * * * *  Read File  * * * * * */
+/* * * * * * * * * * * * * * * * * * 
+             读文件 
+* * * * * * * * * * * * * * * * * */
 int ReadFile(const char *file_name, string *strLine, int &line_index)
 {
     char buffer[MAX_LINE_CHAR];
@@ -163,7 +167,9 @@ int ReadFile(const char *file_name, string *strLine, int &line_index)
 }
 
 
-/* * * * * *  Write File  * * * * * */
+/* * * * * * * * * * * * * * * * * * 
+             写文件 
+* * * * * * * * * * * * * * * * * */
 int WirteFile(const char *file_name, const string *strLine, const int line_index)
 {
     ofstream ofile(file_name);
@@ -190,6 +196,43 @@ int WirteFile(const char *file_name, const string *strLine, const int line_index
     
     return 0;
 }
+
+
+/* * * * * * * * * * * * * * * * * * 
+          写文件_插入一行 
+* * * * * * * * * * * * * * * * * */
+int InsertFile(const char *file_name, const string strInertLine, const int insert_index)
+{
+    string strLine[MAX_LINE];    
+    int line_index = 1;
+    
+    if( ReadFile(file_name, strLine, line_index) == -1 )
+    {
+        return -1;
+    }
+
+    for(int i = 1; i <= line_index; i++)
+    {
+        if( i == insert_index )
+        {
+            line_index++;            
+            for(int j = line_index; j > i; j--)
+            {
+                strLine[j] = strLine[j-1];
+            }
+            strLine[i] = strInertLine;
+        }
+    }
+
+    if(WirteFile(file_name, strLine, line_index) == -1)
+    {
+        return -2;
+    }
+    
+    return 0;
+
+}
+
 
 /*---------------------------------------------------------------*/
 /*--------------------  string处理函数 @ 番茄  --------------------*/
@@ -479,13 +522,22 @@ int sm_StrMoneyModify_Line(string &str, int money_new)
 }
 
 
-/* * * * * *  string单行金额生成  * * * * * */
-string sm_StrGenerator_Line(const int money, const char *line_char)
+/* * * * * * * * * * * * * * * * * * 
+          string单行金额生成 
+* * * * * * * * * * * * * * * * * */
+string sm_StrGenerator_Line(const bool pnFlag, const unsigned int value, const char *line_char)
 {
     string str;
     
-    str += "`- ";
-    str += int2char(money);
+    if(pnFlag == false)
+    {
+        str += "`- ";
+    }
+    else
+    {
+        str += "`+ ";
+    }
+    str += int2char(value);
     str += "` ";
     str += line_char;
     

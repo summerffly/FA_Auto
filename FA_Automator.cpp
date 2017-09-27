@@ -214,7 +214,7 @@ int main(int argc, char **argv, char *env[])
             int line_next = FA_Search_Line("Books.M.md", nx_month_str.c_str());
             int line_tag = FA_Search_Line("life.M.md", cr_month_str.c_str());
 
-            FA_Line_Add("Books.M.md", (line_next-1), char2int(money), content);
+            FA_Line_Add("Books.M.md", (line_next-1), false, char2int(money), content);
             int money_sum = FA_Line_Calculator("Books.M.md", line_this, line_next);
             FA_Sum_Modify("Books.M.md", (line_this+1), money_sum, 1);
             FA_Line_Modify("life.M.md", line_tag, char2int(money));
@@ -246,7 +246,7 @@ int main(int argc, char **argv, char *env[])
             int line_next = FA_Search_Line("TB.M.md", nx_month_str.c_str());
             int line_tag = FA_Search_Line("life.M.md", cr_month_str.c_str());
 
-            FA_Line_Add("TB.M.md", (line_next-1), char2int(money), content);
+            FA_Line_Add("TB.M.md", (line_next-1), false, char2int(money), content);
             int money_sum = FA_Line_Calculator("TB.M.md", line_this, line_next);
             FA_Sum_Modify("TB.M.md", (line_this+1), money_sum, 1);
             FA_Line_Modify("life.M.md", line_tag, char2int(money));
@@ -278,7 +278,7 @@ int main(int argc, char **argv, char *env[])
             int line_next = FA_Search_Line("KEEP.M.md", nx_month_str.c_str());
             int line_tag = FA_Search_Line("life.M.md", cr_month_str.c_str());
 
-            FA_Line_Add("KEEP.M.md", (line_next-1), char2int(money), content);
+            FA_Line_Add("KEEP.M.md", (line_next-1), false, char2int(money), content);
             int money_sum = FA_Line_Calculator("KEEP.M.md", line_this, line_next);
             FA_Sum_Modify("KEEP.M.md", (line_this+1), money_sum, 1);
             FA_Line_Modify("life.M.md", line_tag, char2int(money));
@@ -310,7 +310,7 @@ int main(int argc, char **argv, char *env[])
             int line_next = FA_Search_Line("sa.M.md", nx_month_str.c_str());
             int line_tag = FA_Search_Line("life.M.md", cr_month_str.c_str());
             
-            FA_Line_Add("sa.M.md", (line_next-1), char2int(money), content);
+            FA_Line_Add("sa.M.md", (line_next-1), false, char2int(money), content);
             int money_sum = FA_Line_Calculator("sa.M.md", line_this, line_next);
             FA_Sum_Modify("sa.M.md", (line_this+1), money_sum, 1);
             FA_Line_Modify("life.M.md", line_tag, char2int(money));            
@@ -337,7 +337,7 @@ int main(int argc, char **argv, char *env[])
             int line_next = FA_Search_Line("DK.md", "## Total");
             int line_tag = FA_Search_Line("FA_TVT.md", "## DK");
             
-            FA_Line_Add("DK.md", (line_next-1), char2int(money), content);
+            FA_Line_Add("DK.md", (line_next-1), false, char2int(money), content);
             int money_sum = FA_Line_Calculator("DK.md", line_this, line_next);
 
             // tip 番茄@20170906 - line_next需要+3，因为加了新的一行
@@ -366,7 +366,7 @@ int main(int argc, char **argv, char *env[])
             int line_next = FA_Search_Line("NS.md", "## Total");
             int line_tag = FA_Search_Line("FA_TVT.md", "## NS");
             
-            FA_Line_Add("NS.md", (line_next-1), char2int(money), content);
+            FA_Line_Add("NS.md", (line_next-1), false, char2int(money), content);
             int money_sum = FA_Line_Calculator("NS.md", line_this, line_next);
 
             // tip 番茄@20170906 - line_next需要+3，因为加了新的一行
@@ -379,14 +379,68 @@ int main(int argc, char **argv, char *env[])
         /* * * * * * * * * * * * * * * * * * * * * * */
         else if( strncmp(sm_command, CMD_LOTTERY, strlen(CMD_LOTTERY)) == 0 )
         {
+            char flag;
+            char money[8];
+            char date[10];
+
+            bool pnFlag = false;
+            unsigned int value = 0;
+            string strInsetLine;
+
+            cout << "++ or -- >>> ";
+            cin >> flag;
+
+            if((flag != '+') && (flag != '-'))
+                continue;
+
+            cout << "Money >>> ";
+            cin >> money;
+
+            if(char0check(money) != 0)
+                continue;
+
+            cout << "date >>> ";
+            cin >> date;
+
+            if(strlen(date) != 8)
+                continue;
+            
+            if( flag == '+' )
+            {
+                pnFlag = true;
+                strInsetLine += "足彩收入_";
+                strInsetLine += date;
+            }
+            else
+            {
+                pnFlag = false;
+                strInsetLine += "足彩支出_";
+                strInsetLine += date;
+            }
+
             int line_this = FA_Search_Line("lottery.md", "# lottery");
             int line_next = FA_Search_Line("lottery.md", "## Total");
             int line_tag = FA_Search_Line("FA_TVT.md", "## lottery");
             
+            FA_Line_Add("lottery.md", (line_next-1), pnFlag, char2int(money), strInsetLine.c_str());
             int money_sum = FA_Line_Calculator("lottery.md", line_this, line_next);
 
-            FA_Sum_Modify("lottery.md", (line_next+2), money_sum, 2);
+            FA_Sum_Modify("lottery.md", (line_next+3), money_sum, 2);
             FA_Sum_Modify("FA_TVT.md", (line_tag+1), money_sum, 1);
+
+            FA_Sum_Update_TVT();
+
+            int line_bank = FA_Search_Line("FA_TVT.md", "广发银行");
+            int line_alirest = FA_Search_Line("FA_TVT.md", "余额宝");
+
+            if( flag == '+' )
+            {
+                FA_Balance("FA_TVT.md", line_bank, line_alirest, char2int(money), false);
+            }
+            else
+            {
+                FA_Balance("FA_TVT.md", line_bank, line_alirest, char2int(money), true);
+            }
         }
 
         /* * * * * * * * * * * * * * * * * * * * * * */
