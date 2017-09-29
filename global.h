@@ -10,7 +10,7 @@ using namespace std;
 
 /*--------------------  DEFINE Library  --------------------*/
 
-#define MAX_COMMAND     64      // 命令最大字符数
+#define MAX_COMMAND     128      // 命令最大字符数
 #define MAX_LINE_CHAR   128     // 每行最大字符数
 #define MAX_LINE        256     // 最大支持行数
 
@@ -82,6 +82,7 @@ const char *CMD_SU_TVT = "update-tvt";        // FA_Sum_Update_TVT
 const char *CMD_SU_EXMN = "update-ex-month";        // FA_Sum_Update_ExMonth
 
 const char *CMD_LIFE = "life";
+
 const char *CMD_BOOK = "book";
 const char *CMD_TB = "tb";
 const char *CMD_KEEP = "keep";

@@ -3,6 +3,7 @@
 
 #include "global.h"
 #include "FA_tools.h"
+#include <vector>
 
 using namespace std;
 
@@ -11,6 +12,8 @@ using namespace std;
 
 int main(int argc, char **argv, char *env[])
 {
+    struct timeval tst,ted;
+
     char *version = new char[10];
     char *ex_month = new char[3];
     char *cr_month = new char[3];
@@ -34,18 +37,35 @@ int main(int argc, char **argv, char *env[])
     cout << "----------------------------------------" << endl;
     cout << "----------------------------------------" << endl;
 
-
-    // CMD循环模式
+    // advanced_CMD循环模式
+    char advanced_CMD[MAX_COMMAND];
+    int CMD_argc = 0;
+    vector<string> CMD_argv;
+    
     while(1)
-    {
-        char sm_command[MAX_COMMAND];            
+    { 
         cout << "CMD >>> ";
-        cin >> sm_command;
+        //cin >> advanced_CMD;
+        cin.getline(advanced_CMD, MAX_COMMAND);
+
+        if( CMD_Line_Parser(advanced_CMD, CMD_argc, CMD_argv) == -1 )
+        {
+            //cout << "----------------------------------------" << endl;
+            //cout << "CMD is blank line!" << endl;
+            //cout << "----------------------------------------" << endl;
+            continue;
+        }
+        
+        if( CMD_argv.at(CMD_argc-1).compare("back") == 0 )
+        {
+            cout << "----------------------------------------" << endl;
+            continue;
+        }
 
         /* * * * * * * * * * * * * * * * * * * * * * */
         /* * * * * * * *    关闭系统    * * * * * * * */
         /* * * * * * * * * * * * * * * * * * * * * * */
-        if( strncmp(sm_command, CMD_SD, strlen(CMD_SD)) == 0 )
+        else if( CMD_argv.begin()->compare(CMD_SD) == 0 )
         {
             cout << "----------------------------------------" << endl;
             cout << "|-----    FA_Automator SHUTDOWN   -----|" << endl;
@@ -56,22 +76,28 @@ int main(int argc, char **argv, char *env[])
         /* * * * * * * * * * * * * * * * * * * * * * */
         /* * * * * * * *   显示md文件   * * * * * * * */
         /* * * * * * * * * * * * * * * * * * * * * * */
-        else if( strncmp(sm_command, CMD_PRINT_FILE, strlen(CMD_PRINT_FILE)) == 0 )
+        else if( CMD_argv.begin()->compare(CMD_PRINT_FILE) == 0 )
         {
             char file_name[32];
 
             cout << "File >>> ";
             cin >> file_name;
             
+            gettimeofday(&tst, NULL);   ////////////////////////////// TimePoint_START
+
             cout << "----------------------------------------" << endl;
             FA_Print_File(file_name);
-            cout << "----------------------------------------" << endl;            
+            cout << "----------------------------------------" << endl;  
+            
+            gettimeofday(&ted, NULL);   ////////////////////////////// TimePoint_END
+            showtcost(tst, ted);
+            cout << "----------------------------------------" << endl;
         }
 
         /* * * * * * * * * * * * * * * * * * * * * * */
         /* * * * * * * *    搜索单行    * * * * * * * */
         /* * * * * * * * * * * * * * * * * * * * * * */
-        else if( !strncmp(sm_command, CMD_PRINT_LINE, strlen(CMD_PRINT_LINE)) )
+        else if( CMD_argv.begin()->compare(CMD_PRINT_LINE) == 0 )
         {
             char file_name[32];
             char line_key[32];
@@ -82,14 +108,22 @@ int main(int argc, char **argv, char *env[])
             cout << "Line-Key >>> ";
             cin >> line_key;
 
+            gettimeofday(&tst, NULL);   ////////////////////////////// TimePoint_START
+
             FA_Print_Line(file_name, line_key);
+
+            gettimeofday(&ted, NULL);   ////////////////////////////// TimePoint_END
+            showtcost(tst, ted);
+            cout << "----------------------------------------" << endl;
         }
 
         /* * * * * * * * * * * * * * * * * * * * * * */
         /* * * * * * * *  检查月度支出   * * * * * * * */
         /* * * * * * * * * * * * * * * * * * * * * * */
-        else if( strncmp(sm_command, CMD_SC_MN, strlen(CMD_SC_MN)) == 0 )
+        else if( CMD_argv.begin()->compare(CMD_SC_MN) == 0 )
         {
+            gettimeofday(&tst, NULL);   ////////////////////////////// TimePoint_START
+
             string cr_month_str("## life.M");
             cr_month_str += cr_month;
             string nx_month_str("## life.M");
@@ -101,14 +135,20 @@ int main(int argc, char **argv, char *env[])
             FA_Sum_Check_Month(line_this);
             
             cout << "CHECK " << char2int(cr_month) << "月支出: " << FA_Line_Calculator("life.M.md", line_this, line_next) << endl;       
-            cout << "----------------------------------------" << endl;            
+            cout << "----------------------------------------" << endl;
+            
+            gettimeofday(&ted, NULL);   ////////////////////////////// TimePoint_END
+            showtcost(tst, ted);
+            cout << "----------------------------------------" << endl;
         }
 
         /* * * * * * * * * * * * * * * * * * * * * * */
         /* * * * * * * *  更新月度支出   * * * * * * * */
         /* * * * * * * * * * * * * * * * * * * * * * */
-        else if( strncmp(sm_command, CMD_SU_MN, strlen(CMD_SU_MN)) == 0 )
+        else if( CMD_argv.begin()->compare(CMD_SU_MN) == 0 )
         {
+            gettimeofday(&tst, NULL);   ////////////////////////////// TimePoint_START
+
             string cr_month_str("## life.M");
             cr_month_str += cr_month;
             string nx_month_str("## life.M");
@@ -121,13 +161,19 @@ int main(int argc, char **argv, char *env[])
             int money_sum = FA_Line_Calculator("life.M.md", line_this, line_next);
 
             FA_Sum_Update_Month(line_this, line_sz, money_sum);
+
+            gettimeofday(&ted, NULL);   ////////////////////////////// TimePoint_END
+            showtcost(tst, ted);
+            cout << "----------------------------------------" << endl;
         }
 
         /* * * * * * * * * * * * * * * * * * * * * * */
         /* * * * * * *  更新上个月度收支  * * * * * * * */
         /* * * * * * * * * * * * * * * * * * * * * * */
-        else if( strncmp(sm_command, CMD_SU_EXMN, strlen(CMD_SU_EXMN)) == 0 )
+        else if( CMD_argv.begin()->compare(CMD_SU_EXMN) == 0 )
         {
+            gettimeofday(&tst, NULL);   ////////////////////////////// TimePoint_START
+
             string ex_month_str("## life.M");
             ex_month_str += ex_month;
 
@@ -135,28 +181,44 @@ int main(int argc, char **argv, char *env[])
             int line_sz = FA_Search_Line("FA_TVT.md", ex_month_str.c_str());
             
             FA_Sum_Update_ExMonth(line_this, line_sz);
+
+            gettimeofday(&ted, NULL);   ////////////////////////////// TimePoint_END
+            showtcost(tst, ted);
+            cout << "----------------------------------------" << endl;
         }
 
         /* * * * * * * * * * * * * * * * * * * * * * */
         /* * * * * * * *   检查TVT支出  * * * * * * * */
         /* * * * * * * * * * * * * * * * * * * * * * */
-        else if( strncmp(sm_command, CMD_SC_TVT, strlen(CMD_SC_TVT)) == 0 )
+        else if( CMD_argv.begin()->compare(CMD_SC_TVT) == 0 )        
         {
+            gettimeofday(&tst, NULL);   ////////////////////////////// TimePoint_START
+
             FA_Sum_Check_TVT();
+
+            gettimeofday(&ted, NULL);   ////////////////////////////// TimePoint_END
+            showtcost(tst, ted);
+            cout << "----------------------------------------" << endl;
         }
 
         /* * * * * * * * * * * * * * * * * * * * * * */
         /* * * * * * * *   更新TVT支出  * * * * * * * */
         /* * * * * * * * * * * * * * * * * * * * * * */
-        else if( strncmp(sm_command, CMD_SU_TVT, strlen(CMD_SU_TVT)) == 0 )
+        else if( CMD_argv.begin()->compare(CMD_SU_TVT) == 0 )        
         {
+            gettimeofday(&tst, NULL);   ////////////////////////////// TimePoint_START
+
             FA_Sum_Update_TVT();
+
+            gettimeofday(&ted, NULL);   ////////////////////////////// TimePoint_END
+            showtcost(tst, ted);
+            cout << "----------------------------------------" << endl;
         }
 
         /* * * * * * * * * * * * * * * * * * * * * * */
         /* * * * * * * *  更改LIFE支出  * * * * * * * */
         /* * * * * * * * * * * * * * * * * * * * * * */
-        else if( strncmp(sm_command, CMD_LIFE, strlen(CMD_LIFE)) == 0 )
+        else if( CMD_argv.begin()->compare(CMD_LIFE) == 0 )        
         {
             string cr_month_str("## life.M");
             cr_month_str += cr_month;
@@ -191,7 +253,7 @@ int main(int argc, char **argv, char *env[])
         /* * * * * * * * * * * * * * * * * * * * * * */
         /* * * * * * * *  增加BOOK支出  * * * * * * * */
         /* * * * * * * * * * * * * * * * * * * * * * */
-        else if( strncmp(sm_command, CMD_BOOK, strlen(CMD_BOOK)) == 0 )
+        else if( CMD_argv.begin()->compare(CMD_BOOK) == 0 ) 
         {
             char money[8];
             char content[32];
@@ -223,7 +285,7 @@ int main(int argc, char **argv, char *env[])
         /* * * * * * * * * * * * * * * * * * * * * * */
         /* * * * * * * *   增加TB支出   * * * * * * * */
         /* * * * * * * * * * * * * * * * * * * * * * */
-        else if( strncmp(sm_command, CMD_TB, strlen(CMD_TB)) == 0 )
+        else if( CMD_argv.begin()->compare(CMD_TB) == 0 )
         {
             char money[8];
             char content[32];
@@ -255,7 +317,7 @@ int main(int argc, char **argv, char *env[])
         /* * * * * * * * * * * * * * * * * * * * * * */
         /* * * * * * * *  增加KEEP支出  * * * * * * * */
         /* * * * * * * * * * * * * * * * * * * * * * */
-        else if( strncmp(sm_command, CMD_KEEP, strlen(CMD_KEEP)) == 0 )
+        else if( CMD_argv.begin()->compare(CMD_KEEP) == 0 )
         {
             char money[8];
             char content[32];
@@ -287,7 +349,7 @@ int main(int argc, char **argv, char *env[])
         /* * * * * * * * * * * * * * * * * * * * * * */
         /* * * * * * * *   增加SA支出   * * * * * * * */
         /* * * * * * * * * * * * * * * * * * * * * * */
-        else if( strncmp(sm_command, CMD_SA, strlen(CMD_SA)) == 0 )
+        else if( CMD_argv.begin()->compare(CMD_SA) == 0 )
         {
             char money[8];
             char content[32];
@@ -319,7 +381,7 @@ int main(int argc, char **argv, char *env[])
         /* * * * * * * * * * * * * * * * * * * * * * */
         /* * * * * * * *   增加DK支出   * * * * * * * */
         /* * * * * * * * * * * * * * * * * * * * * * */
-        else if( strncmp(sm_command, CMD_DK, strlen(CMD_DK)) == 0 )
+        else if( CMD_argv.begin()->compare(CMD_DK) == 0 )
         {
             char money[8];
             char content[32];
@@ -348,7 +410,7 @@ int main(int argc, char **argv, char *env[])
         /* * * * * * * * * * * * * * * * * * * * * * */
         /* * * * * * * *   增加NS支出   * * * * * * * */
         /* * * * * * * * * * * * * * * * * * * * * * */
-        else if( strncmp(sm_command, CMD_NS, strlen(CMD_NS)) == 0 )
+        else if( CMD_argv.begin()->compare(CMD_NS) == 0 )
         {
             char money[8];
             char content[32];
@@ -377,7 +439,7 @@ int main(int argc, char **argv, char *env[])
         /* * * * * * * * * * * * * * * * * * * * * * */
         /* * * * * * *   计算lottery收支  * * * * * * */
         /* * * * * * * * * * * * * * * * * * * * * * */
-        else if( strncmp(sm_command, CMD_LOTTERY, strlen(CMD_LOTTERY)) == 0 )
+        else if( CMD_argv.begin()->compare(CMD_LOTTERY) == 0 )
         {
             char flag;
             char money[8];
@@ -446,7 +508,7 @@ int main(int argc, char **argv, char *env[])
         /* * * * * * * * * * * * * * * * * * * * * * */
         /* * * * * * * *   balance操作  * * * * * * * */
         /* * * * * * * * * * * * * * * * * * * * * * */
-        else if( strncmp(sm_command, CMD_BALANCE, strlen(CMD_BALANCE)) == 0 )
+        else if( CMD_argv.begin()->compare(CMD_BALANCE) == 0 )
         {
             char money[8];
 
@@ -465,7 +527,7 @@ int main(int argc, char **argv, char *env[])
         /* * * * * * * * * * * * * * * * * * * * * * */
         /* * * * * * *    rebalance操作   * * * * * * */
         /* * * * * * * * * * * * * * * * * * * * * * */
-        else if( strncmp(sm_command, CMD_REBALANCE, strlen(CMD_REBALANCE)) == 0 )
+        else if( CMD_argv.begin()->compare(CMD_REBALANCE) == 0 )
         {
             char money[8];
 
@@ -484,7 +546,7 @@ int main(int argc, char **argv, char *env[])
         /* * * * * * * * * * * * * * * * * * * * * * */
         /* * * * * * *     BackUp操作     * * * * * * */
         /* * * * * * * * * * * * * * * * * * * * * * */
-        else if( strncmp(sm_command, CMD_BACKUP, strlen(CMD_BACKUP)) == 0 )
+        else if( CMD_argv.begin()->compare(CMD_BACKUP) == 0 )
         {
             FA_BackUp("FA_TVT.md");
             FA_BackUp("life.M.md");
@@ -500,7 +562,7 @@ int main(int argc, char **argv, char *env[])
         /* * * * * * * * * * * * * * * * * * * * * * */
         /* * * * * * * *      TEST     * * * * * * * */
         /* * * * * * * * * * * * * * * * * * * * * * */
-        else if( strncmp(sm_command, CMD_TEST, strlen(CMD_TEST)) == 0 )
+        else if( CMD_argv.begin()->compare(CMD_TEST) == 0 )
         {
             continue;   
         }
