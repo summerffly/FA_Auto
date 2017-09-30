@@ -70,8 +70,8 @@ regex RE_end(pattern_end);
 
 /*-------------------- COMMAND Library --------------------*/
 
-const char *CMD_PRINT_FILE = "print-file";     // FA_Print_File
-const char *CMD_PRINT_LINE = "print-line";     // FA_Print_Line
+const char *CMD_PRINT = "print";     // FA_Print_File
+const char *CMD_SEARCH = "search";     // FA_Print_Line
 
 const char *CMD_SC_MN = "check-month";      // FA_Sum_Check_Month
 const char *CMD_SC_TVT = "check-tvt";         // FA_Sum_Check_TVT
@@ -99,6 +99,7 @@ const char *CMD_BACKUP = "bakup";
 
 const char *CMD_TEST = "test";
 
+const char *CMD_CANCEL = "cancel";
 const char *CMD_SD = "sd";
 
 

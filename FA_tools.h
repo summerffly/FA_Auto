@@ -858,7 +858,7 @@ int FA_BackUp(const char *file_name)
         cout << "----------------------------------------" << endl;
     }
     
-    cout << ">>> " << file_name << "   BACK UPED" << endl;
+    cout << ">>> " << file_name << "   BACKUPED" << endl;
 
     if( strncmp(file_name, "lottery.md", strlen("lottery.md")) == 0 )
     {

@@ -43,78 +43,72 @@ int main(int argc, char **argv, char *env[])
     vector<string> CMD_argv;
     
     while(1)
-    { 
+    {
         cout << "CMD >>> ";
-        //cin >> advanced_CMD;
         cin.getline(advanced_CMD, MAX_COMMAND);
 
+        // 判断是否输入空行
         if( CMD_Line_Parser(advanced_CMD, CMD_argc, CMD_argv) == -1 )
         {
-            //cout << "----------------------------------------" << endl;
-            //cout << "CMD is blank line!" << endl;
-            //cout << "----------------------------------------" << endl;
+            cout << "CMD is blank line !" << endl;
+            cout << "----------------------------------------" << endl;
+            
             continue;
         }
         
-        if( CMD_argv.at(CMD_argc-1).compare("back") == 0 )
+        // 判断是否输入撤销CMD
+        if( CMD_argv.back().compare(CMD_CANCEL) == 0 )
         {
+            cout << "CMD canceled !" << endl;
             cout << "----------------------------------------" << endl;
+            
             continue;
         }
 
         /* * * * * * * * * * * * * * * * * * * * * * */
         /* * * * * * * *    关闭系统    * * * * * * * */
         /* * * * * * * * * * * * * * * * * * * * * * */
-        else if( CMD_argv.begin()->compare(CMD_SD) == 0 )
+        if( CMD_argv.begin()->compare(CMD_SD) == 0 )
         {
             cout << "----------------------------------------" << endl;
             cout << "|-----    FA_Automator SHUTDOWN   -----|" << endl;
             cout << "----------------------------------------" << endl;
+
             break;
         }
 
         /* * * * * * * * * * * * * * * * * * * * * * */
         /* * * * * * * *   显示md文件   * * * * * * * */
         /* * * * * * * * * * * * * * * * * * * * * * */
-        else if( CMD_argv.begin()->compare(CMD_PRINT_FILE) == 0 )
-        {
-            char file_name[32];
-
-            cout << "File >>> ";
-            cin >> file_name;
-            
+        else if( CMD_argv.begin()->compare(CMD_PRINT) == 0 )
+        {   
             gettimeofday(&tst, NULL);   ////////////////////////////// TimePoint_START
 
             cout << "----------------------------------------" << endl;
-            FA_Print_File(file_name);
+            FA_Print_File(CMD_argv.at(CMD_argc-1).c_str());
             cout << "----------------------------------------" << endl;  
             
             gettimeofday(&ted, NULL);   ////////////////////////////// TimePoint_END
             showtcost(tst, ted);
             cout << "----------------------------------------" << endl;
+
+            continue;
         }
 
         /* * * * * * * * * * * * * * * * * * * * * * */
         /* * * * * * * *    搜索单行    * * * * * * * */
         /* * * * * * * * * * * * * * * * * * * * * * */
-        else if( CMD_argv.begin()->compare(CMD_PRINT_LINE) == 0 )
+        else if( CMD_argv.begin()->compare(CMD_SEARCH) == 0 )
         {
-            char file_name[32];
-            char line_key[32];
-            
-            cout << "File >>> ";
-            cin >> file_name;
-
-            cout << "Line-Key >>> ";
-            cin >> line_key;
-
             gettimeofday(&tst, NULL);   ////////////////////////////// TimePoint_START
 
-            FA_Print_Line(file_name, line_key);
+            FA_Print_Line(CMD_argv.at(1).c_str(), CMD_argv.at(2).c_str());
 
             gettimeofday(&ted, NULL);   ////////////////////////////// TimePoint_END
             showtcost(tst, ted);
             cout << "----------------------------------------" << endl;
+
+            continue;
         }
 
         /* * * * * * * * * * * * * * * * * * * * * * */
@@ -140,6 +134,8 @@ int main(int argc, char **argv, char *env[])
             gettimeofday(&ted, NULL);   ////////////////////////////// TimePoint_END
             showtcost(tst, ted);
             cout << "----------------------------------------" << endl;
+
+            continue;
         }
 
         /* * * * * * * * * * * * * * * * * * * * * * */
@@ -165,6 +161,8 @@ int main(int argc, char **argv, char *env[])
             gettimeofday(&ted, NULL);   ////////////////////////////// TimePoint_END
             showtcost(tst, ted);
             cout << "----------------------------------------" << endl;
+
+            continue;
         }
 
         /* * * * * * * * * * * * * * * * * * * * * * */
@@ -185,6 +183,8 @@ int main(int argc, char **argv, char *env[])
             gettimeofday(&ted, NULL);   ////////////////////////////// TimePoint_END
             showtcost(tst, ted);
             cout << "----------------------------------------" << endl;
+
+            continue;
         }
 
         /* * * * * * * * * * * * * * * * * * * * * * */
@@ -199,6 +199,8 @@ int main(int argc, char **argv, char *env[])
             gettimeofday(&ted, NULL);   ////////////////////////////// TimePoint_END
             showtcost(tst, ted);
             cout << "----------------------------------------" << endl;
+
+            continue;
         }
 
         /* * * * * * * * * * * * * * * * * * * * * * */
@@ -213,6 +215,8 @@ int main(int argc, char **argv, char *env[])
             gettimeofday(&ted, NULL);   ////////////////////////////// TimePoint_END
             showtcost(tst, ted);
             cout << "----------------------------------------" << endl;
+
+            continue;
         }
 
         /* * * * * * * * * * * * * * * * * * * * * * */
@@ -247,7 +251,16 @@ int main(int argc, char **argv, char *env[])
                 continue;
             }
 
+            gettimeofday(&tst, NULL);   ////////////////////////////// TimePoint_START
+
             FA_Line_Modify("life.M.md", line_tag, char2int(mod_money));
+
+            gettimeofday(&ted, NULL);   ////////////////////////////// TimePoint_END
+            showtcost(tst, ted);
+            cout << "----------------------------------------" << endl;
+
+            cin.ignore();
+            continue;
         }
 
         /* * * * * * * * * * * * * * * * * * * * * * */
@@ -272,6 +285,8 @@ int main(int argc, char **argv, char *env[])
             cout << "Book >>> ";
             cin >> content;
 
+            gettimeofday(&tst, NULL);   ////////////////////////////// TimePoint_START
+
             int line_this = FA_Search_Line("Books.M.md", cr_month_str.c_str());
             int line_next = FA_Search_Line("Books.M.md", nx_month_str.c_str());
             int line_tag = FA_Search_Line("life.M.md", cr_month_str.c_str());
@@ -280,6 +295,13 @@ int main(int argc, char **argv, char *env[])
             int money_sum = FA_Line_Calculator("Books.M.md", line_this, line_next);
             FA_Sum_Modify("Books.M.md", (line_this+1), money_sum, 1);
             FA_Line_Modify("life.M.md", line_tag, char2int(money));
+
+            gettimeofday(&ted, NULL);   ////////////////////////////// TimePoint_END
+            showtcost(tst, ted);
+            cout << "----------------------------------------" << endl;
+
+            cin.ignore();
+            continue;
         }
 
         /* * * * * * * * * * * * * * * * * * * * * * */
@@ -304,6 +326,8 @@ int main(int argc, char **argv, char *env[])
             cout << "TB >>> ";
             cin >> content;
 
+            gettimeofday(&tst, NULL);   ////////////////////////////// TimePoint_START
+
             int line_this = FA_Search_Line("TB.M.md", cr_month_str.c_str());
             int line_next = FA_Search_Line("TB.M.md", nx_month_str.c_str());
             int line_tag = FA_Search_Line("life.M.md", cr_month_str.c_str());
@@ -312,6 +336,13 @@ int main(int argc, char **argv, char *env[])
             int money_sum = FA_Line_Calculator("TB.M.md", line_this, line_next);
             FA_Sum_Modify("TB.M.md", (line_this+1), money_sum, 1);
             FA_Line_Modify("life.M.md", line_tag, char2int(money));
+
+            gettimeofday(&ted, NULL);   ////////////////////////////// TimePoint_END
+            showtcost(tst, ted);
+            cout << "----------------------------------------" << endl;
+
+            cin.ignore();
+            continue;
         }
 
         /* * * * * * * * * * * * * * * * * * * * * * */
@@ -336,6 +367,8 @@ int main(int argc, char **argv, char *env[])
             cout << "KEEP >>> ";
             cin >> content;
 
+            gettimeofday(&tst, NULL);   ////////////////////////////// TimePoint_START
+
             int line_this = FA_Search_Line("KEEP.M.md", cr_month_str.c_str());
             int line_next = FA_Search_Line("KEEP.M.md", nx_month_str.c_str());
             int line_tag = FA_Search_Line("life.M.md", cr_month_str.c_str());
@@ -344,6 +377,13 @@ int main(int argc, char **argv, char *env[])
             int money_sum = FA_Line_Calculator("KEEP.M.md", line_this, line_next);
             FA_Sum_Modify("KEEP.M.md", (line_this+1), money_sum, 1);
             FA_Line_Modify("life.M.md", line_tag, char2int(money));
+
+            gettimeofday(&ted, NULL);   ////////////////////////////// TimePoint_END
+            showtcost(tst, ted);
+            cout << "----------------------------------------" << endl;
+
+            cin.ignore();
+            continue;
         }
 
         /* * * * * * * * * * * * * * * * * * * * * * */
@@ -368,6 +408,8 @@ int main(int argc, char **argv, char *env[])
             cout << "sa >>> ";
             cin >> content;
 
+            gettimeofday(&tst, NULL);   ////////////////////////////// TimePoint_START
+
             int line_this = FA_Search_Line("sa.M.md", cr_month_str.c_str());
             int line_next = FA_Search_Line("sa.M.md", nx_month_str.c_str());
             int line_tag = FA_Search_Line("life.M.md", cr_month_str.c_str());
@@ -375,7 +417,14 @@ int main(int argc, char **argv, char *env[])
             FA_Line_Add("sa.M.md", (line_next-1), false, char2int(money), content);
             int money_sum = FA_Line_Calculator("sa.M.md", line_this, line_next);
             FA_Sum_Modify("sa.M.md", (line_this+1), money_sum, 1);
-            FA_Line_Modify("life.M.md", line_tag, char2int(money));            
+            FA_Line_Modify("life.M.md", line_tag, char2int(money));
+
+            gettimeofday(&ted, NULL);   ////////////////////////////// TimePoint_END
+            showtcost(tst, ted);
+            cout << "----------------------------------------" << endl;
+         
+            cin.ignore();
+            continue;
         }
 
         /* * * * * * * * * * * * * * * * * * * * * * */
@@ -395,6 +444,8 @@ int main(int argc, char **argv, char *env[])
             cout << "DK >>> ";
             cin >> content;
 
+            gettimeofday(&tst, NULL);   ////////////////////////////// TimePoint_START
+
             int line_this = FA_Search_Line("DK.md", "# Digital Kingdom");
             int line_next = FA_Search_Line("DK.md", "## Total");
             int line_tag = FA_Search_Line("FA_TVT.md", "## DK");
@@ -405,6 +456,13 @@ int main(int argc, char **argv, char *env[])
             // tip 番茄@20170906 - line_next需要+3，因为加了新的一行
             FA_Sum_Modify("DK.md", (line_next+3), money_sum, 2);
             FA_Sum_Modify("FA_TVT.md", (line_tag+1), money_sum, 1);
+
+            gettimeofday(&ted, NULL);   ////////////////////////////// TimePoint_END
+            showtcost(tst, ted);
+            cout << "----------------------------------------" << endl;
+
+            cin.ignore();
+            continue;
         }
 
         /* * * * * * * * * * * * * * * * * * * * * * */
@@ -424,6 +482,8 @@ int main(int argc, char **argv, char *env[])
             cout << "NS >>> ";
             cin >> content;
 
+            gettimeofday(&tst, NULL);   ////////////////////////////// TimePoint_START
+
             int line_this = FA_Search_Line("NS.md", "# New Style");
             int line_next = FA_Search_Line("NS.md", "## Total");
             int line_tag = FA_Search_Line("FA_TVT.md", "## NS");
@@ -434,6 +494,13 @@ int main(int argc, char **argv, char *env[])
             // tip 番茄@20170906 - line_next需要+3，因为加了新的一行
             FA_Sum_Modify("NS.md", (line_next+3), money_sum, 2);
             FA_Sum_Modify("FA_TVT.md", (line_tag+1), money_sum, 1);
+
+            gettimeofday(&ted, NULL);   ////////////////////////////// TimePoint_END
+            showtcost(tst, ted);
+            cout << "----------------------------------------" << endl;
+
+            cin.ignore();
+            continue;
         }
 
         /* * * * * * * * * * * * * * * * * * * * * * */
@@ -441,50 +508,42 @@ int main(int argc, char **argv, char *env[])
         /* * * * * * * * * * * * * * * * * * * * * * */
         else if( CMD_argv.begin()->compare(CMD_LOTTERY) == 0 )
         {
-            char flag;
-            char money[8];
-            char date[10];
+            gettimeofday(&tst, NULL);   ////////////////////////////// TimePoint_START
 
             bool pnFlag = false;
+            string money;
             unsigned int value = 0;
             string strInsetLine;
 
-            cout << "++ or -- >>> ";
-            cin >> flag;
+            money = CMD_argv.at(2);
 
-            if((flag != '+') && (flag != '-'))
+            if( (CMD_argv.at(1).compare("++")) && (CMD_argv.at(1).compare("--")) )
                 continue;
 
-            cout << "Money >>> ";
-            cin >> money;
-
-            if(char0check(money) != 0)
+            if( char0check(money.c_str()) != 0 )
                 continue;
 
-            cout << "date >>> ";
-            cin >> date;
-
-            if(strlen(date) != 8)
+            if( strlen(CMD_argv.at(3).c_str()) != 8 )
                 continue;
             
-            if( flag == '+' )
+            if( CMD_argv.at(1).compare("++") == 0 )
             {
                 pnFlag = true;
                 strInsetLine += "足彩收入_";
-                strInsetLine += date;
+                strInsetLine += CMD_argv.at(3);
             }
             else
             {
                 pnFlag = false;
                 strInsetLine += "足彩支出_";
-                strInsetLine += date;
+                strInsetLine += CMD_argv.at(3);
             }
 
             int line_this = FA_Search_Line("lottery.md", "# lottery");
             int line_next = FA_Search_Line("lottery.md", "## Total");
             int line_tag = FA_Search_Line("FA_TVT.md", "## lottery");
             
-            FA_Line_Add("lottery.md", (line_next-1), pnFlag, char2int(money), strInsetLine.c_str());
+            FA_Line_Add("lottery.md", (line_next-1), pnFlag, char2int(money.c_str()), strInsetLine.c_str());
             int money_sum = FA_Line_Calculator("lottery.md", line_this, line_next);
 
             FA_Sum_Modify("lottery.md", (line_next+3), money_sum, 2);
@@ -495,14 +554,20 @@ int main(int argc, char **argv, char *env[])
             int line_bank = FA_Search_Line("FA_TVT.md", "广发银行");
             int line_alirest = FA_Search_Line("FA_TVT.md", "余额宝");
 
-            if( flag == '+' )
+            if( CMD_argv.at(1).compare("++") == 0 )
             {
-                FA_Balance("FA_TVT.md", line_bank, line_alirest, char2int(money), false);
+                FA_Balance("FA_TVT.md", line_bank, line_alirest, char2int(money.c_str()), false);
             }
             else
             {
-                FA_Balance("FA_TVT.md", line_bank, line_alirest, char2int(money), true);
+                FA_Balance("FA_TVT.md", line_bank, line_alirest, char2int(money.c_str()), true);
             }
+
+            gettimeofday(&ted, NULL);   ////////////////////////////// TimePoint_END
+            showtcost(tst, ted);
+            cout << "----------------------------------------" << endl;
+
+            continue;
         }
 
         /* * * * * * * * * * * * * * * * * * * * * * */
@@ -518,10 +583,19 @@ int main(int argc, char **argv, char *env[])
             if(char0check(money) != 0)
                 continue;
 
+            gettimeofday(&tst, NULL);   ////////////////////////////// TimePoint_START
+
             int line_bank = FA_Search_Line("FA_TVT.md", "广发银行");
             int line_alirest = FA_Search_Line("FA_TVT.md", "余额宝");
 
             FA_Balance("FA_TVT.md", line_bank, line_alirest, char2int(money), true);
+
+            gettimeofday(&ted, NULL);   ////////////////////////////// TimePoint_END
+            showtcost(tst, ted);
+            cout << "----------------------------------------" << endl;
+
+            cin.ignore();
+            continue;
         }
 
         /* * * * * * * * * * * * * * * * * * * * * * */
@@ -537,10 +611,20 @@ int main(int argc, char **argv, char *env[])
             if(char0check(money) != 0)
                 continue;
 
+            
+            gettimeofday(&tst, NULL);   ////////////////////////////// TimePoint_START
+            
             int line_bank = FA_Search_Line("FA_TVT.md", "广发银行");
             int line_alirest = FA_Search_Line("FA_TVT.md", "余额宝");
 
             FA_Balance("FA_TVT.md", line_bank, line_alirest, char2int(money), false);
+
+            gettimeofday(&ted, NULL);   ////////////////////////////// TimePoint_END
+            showtcost(tst, ted);
+            cout << "----------------------------------------" << endl;
+
+            cin.ignore();
+            continue;
         }
 
         /* * * * * * * * * * * * * * * * * * * * * * */
@@ -548,6 +632,8 @@ int main(int argc, char **argv, char *env[])
         /* * * * * * * * * * * * * * * * * * * * * * */
         else if( CMD_argv.begin()->compare(CMD_BACKUP) == 0 )
         {
+            gettimeofday(&tst, NULL);   ////////////////////////////// TimePoint_START
+
             FA_BackUp("FA_TVT.md");
             FA_BackUp("life.M.md");
             FA_BackUp("Books.M.md");
@@ -557,6 +643,12 @@ int main(int argc, char **argv, char *env[])
             FA_BackUp("DK.md");
             FA_BackUp("NS.md");
             FA_BackUp("lottery.md");
+
+            gettimeofday(&ted, NULL);   ////////////////////////////// TimePoint_END
+            showtcost(tst, ted);
+            cout << "----------------------------------------" << endl;
+
+            continue;
         }
 
         /* * * * * * * * * * * * * * * * * * * * * * */
@@ -572,6 +664,8 @@ int main(int argc, char **argv, char *env[])
             cout << "----------------------------------------" << endl;
             cout << ">>>           Error Command          <<<" << endl;
             cout << "----------------------------------------" << endl;
+
+            continue;
         }
     }
 

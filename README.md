@@ -9,7 +9,7 @@
 - 编写自己喜欢的程序
 - 能最大程度地提高效率
 - 也获得了更多时间与自由
-- Coding makes world more beautiful : )
+- Codeing Monkey makes the world more beautiful : )
 
 ---
 
