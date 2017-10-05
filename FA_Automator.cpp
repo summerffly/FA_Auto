@@ -30,7 +30,7 @@ int main(int argc, char **argv, char *env[])
     cout << "| |      >>>  番茄_summer  <<<       | |" << endl;
     cout << "----------------------------------------" << endl;
     cout << "----------------------------------------" << endl;
-    cout << "| |           Version: " << version << "           | |" << endl;
+    cout << "| |         Version: " << version << "_LTU" << "         | |" << endl;
     cout << "| |       Previous Month: " << ex_month << "         | |" << endl;    
     cout << "| |        Current Month: " << cr_month << "         | |" << endl;
     cout << "| |          Next Month: " << nx_month << "          | |" << endl;
@@ -80,8 +80,16 @@ int main(int argc, char **argv, char *env[])
         /* * * * * * * * * * * * * * * * * * * * * * */
         /* * * * * * * *   显示md文件   * * * * * * * */
         /* * * * * * * * * * * * * * * * * * * * * * */
-        else if( CMD_argv.begin()->compare(CMD_PRINT) == 0 )
-        {   
+        if( CMD_argv.begin()->compare(CMD_PRINT) == 0 )
+        {
+            if(CMD_argv.size() != 2)
+            {
+                cout << "CMD is incomplete !" << endl;
+                cout << "----------------------------------------" << endl;
+
+                continue;
+            }
+
             gettimeofday(&tst, NULL);   ////////////////////////////// TimePoint_START
 
             cout << "----------------------------------------" << endl;
@@ -100,6 +108,14 @@ int main(int argc, char **argv, char *env[])
         /* * * * * * * * * * * * * * * * * * * * * * */
         else if( CMD_argv.begin()->compare(CMD_SEARCH) == 0 )
         {
+            if(CMD_argv.size() != 3)
+            {
+                cout << "CMD is incomplete !" << endl;
+                cout << "----------------------------------------" << endl;
+
+                continue;
+            }
+
             gettimeofday(&tst, NULL);   ////////////////////////////// TimePoint_START
 
             FA_Print_Line(CMD_argv.at(1).c_str(), CMD_argv.at(2).c_str());
@@ -508,6 +524,14 @@ int main(int argc, char **argv, char *env[])
         /* * * * * * * * * * * * * * * * * * * * * * */
         else if( CMD_argv.begin()->compare(CMD_LOTTERY) == 0 )
         {
+            if(CMD_argv.size() != 4)
+            {
+                cout << "CMD is incomplete !" << endl;
+                cout << "----------------------------------------" << endl;
+
+                continue;
+            }
+
             gettimeofday(&tst, NULL);   ////////////////////////////// TimePoint_START
 
             bool pnFlag = false;

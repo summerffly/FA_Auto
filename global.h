@@ -10,7 +10,7 @@ using namespace std;
 
 /*--------------------  DEFINE Library  --------------------*/
 
-#define MAX_COMMAND     128      // 命令最大字符数
+#define MAX_COMMAND     128     // 命令最大字符数
 #define MAX_LINE_CHAR   128     // 每行最大字符数
 #define MAX_LINE        256     // 最大支持行数
 
