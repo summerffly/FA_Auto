@@ -1,24 +1,28 @@
 
 /*--------------------  CODE_ORIGIN @ 番茄  --------------------*/
 
-#include "global.h"
-#include "FA_tools.h"
 #include <vector>
+
+#include "global.h"
+#include "advanced_CMD.h"
+#include "FBric_operator.h"
+#include "FA_tools.h"
+#include "FA_itfX.h"
 
 using namespace std;
 
+//----- 全局变量区 -----//
+struct timeval tst,ted;
 
-/*--------------------  MAIN  --------------------*/
+char *version = new char[10];
+char *ex_month = new char[3];
+char *cr_month = new char[3];
+char *nx_month = new char[3];
 
+
+//----- Main入口-----//
 int main(int argc, char **argv, char *env[])
 {
-    struct timeval tst,ted;
-
-    char *version = new char[10];
-    char *ex_month = new char[3];
-    char *cr_month = new char[3];
-    char *nx_month = new char[3];
-
     if( FA_Read_Conf(version, ex_month, cr_month, nx_month) == -1 )
     {
         return -1;
@@ -656,19 +660,11 @@ int main(int argc, char **argv, char *env[])
         /* * * * * * * * * * * * * * * * * * * * * * */
         else if( CMD_argv.begin()->compare(CMD_BACKUP) == 0 )
         {
-            gettimeofday(&tst, NULL);   ////////////////////////////// TimePoint_START
+            gettimeofday(&tst, NULL);
 
-            FA_BackUp("FA_TVT.md");
-            FA_BackUp("life.M.md");
-            FA_BackUp("Books.M.md");
-            FA_BackUp("KEEP.M.md");
-            FA_BackUp("TB.M.md");
-            FA_BackUp("sa.M.md");
-            FA_BackUp("DK.md");
-            FA_BackUp("NS.md");
-            FA_BackUp("lottery.md");
+            FAiX_BackUp("./FA_TVT.bak/");
 
-            gettimeofday(&ted, NULL);   ////////////////////////////// TimePoint_END
+            gettimeofday(&ted, NULL);
             showtcost(tst, ted);
             cout << "----------------------------------------" << endl;
 
@@ -698,5 +694,4 @@ int main(int argc, char **argv, char *env[])
 
 
 /*--------------------  CODE_END @ 番茄  --------------------*/
-
 

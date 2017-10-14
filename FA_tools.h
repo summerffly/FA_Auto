@@ -1,11 +1,10 @@
 
 /*--------------------  CODE_ORIGIN @ 番茄  --------------------*/
 
-#include <fstream>
-#include <iomanip>
+#pragma once
 
 #include "global.h"
-#include "str_operator.h"
+#include "FBric_operator.h"
 
 using namespace std;
 
@@ -834,7 +833,7 @@ int FA_Balance(const char *file_name, const int line_a, const int line_b, const 
 }
 
 
-int FA_BackUp(const char *file_name)
+int FA_BackUp(const char *file_name, const char *bak_file_path)
 {
     string strLine[MAX_LINE];    
     int line_index = 1;
@@ -845,7 +844,8 @@ int FA_BackUp(const char *file_name)
     }
     
     string str;
-    str += "./FA_TVT.bak/";
+    //str += "./FA_TVT.bak/";
+    str += bak_file_path;
     str += file_name;
 
     if(WirteFile(str.c_str(), strLine, line_index) == -1)
