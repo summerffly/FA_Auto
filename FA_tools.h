@@ -9,66 +9,9 @@
 using namespace std;
 
 
-/*--------------------  函数声明 @ 番茄  --------------------*/
-
-int FA_Search_Line(const char *file_name, const char *line_key);
-int FA_Line_Calculator(const char *file_name, const int line_start, const int line_end);
-
-
-/*--------------------  TOOLS @ 番茄  --------------------*/
-
-// tip 番茄@20170817 - 直接对内存进行操作，需要注意风险，特别是更改格式以后
-int FA_Read_Conf(char *version, char *ex_month, char *cr_month, char *nx_month)
-{
-    char buffer[64];
-    string strLine[16];
-    int line_index = 1;
-    
-    ifstream ifile("./FA.conf");
-
-    if(!ifile.is_open())
-    {
-        cout << "----------------------------------------" << endl;
-        cout << ">>>          Read Conf Error         <<<" << endl;
-        cout << "----------------------------------------" << endl;
-        return -1;
-    }
-    
-    while(!ifile.eof())
-    {
-        ifile.getline(buffer, MAX_LINE_CHAR);
-        strLine[line_index] = buffer;
-        
-        if( regex_match(strLine[line_index], RE_cv) )
-        {
-            memmove(version, buffer+18, 4);
-            continue;
-        }
-        else if( regex_match(strLine[line_index], RE_pm) )
-        {
-            memmove(ex_month, buffer+17, 3);            
-            continue;
-        }
-        else if( regex_match(strLine[line_index], RE_cm) )
-        {
-            memmove(cr_month, buffer+16, 3);            
-            continue;
-        }
-        else if( regex_match(strLine[line_index], RE_nm) )
-        {
-            memmove(nx_month, buffer+13, 3);              
-            continue;
-        }
-        
-        line_index++;
-    }
-    
-    ifile.close();
-        
-    return 0;
-}
-
-
+/**************************************************/
+//   打印.md文件全部内容
+/**************************************************/
 int FA_Print_File(const char *file_name)
 {    
     string strLine[MAX_LINE];
@@ -82,12 +25,70 @@ int FA_Print_File(const char *file_name)
     for(int i = 1; i <= line_index; i++)
     {
         cout << "line_" << i << " // " << strLine[i].c_str() << endl;
-    }    
+    }
     
     return 0;
 }
 
 
+/**************************************************/
+//   搜索.md文件某一行
+/**************************************************/
+int FA_Search_Line(const char *file_name, const char *line_key)
+{
+    string strLine[MAX_LINE];    
+    int line_index = 1;       // 每一行的标志 从1开始计数 返回0可能有别的用途
+    int line_counter = 0;     // 匹配行的计数器
+    int line_tag = 0;         // 匹配行的标志
+
+    string str_key = line_key;
+    string pattern_key = "^.*" + str_key + ".*$";
+    regex RE_key(pattern_key);
+    
+    if( ReadFile(file_name, strLine, line_index) == -1 )
+    {
+        return -1;
+    }
+
+    for(int i = 1; i <= line_index; i++)
+    {
+        if( regex_match(strLine[i], RE_key) )
+        {
+            if( line_counter == 0 )
+            {
+                line_tag = i;
+            }
+            line_counter++;
+        }
+    }
+    
+    if(line_counter > 0)
+    {
+        if(line_counter == 1)
+        {
+            return line_tag;
+        }
+        else
+        {
+            cout << "----------------------------------------" << endl;
+            cout << ">>>        MULTI-LINES MATCHED       <<<" << endl;
+            cout << "----------------------------------------" << endl;
+            return -1;
+        }
+    }
+    else
+    {
+        cout << "----------------------------------------" << endl;
+        cout << ">>>          NO-LINE MATCHED         <<<" << endl;
+        cout << "----------------------------------------" << endl;
+        return -2;
+    }
+}
+
+
+/**************************************************/
+//   打印.md文件某一行
+/**************************************************/
 int FA_Print_Line(const char *file_name, const char *line_key)
 {
     string strLine[MAX_LINE];
@@ -111,7 +112,7 @@ int FA_Print_Line(const char *file_name, const char *line_key)
             line_counter++;
             line_tag[line_counter] = i;
         }
-    }   
+    }
     
     if(line_counter > 0)
     {
@@ -147,6 +148,64 @@ int FA_Print_Line(const char *file_name, const char *line_key)
 }
 
 
+/**************************************************/
+//   两行区间内 搜索.md文件某一行
+/**************************************************/
+int FA_Search_Line_Area(const char *file_name, const char *line_key, const int line_start, const int line_end)
+{
+    string strLine[MAX_LINE];    
+    int line_index = 1;       // 每一行的标志 从1开始计数 返回0可能有别的用途
+    int line_counter = 0;     // 匹配行的计数器
+    int line_tag = 0;         // 匹配行的标志
+
+    string str_key = line_key;
+    string pattern_key = "^.*" + str_key + ".*$";
+    regex RE_key(pattern_key);
+    
+    if( ReadFile(file_name, strLine, line_index) == -1 )
+    {
+        return -1;
+    }
+
+    for(int i = line_start; i <= line_end; i++)
+    {
+        if( regex_match(strLine[i], RE_key) )
+        {
+            if( line_counter == 0 )
+            {
+                line_tag = i;
+            }
+            line_counter++;
+        }
+    }
+    
+    if(line_counter > 0)
+    {
+        if(line_counter == 1)
+        {
+            return line_tag;
+        }
+        else
+        {
+            cout << "----------------------------------------" << endl;
+            cout << ">>>        MULTI-LINES MATCHED       <<<" << endl;
+            cout << "----------------------------------------" << endl;
+            return -1;
+        }
+    }
+    else
+    {
+        cout << "----------------------------------------" << endl;
+        cout << ">>>          NO-LINE MATCHED         <<<" << endl;
+        cout << "----------------------------------------" << endl;
+        return -2;
+    }
+}
+
+
+/**************************************************/
+//   两行区间内 打印.md文件某一行
+/**************************************************/
 int FA_Print_Line_Area(const char *file_name, const char *line_key, const int line_start, const int line_end)
 {
     string strLine[MAX_LINE];
@@ -205,114 +264,6 @@ int FA_Print_Line_Area(const char *file_name, const char *line_key, const int li
     }
 }
 
-
-int FA_Search_Line(const char *file_name, const char *line_key)
-{
-    string strLine[MAX_LINE];    
-    int line_index = 1;       // 每一行的标志 从1开始计数 返回0可能有别的用途
-    int line_counter = 0;     // 匹配行的计数器
-    int line_tag = 0;         // 匹配行的标志
-
-    string str_key = line_key;
-    string pattern_key = "^.*" + str_key + ".*$";
-    regex RE_key(pattern_key);
-    
-    if( ReadFile(file_name, strLine, line_index) == -1 )
-    {
-        return -1;
-    }
-
-    for(int i = 1; i <= line_index; i++)
-    {
-        if( regex_match(strLine[i], RE_key) )
-        {
-            if( line_counter == 0 )
-            {
-                line_tag = i;
-            }
-            line_counter++;
-        }
-    }
-    
-    if(line_counter > 0)
-    {
-        if(line_counter == 1)
-        {
-            return line_tag;
-        }
-        else
-        {
-            cout << "----------------------------------------" << endl;
-            cout << ">>>        MULTI-LINES MATCHED       <<<" << endl;
-            cout << "----------------------------------------" << endl;
-            return -1;
-        }
-    }
-    else
-    {
-        cout << "----------------------------------------" << endl;
-        cout << ">>>          NO-LINE MATCHED         <<<" << endl;
-        cout << "----------------------------------------" << endl;
-        return -2;
-    }
-}
-
-
-int FA_Search_Line_Area(const char *file_name, const char *line_key, const int line_start, const int line_end)
-{
-    string strLine[MAX_LINE];    
-    int line_index = 1;       // 每一行的标志 从1开始计数 返回0可能有别的用途
-    int line_counter = 0;     // 匹配行的计数器
-    int line_tag = 0;         // 匹配行的标志
-
-    string str_key = line_key;
-    string pattern_key = "^.*" + str_key + ".*$";
-    regex RE_key(pattern_key);
-    
-    if( ReadFile(file_name, strLine, line_index) == -1 )
-    {
-        return -1;
-    }
-
-    for(int i = line_start; i <= line_end; i++)
-    {
-        if( regex_match(strLine[i], RE_key) )
-        {
-            if( line_counter == 0 )
-            {
-                line_tag = i;
-            }
-            line_counter++;
-        }
-    }
-    
-    if(line_counter > 0)
-    {
-        if(line_counter == 1)
-        {
-            return line_tag;
-        }
-        else
-        {
-            cout << "----------------------------------------" << endl;
-            cout << ">>>        MULTI-LINES MATCHED       <<<" << endl;
-            cout << "----------------------------------------" << endl;
-            return -1;
-        }
-    }
-    else
-    {
-        cout << "----------------------------------------" << endl;
-        cout << ">>>          NO-LINE MATCHED         <<<" << endl;
-        cout << "----------------------------------------" << endl;
-        return -2;
-    }
-}
-
-
-/*----------------------------------------------------------------*/
-/*--------------------  处理函数 @ 番茄  --------------------*/
-/*----------------------------------------------------------------*/
 
 int FA_Sum_Check_Month(const int line_tag)
 {
@@ -473,184 +424,6 @@ int FA_Sum_Update_ExMonth(const int line_tag_life, const int line_tag_sz)
 
     WirteFile("life.M.md", strLine_life, line_index_life);       
     WirteFile("FA_TVT.md", strLine_sz, line_index_sz);       
-    
-    return 0;
-}
-
-
-int FA_Sum_Check_TVT()
-{
-    string strLine[MAX_LINE];    
-    int line_index = 1;
-    int money_sum = 0;
-    
-    if( ReadFile("FA_TVT.md", strLine, line_index) == -1 )
-    {
-        return -1;
-    }
-
-    for(int i = 1; i <= line_index; i++)
-    {
-        if( regex_match(strLine[i], RE_ofi) )
-        {
-            money_sum += sm_StrMoneyFind_Top(strLine[i]);
-            continue;
-        }
-        else if( regex_match(strLine[i], RE_lottery) )
-        {
-            money_sum += sm_StrMoneyFind_Title(strLine[i+1]);
-            continue;
-        }
-        else if( regex_match(strLine[i], RE_dk) )
-        {
-            money_sum += sm_StrMoneyFind_Title(strLine[i+1]);
-            continue;
-        }
-        else if( regex_match(strLine[i], RE_ns) )
-        {
-            money_sum += sm_StrMoneyFind_Title(strLine[i+1]);
-            continue;
-        }
-        else if( regex_match(strLine[i], RE_month) )
-        {
-            money_sum += sm_StrMoneyFind_Month(strLine[i+3]);
-            continue;
-        }
-        else if( regex_match(strLine[i], RE_cfi) )
-        {
-            cout << "----------------------------------------" << endl;  
-            cout << "line_" << i << " // " << strLine[i].c_str() << endl;
-            cout << "Sum_Check_SZ: " << money_sum << endl;
-            cout << "----------------------------------------" << endl;
-            continue;
-        }
-        else if( regex_match(strLine[i], RE_de_one) )
-        {
-            money_sum += sm_StrMoneyFind_Line(strLine[i]);
-            continue;
-        }
-        else if( regex_match(strLine[i], RE_de_mobike) )
-        {
-            money_sum += sm_StrMoneyFind_Line(strLine[i]);
-            continue;
-        }
-        else if( regex_match(strLine[i], RE_de_ofo) )
-        {
-            money_sum += sm_StrMoneyFind_Line(strLine[i]);
-            continue;
-        }
-        else if( regex_match(strLine[i], RE_loan) )
-        {
-            money_sum += sm_StrMoneyFind_Line(strLine[i]);
-            continue;
-        }
-        else if( regex_match(strLine[i], RE_bank) )
-        {
-            cout << "line_" << i << " // " << strLine[i].c_str() << endl;
-            money_sum -= sm_StrMoneyFind_Top(strLine[i]);
-            continue;
-        }
-        else if( regex_match(strLine[i], RE_alirest) )
-        {
-            cout << "line_" << i << " // " << strLine[i].c_str() << endl;
-            cout << "Sum_Check_SZ: " << money_sum << endl;
-            cout << "----------------------------------------" << endl;
-            continue;
-        }
-    }
-    
-    return 0;
-}
-
-
-int FA_Sum_Update_TVT()
-{
-    string strLine[MAX_LINE];    
-    int line_index = 1;
-    int money_sum = 0;
-    
-    if( ReadFile("FA_TVT.md", strLine, line_index) == -1 )
-    {
-        return -1;
-    }
-
-    for(int i = 1; i <= line_index; i++)
-    {
-        if( regex_match(strLine[i], RE_ofi) )
-        {
-            money_sum += sm_StrMoneyFind_Top(strLine[i]);
-            continue;
-        }
-        else if( regex_match(strLine[i], RE_lottery) )
-        {
-            money_sum += sm_StrMoneyFind_Title(strLine[i+1]);
-            continue;
-        }
-        else if( regex_match(strLine[i], RE_dk) )
-        {
-            money_sum += sm_StrMoneyFind_Title(strLine[i+1]);
-            continue;
-        }
-        else if( regex_match(strLine[i], RE_ns) )
-        {
-            money_sum += sm_StrMoneyFind_Title(strLine[i+1]);
-            continue;
-        }
-        else if( regex_match(strLine[i], RE_month) )
-        {
-            money_sum += sm_StrMoneyFind_Month(strLine[i+3]);
-            continue;
-        }
-        else if( regex_match(strLine[i], RE_cfi) )
-        {
-            cout << "----------------------------------------" << endl;  
-            cout << "line_" << i << " // " << strLine[i].c_str() << endl;
-            cout << "Sum_Check_SZ: " << money_sum << endl;
-            cout << "----------------------------------------" << endl;
-            sm_StrMoneyModify_Top(strLine[i], money_sum);            
-            continue;
-        }
-        else if( regex_match(strLine[i], RE_de_one) )
-        {
-            money_sum += sm_StrMoneyFind_Line(strLine[i]);
-            continue;
-        }
-        else if( regex_match(strLine[i], RE_de_mobike) )
-        {
-            money_sum += sm_StrMoneyFind_Line(strLine[i]);
-            continue;
-        }
-        else if( regex_match(strLine[i], RE_de_ofo) )
-        {
-            money_sum += sm_StrMoneyFind_Line(strLine[i]);
-            continue;
-        }
-        else if( regex_match(strLine[i], RE_loan) )
-        {
-            money_sum += sm_StrMoneyFind_Line(strLine[i]);
-            continue;
-        }
-        else if( regex_match(strLine[i], RE_bank) )
-        {
-            cout << "line_" << i << " // " << strLine[i].c_str() << endl;
-            money_sum -= sm_StrMoneyFind_Top(strLine[i]);
-            continue;
-        }
-        else if( regex_match(strLine[i], RE_alirest) )
-        {
-            cout << "line_" << i << " // " << strLine[i].c_str() << endl;
-            cout << "Sum_Check_SZ: " << money_sum << endl;
-            cout << "----------------------------------------" << endl;
-            sm_StrMoneyModify_Top(strLine[i], money_sum);                        
-            continue;
-        }
-    }
-
-    WirteFile("FA_TVT.md", strLine, line_index);   
-    
-    cout << "----------------------------------------" << endl;
-    cout << ">>>           SZ-SUM UPDATED         <<<" << endl;
-    cout << "----------------------------------------" << endl;
     
     return 0;
 }
