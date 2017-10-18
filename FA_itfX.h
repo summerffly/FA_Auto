@@ -64,6 +64,60 @@ int FA_Read_Conf(char *version, char *ex_month, char *cr_month, char *nx_month)
 }
 
 /**************************************************/
+//   检查DK
+/**************************************************/
+int FAitfX_Check_DK()
+{
+    int line_begin = FA_Search_Line("./DK.md", "# DK");
+    int line_end = FA_Search_Line("./DK.md", "## Total");
+
+    int money_sum = FA_Line_Calculator("DK.md", line_begin, line_end);
+
+    cout << "----------------------------------------" << endl;
+    cout << "line_" << line_end+2 << " // " << FA_Print_Line_Index("./DK.md", line_end+2) << endl;
+    cout << "### Check_Sum ### " << money_sum << endl;
+    cout << "----------------------------------------" << endl;
+
+    return 0;
+}
+
+/**************************************************/
+//   检查NS
+/**************************************************/
+int FAitfX_Check_NS()
+{
+    int line_begin = FA_Search_Line("./NS.md", "# NS");
+    int line_end = FA_Search_Line("./NS.md", "## Total");
+
+    int money_sum = FA_Line_Calculator("NS.md", line_begin, line_end);
+
+    cout << "----------------------------------------" << endl;
+    cout << "line_" << line_end+2 << " // " << FA_Print_Line_Index("./NS.md", line_end+2) << endl;
+    cout << "### Check_Sum ### " << money_sum << endl;
+    cout << "----------------------------------------" << endl;
+
+    return 0;
+}
+
+/**************************************************/
+//   检查lottery
+/**************************************************/
+int FAitfX_Check_lottery()
+{
+    int line_begin = FA_Search_Line("./lottery.md", "# lottery");
+    int line_end = FA_Search_Line("./lottery.md", "## Total");
+
+    int money_sum = FA_Line_Calculator("lottery.md", line_begin, line_end);
+
+    cout << "----------------------------------------" << endl;
+    cout << "line_" << line_end+2 << " // " << FA_Print_Line_Index("./lottery.md", line_end+2) << endl;
+    cout << "### Check_Sum ### " << money_sum << endl;
+    cout << "----------------------------------------" << endl;
+
+    return 0;
+}
+
+/**************************************************/
 //   检查FA_TVT
 /**************************************************/
 int FA_Sum_Check_TVT()
@@ -245,10 +299,12 @@ int FA_Sum_Update_TVT()
     return 0;
 }
 
+
+
 /**************************************************/
 //   .md文件全备份
 /**************************************************/
-int FAiX_BackUp(const char *bak_file_path)
+int FAitfX_BackUp(const char *bak_file_path)
 {
     FA_BackUp("FA_TVT.md", bak_file_path);
     FA_BackUp("life.M.md", bak_file_path);

@@ -122,7 +122,7 @@ int main(int argc, char **argv, char *env[])
 
             gettimeofday(&tst, NULL);   ////////////////////////////// TimePoint_START
 
-            FA_Print_Line(CMD_argv.at(1).c_str(), CMD_argv.at(2).c_str());
+            FA_Print_Line_Key(CMD_argv.at(1).c_str(), CMD_argv.at(2).c_str());
 
             gettimeofday(&ted, NULL);   ////////////////////////////// TimePoint_END
             showtcost(tst, ted);
@@ -485,6 +485,16 @@ int main(int argc, char **argv, char *env[])
             continue;
         }
 
+        /**************************************************/
+        //   检查NS
+        /**************************************************/
+        else if( (CMD_argv.begin()->compare(CMD_CHECK) == 0) &&  (CMD_argv.at(1).compare(CMD_DK) == 0) )
+        {
+            FAitfX_Check_DK();
+
+            continue;
+        }
+
         /* * * * * * * * * * * * * * * * * * * * * * */
         /* * * * * * * *   增加NS支出   * * * * * * * */
         /* * * * * * * * * * * * * * * * * * * * * * */
@@ -520,6 +530,16 @@ int main(int argc, char **argv, char *env[])
             cout << "----------------------------------------" << endl;
 
             cin.ignore();
+            continue;
+        }
+
+        /**************************************************/
+        //   检查NS
+        /**************************************************/
+        else if( (CMD_argv.begin()->compare(CMD_CHECK) == 0) &&  (CMD_argv.at(1).compare(CMD_NS) == 0) )
+        {
+            FAitfX_Check_NS();
+
             continue;
         }
 
@@ -598,6 +618,16 @@ int main(int argc, char **argv, char *env[])
             continue;
         }
 
+        /**************************************************/
+        //   检查lottery
+        /**************************************************/
+        else if( (CMD_argv.begin()->compare(CMD_CHECK) == 0) &&  (CMD_argv.at(1).compare(CMD_LOTTERY) == 0) )
+        {
+            FAitfX_Check_lottery();
+
+            continue;
+        }
+
         /* * * * * * * * * * * * * * * * * * * * * * */
         /* * * * * * * *   balance操作  * * * * * * * */
         /* * * * * * * * * * * * * * * * * * * * * * */
@@ -662,7 +692,7 @@ int main(int argc, char **argv, char *env[])
         {
             gettimeofday(&tst, NULL);
 
-            FAiX_BackUp("./FA_TVT.bak/");
+            FAitfX_BackUp("./FA_TVT.bak/");
 
             gettimeofday(&ted, NULL);
             showtcost(tst, ted);
@@ -676,6 +706,7 @@ int main(int argc, char **argv, char *env[])
         /* * * * * * * * * * * * * * * * * * * * * * */
         else if( CMD_argv.begin()->compare(CMD_TEST) == 0 )
         {
+
             continue;   
         }
 

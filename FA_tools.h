@@ -87,9 +87,9 @@ int FA_Search_Line(const char *file_name, const char *line_key)
 
 
 /**************************************************/
-//   打印.md文件某一行
+//   打印.md文件某一行 (按照关键字)
 /**************************************************/
-int FA_Print_Line(const char *file_name, const char *line_key)
+int FA_Print_Line_Key(const char *file_name, const char *line_key)
 {
     string strLine[MAX_LINE];
     int line_index = 1;               // 每一行的标志 从1开始计数 返回0可能有别的用途
@@ -145,6 +145,30 @@ int FA_Print_Line(const char *file_name, const char *line_key)
         cout << "----------------------------------------" << endl;
         return -2;
     }
+}
+
+
+/**************************************************/
+//   打印.md文件某一行 (按照行号)
+/**************************************************/
+string FA_Print_Line_Index(const char *file_name, const int line_id)
+{
+    string strLine[MAX_LINE];
+    int line_index = 1;               // 每一行的标志 从1开始计数 返回0可能有别的用途
+
+    if( ReadFile(file_name, strLine, line_index) == -1 )
+    {
+        string strError("Error");
+        return strError;
+    }
+
+    if( (line_id <= 0) || (line_id > line_index) )
+    {
+        string strError("Line ID Error");
+        return strError;
+    }
+
+    return strLine[line_id];
 }
 
 
