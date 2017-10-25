@@ -289,48 +289,6 @@ int FA_Print_Line_Area(const char *file_name, const char *line_key, const int li
 }
 
 
-int FA_Sum_Check_Month(const int line_tag)
-{
-    string strLine[MAX_LINE];    
-    int line_index = 1;
-
-    int money_in = 0;
-    int money_out = 0;
-    int money_rest = 0;    
-    
-    if( ReadFile("life.M.md", strLine, line_index) == -1 )
-    {
-        return -1;
-    }
-
-    for(int i = 1; i <= line_index; i++)
-    {
-        if(i == (line_tag+1))
-        {
-            cout << "----------------------------------------" << endl;              
-            cout << "line_" << i << " // " << strLine[i].c_str() << endl;            
-            money_in = sm_StrMoneyFind_Month(strLine[i]);
-            continue;
-        }
-        if(i == (line_tag+2))
-        {
-            cout << "line_" << i << " // " << strLine[i].c_str() << endl;            
-            money_out = sm_StrMoneyFind_Month(strLine[i]);
-            continue;
-        }
-        if(i == (line_tag+3))
-        {
-            cout << "line_" << i << " // " << strLine[i].c_str() << endl;            
-            money_in = sm_StrMoneyFind_Month(strLine[i]);
-            cout << "----------------------------------------" << endl;              
-            continue;
-        }
-    }
-    
-    return 0;
-}
-
-
 int FA_Sum_Update_Month(const int line_tag_life, const int line_tag_sz, const int money_sum)
 {
     string strLine_life[MAX_LINE];    
@@ -641,7 +599,6 @@ int FA_BackUp(const char *file_name, const char *bak_file_path)
     }
     
     string str;
-    //str += "./FA_TVT.bak/";
     str += bak_file_path;
     str += file_name;
 
@@ -650,17 +607,7 @@ int FA_BackUp(const char *file_name, const char *bak_file_path)
         return -2;
     }
     
-    if( strncmp(file_name, "FA_TVT.md", strlen("FA_TVT.md")) == 0 )
-    {
-        cout << "----------------------------------------" << endl;
-    }
-    
-    cout << ">>> " << file_name << "   BACKUPED" << endl;
-
-    if( strncmp(file_name, "lottery.md", strlen("lottery.md")) == 0 )
-    {
-        cout << "----------------------------------------" << endl;
-    }
+    cout << ">>> " << "BACK UP:  " << file_name << endl;
     
     return 0;
 }

@@ -64,143 +64,31 @@ int FA_Read_Conf(char *version, char *ex_month, char *cr_month, char *nx_month)
 }
 
 /**************************************************/
-//   检查DK
+//   检查 life.M 月度支出
 /**************************************************/
-int FAitfX_Check_DK()
+int FAitfX_Check_Month(const char *month_on, const char *month_under)
 {
-    int line_begin = FA_Search_Line("./DK.md", "# DK");
-    int line_end = FA_Search_Line("./DK.md", "## Total");
+    string str_month_on("## life.M");
+    str_month_on += month_on;
+    string str_month_under("## life.M");
+    str_month_under += month_under;
 
-    int money_sum = FA_Line_Calculator("DK.md", line_begin, line_end);
-
-    cout << "----------------------------------------" << endl;
-    cout << "line_" << line_end+2 << " // " << FA_Print_Line_Index("./DK.md", line_end+2) << endl;
-    cout << "### Check_Sum ### " << money_sum << endl;
-    cout << "----------------------------------------" << endl;
-
-    return 0;
-}
-
-/**************************************************/
-//   检查NS
-/**************************************************/
-int FAitfX_Check_NS()
-{
-    int line_begin = FA_Search_Line("./NS.md", "# NS");
-    int line_end = FA_Search_Line("./NS.md", "## Total");
-
-    int money_sum = FA_Line_Calculator("NS.md", line_begin, line_end);
-
-    cout << "----------------------------------------" << endl;
-    cout << "line_" << line_end+2 << " // " << FA_Print_Line_Index("./NS.md", line_end+2) << endl;
-    cout << "### Check_Sum ### " << money_sum << endl;
-    cout << "----------------------------------------" << endl;
-
-    return 0;
-}
-
-/**************************************************/
-//   检查lottery
-/**************************************************/
-int FAitfX_Check_lottery()
-{
-    int line_begin = FA_Search_Line("./lottery.md", "# lottery");
-    int line_end = FA_Search_Line("./lottery.md", "## Total");
-
-    int money_sum = FA_Line_Calculator("lottery.md", line_begin, line_end);
-
-    cout << "----------------------------------------" << endl;
-    cout << "line_" << line_end+2 << " // " << FA_Print_Line_Index("./lottery.md", line_end+2) << endl;
-    cout << "### Check_Sum ### " << money_sum << endl;
-    cout << "----------------------------------------" << endl;
-
-    return 0;
-}
-
-/**************************************************/
-//   检查FA_TVT
-/**************************************************/
-int FA_Sum_Check_TVT()
-{
-    string strLine[MAX_LINE];    
-    int line_index = 1;
-    int money_sum = 0;
+    int line_on = FA_Search_Line("./life.M.md", str_month_on.c_str());
+    int line_under = FA_Search_Line("./life.M.md", str_month_under.c_str());
     
-    if( ReadFile("FA_TVT.md", strLine, line_index) == -1 )
-    {
-        return -1;
-    }
+    int money_in_chk = sm_StrMoneyFind_Month(FA_Print_Line_Index("./life.M.md", line_on + 1));
+    int money_out_chk = FA_Line_Calculator("./life.M.md", line_on, line_under);
+    int money_rest_chk = money_in_chk + money_out_chk;
 
-    for(int i = 1; i <= line_index; i++)
-    {
-        if( regex_match(strLine[i], RE_ofi) )
-        {
-            money_sum += sm_StrMoneyFind_Top(strLine[i]);
-            continue;
-        }
-        else if( regex_match(strLine[i], RE_lottery) )
-        {
-            money_sum += sm_StrMoneyFind_Title(strLine[i+1]);
-            continue;
-        }
-        else if( regex_match(strLine[i], RE_dk) )
-        {
-            money_sum += sm_StrMoneyFind_Title(strLine[i+1]);
-            continue;
-        }
-        else if( regex_match(strLine[i], RE_ns) )
-        {
-            money_sum += sm_StrMoneyFind_Title(strLine[i+1]);
-            continue;
-        }
-        else if( regex_match(strLine[i], RE_month) )
-        {
-            money_sum += sm_StrMoneyFind_Month(strLine[i+3]);
-            continue;
-        }
-        else if( regex_match(strLine[i], RE_cfi) )
-        {
-            cout << "----------------------------------------" << endl;  
-            cout << "line_" << i << " // " << strLine[i].c_str() << endl;
-            cout << "Sum_Check_SZ: " << money_sum << endl;
-            cout << "----------------------------------------" << endl;
-            continue;
-        }
-        else if( regex_match(strLine[i], RE_de_one) )
-        {
-            money_sum += sm_StrMoneyFind_Line(strLine[i]);
-            continue;
-        }
-        else if( regex_match(strLine[i], RE_de_mobike) )
-        {
-            money_sum += sm_StrMoneyFind_Line(strLine[i]);
-            continue;
-        }
-        else if( regex_match(strLine[i], RE_de_ofo) )
-        {
-            money_sum += sm_StrMoneyFind_Line(strLine[i]);
-            continue;
-        }
-        else if( regex_match(strLine[i], RE_loan) )
-        {
-            money_sum += sm_StrMoneyFind_Line(strLine[i]);
-            continue;
-        }
-        else if( regex_match(strLine[i], RE_bank) )
-        {
-            cout << "line_" << i << " // " << strLine[i].c_str() << endl;
-            money_sum -= sm_StrMoneyFind_Top(strLine[i]);
-            continue;
-        }
-        else if( regex_match(strLine[i], RE_alirest) )
-        {
-            cout << "line_" << i << " // " << strLine[i].c_str() << endl;
-            cout << "Sum_Check_SZ: " << money_sum << endl;
-            cout << "----------------------------------------" << endl;
-            continue;
-        }
-    }
-    
+    cout << "----------------------------------------" << endl;
+    cout << "line_" << line_on + 1 << " // " << FA_Print_Line_Index("./life.M.md", line_on + 1) << endl;
+    cout << "line_" << line_on + 2 << " // " << FA_Print_Line_Index("./life.M.md", line_on + 2) << endl;
+    cout << "line_" << line_on + 3 << " // " << FA_Print_Line_Index("./life.M.md", line_on + 3) << endl;
+    cout << "### Check_Sum ### " << money_in_chk << endl;
+    cout << "### Check_Sum ### " << money_out_chk << endl;
+    cout << "### Check_Sum ### " << money_rest_chk << endl;
+    cout << "----------------------------------------" << endl;
+
     return 0;
 }
 
@@ -299,27 +187,166 @@ int FA_Sum_Update_TVT()
     return 0;
 }
 
+/**************************************************/
+//   检查FA_TVT
+/**************************************************/
+int FA_Sum_Check_TVT()
+{
+    string strLine[MAX_LINE];    
+    int line_index = 1;
+    int money_sum = 0;
+    
+    if( ReadFile("FA_TVT.md", strLine, line_index) == -1 )
+    {
+        return -1;
+    }
 
+    for(int i = 1; i <= line_index; i++)
+    {
+        if( regex_match(strLine[i], RE_ofi) )
+        {
+            money_sum += sm_StrMoneyFind_Top(strLine[i]);
+            continue;
+        }
+        else if( regex_match(strLine[i], RE_lottery) )
+        {
+            money_sum += sm_StrMoneyFind_Title(strLine[i+1]);
+            continue;
+        }
+        else if( regex_match(strLine[i], RE_dk) )
+        {
+            money_sum += sm_StrMoneyFind_Title(strLine[i+1]);
+            continue;
+        }
+        else if( regex_match(strLine[i], RE_ns) )
+        {
+            money_sum += sm_StrMoneyFind_Title(strLine[i+1]);
+            continue;
+        }
+        else if( regex_match(strLine[i], RE_month) )
+        {
+            money_sum += sm_StrMoneyFind_Month(strLine[i+3]);
+            continue;
+        }
+        else if( regex_match(strLine[i], RE_cfi) )
+        {
+            cout << "----------------------------------------" << endl;  
+            cout << "line_" << i << " // " << strLine[i].c_str() << endl;
+            cout << "Sum_Check_SZ: " << money_sum << endl;
+            cout << "----------------------------------------" << endl;
+            continue;
+        }
+        else if( regex_match(strLine[i], RE_de_one) )
+        {
+            money_sum += sm_StrMoneyFind_Line(strLine[i]);
+            continue;
+        }
+        else if( regex_match(strLine[i], RE_de_mobike) )
+        {
+            money_sum += sm_StrMoneyFind_Line(strLine[i]);
+            continue;
+        }
+        else if( regex_match(strLine[i], RE_de_ofo) )
+        {
+            money_sum += sm_StrMoneyFind_Line(strLine[i]);
+            continue;
+        }
+        else if( regex_match(strLine[i], RE_loan) )
+        {
+            money_sum += sm_StrMoneyFind_Line(strLine[i]);
+            continue;
+        }
+        else if( regex_match(strLine[i], RE_bank) )
+        {
+            cout << "line_" << i << " // " << strLine[i].c_str() << endl;
+            money_sum -= sm_StrMoneyFind_Top(strLine[i]);
+            continue;
+        }
+        else if( regex_match(strLine[i], RE_alirest) )
+        {
+            cout << "line_" << i << " // " << strLine[i].c_str() << endl;
+            cout << "Sum_Check_SZ: " << money_sum << endl;
+            cout << "----------------------------------------" << endl;
+            continue;
+        }
+    }
+    
+    return 0;
+}
+
+/**************************************************/
+//   检查DK
+/**************************************************/
+int FAitfX_Check_DK()
+{
+    int line_begin = FA_Search_Line("./DK.md", "# Digital Kingdom");
+    int line_end = FA_Search_Line("./DK.md", "## Total");
+
+    int money_sum = FA_Line_Calculator("./DK.md", line_begin, line_end);
+
+    cout << "----------------------------------------" << endl;
+    cout << "line_" << line_end+2 << " // " << FA_Print_Line_Index("./DK.md", line_end+2) << endl;
+    cout << "### Check_Sum ### " << money_sum << endl;
+    cout << "----------------------------------------" << endl;
+
+    return 0;
+}
+
+/**************************************************/
+//   检查NS
+/**************************************************/
+int FAitfX_Check_NS()
+{
+    int line_begin = FA_Search_Line("./NS.md", "# New Style");
+    int line_end = FA_Search_Line("./NS.md", "## Total");
+
+    int money_sum = FA_Line_Calculator("./NS.md", line_begin, line_end);
+
+    cout << "----------------------------------------" << endl;
+    cout << "line_" << line_end+2 << " // " << FA_Print_Line_Index("./NS.md", line_end+2) << endl;
+    cout << "### Check_Sum ### " << money_sum << endl;
+    cout << "----------------------------------------" << endl;
+
+    return 0;
+}
+
+/**************************************************/
+//   检查lottery
+/**************************************************/
+int FAitfX_Check_lottery()
+{
+    int line_begin = FA_Search_Line("./lottery.md", "# lottery");
+    int line_end = FA_Search_Line("./lottery.md", "## Total");
+
+    int money_sum = FA_Line_Calculator("./lottery.md", line_begin, line_end);
+
+    cout << "----------------------------------------" << endl;
+    cout << "line_" << line_end+2 << " // " << FA_Print_Line_Index("./lottery.md", line_end+2) << endl;
+    cout << "### Check_Sum ### " << money_sum << endl;
+    cout << "----------------------------------------" << endl;
+
+    return 0;
+}
 
 /**************************************************/
 //   .md文件全备份
 /**************************************************/
 int FAitfX_BackUp(const char *bak_file_path)
 {
-    FA_BackUp("FA_TVT.md", bak_file_path);
-    FA_BackUp("life.M.md", bak_file_path);
-    FA_BackUp("Books.M.md", bak_file_path);
-    FA_BackUp("KEEP.M.md", bak_file_path);
-    FA_BackUp("TB.M.md", bak_file_path);
-    FA_BackUp("sa.M.md", bak_file_path);
-    FA_BackUp("DK.md", bak_file_path);
-    FA_BackUp("NS.md", bak_file_path);
-    FA_BackUp("lottery.md", bak_file_path);
+    cout << "----------------------------------------" << endl;
+    FA_BackUp("./FA_TVT.md", bak_file_path);
+    FA_BackUp("./life.M.md", bak_file_path);
+    FA_BackUp("./Books.M.md", bak_file_path);
+    FA_BackUp("./KEEP.M.md", bak_file_path);
+    FA_BackUp("./TB.M.md", bak_file_path);
+    FA_BackUp("./sa.M.md", bak_file_path);
+    FA_BackUp("./DK.md", bak_file_path);
+    FA_BackUp("./NS.md", bak_file_path);
+    FA_BackUp("./lottery.md", bak_file_path);
+    cout << "----------------------------------------" << endl;
 
     return 0;
 }
-
-
 
 
 /*--------------------  CODE_END @ 番茄  --------------------*/

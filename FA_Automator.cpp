@@ -136,22 +136,11 @@ int main(int argc, char **argv, char *env[])
         /* * * * * * * * * * * * * * * * * * * * * * */
         else if( CMD_argv.begin()->compare(CMD_SC_MN) == 0 )
         {
-            gettimeofday(&tst, NULL);   ////////////////////////////// TimePoint_START
+            gettimeofday(&tst, NULL);
 
-            string cr_month_str("## life.M");
-            cr_month_str += cr_month;
-            string nx_month_str("## life.M");
-            nx_month_str += nx_month;
-
-            int line_this = FA_Search_Line("life.M.md", cr_month_str.c_str());
-            int line_next = FA_Search_Line("life.M.md", nx_month_str.c_str());
-
-            FA_Sum_Check_Month(line_this);
+            FAitfX_Check_Month(cr_month, nx_month);
             
-            cout << "CHECK " << char2int(cr_month) << "月支出: " << FA_Line_Calculator("life.M.md", line_this, line_next) << endl;       
-            cout << "----------------------------------------" << endl;
-            
-            gettimeofday(&ted, NULL);   ////////////////////////////// TimePoint_END
+            gettimeofday(&ted, NULL);
             showtcost(tst, ted);
             cout << "----------------------------------------" << endl;
 
@@ -706,7 +695,7 @@ int main(int argc, char **argv, char *env[])
         /* * * * * * * * * * * * * * * * * * * * * * */
         else if( CMD_argv.begin()->compare(CMD_TEST) == 0 )
         {
-
+            FAitfX_Check_Month("09", "10");
             continue;   
         }
 
