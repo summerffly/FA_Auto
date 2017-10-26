@@ -6,7 +6,7 @@
 #include "global.h"
 #include "advanced_CMD.h"
 #include "FBric_operator.h"
-#include "FA_tools.h"
+#include "FA_tool.h"
 #include "FA_itfX.h"
 
 using namespace std;
@@ -131,10 +131,30 @@ int main(int argc, char **argv, char *env[])
             continue;
         }
 
-        /* * * * * * * * * * * * * * * * * * * * * * */
-        /* * * * * * * *  检查月度支出   * * * * * * * */
-        /* * * * * * * * * * * * * * * * * * * * * * */
-        else if( CMD_argv.begin()->compare(CMD_SC_MN) == 0 )
+        /**************************************************/
+        //   更新 当月收支
+        /**************************************************/
+        else if((CMD_argv.begin()->compare(CMD_UPDATE) == 0)\
+                && (CMD_argv.at(1).compare(CMD_MONTH) == 0)\
+                && (CMD_argv.size() == 2))
+        {
+            gettimeofday(&tst, NULL);
+            
+            FAitfX_Update_Month(cr_month, nx_month);
+            
+            gettimeofday(&ted, NULL);
+            showtcost(tst, ted);
+            cout << "----------------------------------------" << endl;
+
+            continue;
+        }
+
+        /**************************************************/
+        //   检查 当月收支
+        /**************************************************/
+        else if((CMD_argv.begin()->compare(CMD_CHECK) == 0)\
+                && (CMD_argv.at(1).compare(CMD_MONTH) == 0)\
+                && (CMD_argv.size() == 2))
         {
             gettimeofday(&tst, NULL);
 
@@ -147,49 +167,16 @@ int main(int argc, char **argv, char *env[])
             continue;
         }
 
-        /* * * * * * * * * * * * * * * * * * * * * * */
-        /* * * * * * * *  更新月度支出   * * * * * * * */
-        /* * * * * * * * * * * * * * * * * * * * * * */
-        else if( CMD_argv.begin()->compare(CMD_SU_MN) == 0 )
-        {
-            gettimeofday(&tst, NULL);   ////////////////////////////// TimePoint_START
-
-            string cr_month_str("## life.M");
-            cr_month_str += cr_month;
-            string nx_month_str("## life.M");
-            nx_month_str += nx_month;
-
-            int line_this = FA_Search_Line("life.M.md", cr_month_str.c_str());
-            int line_next = FA_Search_Line("life.M.md", nx_month_str.c_str());
-            int line_sz = FA_Search_Line("FA_TVT.md", cr_month_str.c_str());
-            
-            int money_sum = FA_Line_Calculator("life.M.md", line_this, line_next);
-
-            FA_Sum_Update_Month(line_this, line_sz, money_sum);
-
-            gettimeofday(&ted, NULL);   ////////////////////////////// TimePoint_END
-            showtcost(tst, ted);
-            cout << "----------------------------------------" << endl;
-
-            continue;
-        }
-
-        /* * * * * * * * * * * * * * * * * * * * * * */
-        /* * * * * * *  更新上个月度收支  * * * * * * * */
-        /* * * * * * * * * * * * * * * * * * * * * * */
+        /**************************************************/
+        //   更新 上月收支
+        /**************************************************/
         else if( CMD_argv.begin()->compare(CMD_SU_EXMN) == 0 )
         {
-            gettimeofday(&tst, NULL);   ////////////////////////////// TimePoint_START
-
-            string ex_month_str("## life.M");
-            ex_month_str += ex_month;
-
-            int line_this = FA_Search_Line("life.M.md", ex_month_str.c_str());
-            int line_sz = FA_Search_Line("FA_TVT.md", ex_month_str.c_str());
+            gettimeofday(&tst, NULL);
             
-            FA_Sum_Update_ExMonth(line_this, line_sz);
-
-            gettimeofday(&ted, NULL);   ////////////////////////////// TimePoint_END
+            FAitfX_Update_Month(ex_month, cr_month);
+            
+            gettimeofday(&ted, NULL);
             showtcost(tst, ted);
             cout << "----------------------------------------" << endl;
 
@@ -475,9 +462,11 @@ int main(int argc, char **argv, char *env[])
         }
 
         /**************************************************/
-        //   检查NS
+        //   检查DK
         /**************************************************/
-        else if( (CMD_argv.begin()->compare(CMD_CHECK) == 0) &&  (CMD_argv.at(1).compare(CMD_DK) == 0) )
+        else if((CMD_argv.begin()->compare(CMD_CHECK) == 0)\
+                && (CMD_argv.at(1).compare(CMD_DK) == 0)\
+                && (CMD_argv.size() == 2))
         {
             FAitfX_Check_DK();
 
@@ -525,7 +514,9 @@ int main(int argc, char **argv, char *env[])
         /**************************************************/
         //   检查NS
         /**************************************************/
-        else if( (CMD_argv.begin()->compare(CMD_CHECK) == 0) &&  (CMD_argv.at(1).compare(CMD_NS) == 0) )
+        else if((CMD_argv.begin()->compare(CMD_CHECK) == 0)\
+                && (CMD_argv.at(1).compare(CMD_NS) == 0)\
+                && (CMD_argv.size() == 2))
         {
             FAitfX_Check_NS();
 
@@ -610,7 +601,9 @@ int main(int argc, char **argv, char *env[])
         /**************************************************/
         //   检查lottery
         /**************************************************/
-        else if( (CMD_argv.begin()->compare(CMD_CHECK) == 0) &&  (CMD_argv.at(1).compare(CMD_LOTTERY) == 0) )
+        else if((CMD_argv.begin()->compare(CMD_CHECK) == 0)\
+                && (CMD_argv.at(1).compare(CMD_LOTTERY) == 0)\
+                && (CMD_argv.size() == 2))
         {
             FAitfX_Check_lottery();
 
@@ -695,7 +688,8 @@ int main(int argc, char **argv, char *env[])
         /* * * * * * * * * * * * * * * * * * * * * * */
         else if( CMD_argv.begin()->compare(CMD_TEST) == 0 )
         {
-            FAitfX_Check_Month("09", "10");
+            //FAitfX_Check_Month("09", "10");
+            FAitfX_Update_Month(cr_month, nx_month);
             continue;   
         }
 

@@ -70,18 +70,22 @@ regex RE_end(pattern_end);
 
 /*-------------------- COMMAND Library --------------------*/
 
-const char *CMD_CHECK = "check";
+const char *CMD_PRINT = "print";
+const char *CMD_SEARCH = "search";
 
-const char *CMD_PRINT = "print";     // FA_Print_File
-const char *CMD_SEARCH = "search";     // FA_Print_Line
+const char *CMD_CHECK = "check";
+const char *CMD_UPDATE = "update";
+
+const char *CMD_MONTH = "month";
+const char *CMD_TVT = "tvt";
 
 const char *CMD_SC_MN = "check-month";
-const char *CMD_SC_TVT = "check-tvt";         // FA_Sum_Check_TVT
+const char *CMD_SC_TVT = "check-tvt";
 
-const char *CMD_SU_MN = "update-month";     // FA_Sum_Update_Month
-const char *CMD_SU_TVT = "update-tvt";        // FA_Sum_Update_TVT
+const char *CMD_SU_MN = "update-month";
+const char *CMD_SU_TVT = "update-tvt";
 
-const char *CMD_SU_EXMN = "update-ex-month";        // FA_Sum_Update_ExMonth
+const char *CMD_SU_EXMN = "update-ex-month";
 
 const char *CMD_LIFE = "life";
 

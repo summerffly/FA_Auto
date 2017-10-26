@@ -527,10 +527,9 @@ int sm_StrMoneyModify_Line(string &str, int money_new)
     return 0;
 }
 
-
-/* * * * * * * * * * * * * * * * * * 
-          string单行金额生成 
-* * * * * * * * * * * * * * * * * */
+/**************************************************/
+//   string单行金额生成 
+/**************************************************/
 string sm_StrGenerator_Line(const bool pnFlag, const unsigned int value, const char *line_char)
 {
     string str;

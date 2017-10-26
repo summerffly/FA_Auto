@@ -288,124 +288,31 @@ int FA_Print_Line_Area(const char *file_name, const char *line_key, const int li
     }
 }
 
-
-int FA_Sum_Update_Month(const int line_tag_life, const int line_tag_sz, const int money_sum)
+/**************************************************/
+//   同步 life.M 月度支出
+/**************************************************/
+int FA_Sync_Month(const int line_tag_life, const int line_tag_sz)
 {
-    string strLine_life[MAX_LINE];    
-    string strLine_sz[MAX_LINE];    
+    string strLine_life[MAX_LINE];
+    string strLine_sz[MAX_LINE];
     int line_index_life = 1;
     int line_index_sz = 1;
     
-    int money_in = 0;
-    int money_out = 0;
-    int money_rest = 0;    
-    
-    if( ReadFile("life.M.md", strLine_life, line_index_life) == -1 )
+    if( ReadFile("./life.M.md", strLine_life, line_index_life) == -1 )
     {
         return -1;
     }
 
-    if( ReadFile("FA_TVT.md", strLine_sz, line_index_sz) == -1 )
+    if( ReadFile("./FA_TVT.md", strLine_sz, line_index_sz) == -1 )
     {
         return -1;
     }
 
-    for(int i = 1; i <= line_index_life; i++)
-    {
-        if(i == (line_tag_life+1))
-        {
-            cout << "----------------------------------------" << endl;              
-            cout << "line_" << i << " // " << strLine_life[i].c_str() << endl;            
-            money_in = sm_StrMoneyFind_Month(strLine_life[i]);
-            strLine_sz[line_tag_sz+1] = strLine_life[i];
-            continue;
-        }
-        if(i == (line_tag_life+2))
-        {
-            cout << "line_" << i << " // " << strLine_life[i].c_str() << endl;            
-            sm_StrMoneyModify_Month(strLine_life[i], money_sum);
-            strLine_sz[line_tag_sz+2] = strLine_life[i];            
-            continue;
-        }
-        if(i == (line_tag_life+3))
-        {
-            cout << "line_" << i << " // " << strLine_life[i].c_str() << endl;            
-            sm_StrMoneyModify_Month(strLine_life[i], (money_in+money_sum));  
-            strLine_sz[line_tag_sz+3] = strLine_life[i];            
-            cout << "----------------------------------------" << endl;  
-            cout << ">>>            SUM UPDATED           <<<" << endl;
-            cout << "----------------------------------------" << endl;  
-            cout << "line_" << (i-2) << " // " << strLine_life[i-2].c_str() << endl;            
-            cout << "line_" << (i-1) << " // " << strLine_life[i-1].c_str() << endl;            
-            cout << "line_" << i << " // " << strLine_life[i].c_str() << endl;            
-            cout << "----------------------------------------" << endl;              
-            continue;
-        }
-    }
+    strLine_sz[line_tag_sz+1] = strLine_life[line_tag_life+1];
+    strLine_sz[line_tag_sz+2] = strLine_life[line_tag_life+2];
+    strLine_sz[line_tag_sz+3] = strLine_life[line_tag_life+3];
 
-    WirteFile("life.M.md", strLine_life, line_index_life);       
-    WirteFile("FA_TVT.md", strLine_sz, line_index_sz);       
-    
-    return 0;
-}
-
-
-int FA_Sum_Update_ExMonth(const int line_tag_life, const int line_tag_sz)
-{
-    string strLine_life[MAX_LINE];    
-    string strLine_sz[MAX_LINE];    
-    int line_index_life = 1;
-    int line_index_sz = 1;
-    
-    int money_in = 0;
-    int money_out = 0;
-    int money_rest = 0;    
-    
-    if( ReadFile("life.M.md", strLine_life, line_index_life) == -1 )
-    {
-        return -1;
-    }
-
-    if( ReadFile("FA_TVT.md", strLine_sz, line_index_sz) == -1 )
-    {
-        return -1;
-    }
-
-    for(int i = 1; i <= line_index_life; i++)
-    {
-        if(i == (line_tag_life+1))
-        {
-            cout << "----------------------------------------" << endl;              
-            cout << "line_" << i << " // " << strLine_life[i].c_str() << endl;            
-            money_in = sm_StrMoneyFind_Month(strLine_life[i]);
-            strLine_sz[line_tag_sz+1] = strLine_life[i];
-            continue;
-        }
-        if(i == (line_tag_life+2))
-        {
-            cout << "line_" << i << " // " << strLine_life[i].c_str() << endl;            
-            money_out = sm_StrMoneyFind_Month(strLine_life[i]);
-            strLine_sz[line_tag_sz+2] = strLine_life[i];
-            continue;
-        }
-        if(i == (line_tag_life+3))
-        {
-            cout << "line_" << i << " // " << strLine_life[i].c_str() << endl;            
-            sm_StrMoneyModify_Month(strLine_life[i], (money_in + money_out));  
-            strLine_sz[line_tag_sz+3] = strLine_life[i];            
-            cout << "----------------------------------------" << endl;  
-            cout << ">>>            SUM UPDATED           <<<" << endl;
-            cout << "----------------------------------------" << endl;  
-            cout << "line_" << (i-2) << " // " << strLine_life[i-2].c_str() << endl;            
-            cout << "line_" << (i-1) << " // " << strLine_life[i-1].c_str() << endl;            
-            cout << "line_" << i << " // " << strLine_life[i].c_str() << endl;            
-            cout << "----------------------------------------" << endl;              
-            continue;
-        }
-    }
-
-    WirteFile("life.M.md", strLine_life, line_index_life);       
-    WirteFile("FA_TVT.md", strLine_sz, line_index_sz);       
+    WirteFile("./FA_TVT.md", strLine_sz, line_index_sz);
     
     return 0;
 }
@@ -508,19 +415,17 @@ int FA_Sum_Modify(const char *file_name, const int line_id, const int money, int
         return -1;
     }
 
-    for(int i = 1; i <= line_index; i++)
+    if( 1 == mod_tag )
     {
-        if( i == line_id )
-        {
-            if( 1 == mod_tag )
-            {
-                sm_StrMoneyModify_Title(strLine[i], money);
-            }
-            else if( 2 == mod_tag )
-            {
-                sm_StrMoneyModify_Top(strLine[i], money);
-            }
-        }
+        sm_StrMoneyModify_Title(strLine[line_id], money);
+    }
+    else if( 2 == mod_tag )
+    {
+        sm_StrMoneyModify_Top(strLine[line_id], money);
+    }
+    else if( 3 == mod_tag )
+    {
+        sm_StrMoneyModify_Month(strLine[line_id], money);
     }
     
     if(WirteFile(file_name, strLine, line_index) == -1)
@@ -528,9 +433,9 @@ int FA_Sum_Modify(const char *file_name, const int line_id, const int money, int
         return -2;
     }
     
-    cout << "----------------------------------------" << endl;
-    cout << ">>>            SUM MODIFIED          <<<" << endl;
-    cout << "----------------------------------------" << endl;
+    //cout << "----------------------------------------" << endl;
+    //cout << ">>>            SUM MODIFIED          <<<" << endl;
+    //cout << "----------------------------------------" << endl;
     
     return 0;
 }

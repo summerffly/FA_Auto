@@ -1,5 +1,5 @@
 
-source = global.h advanced_CMD.h FBric_operator.h FA_tools.h FA_itfX.h FA_Automator.cpp
+source = global.h advanced_CMD.h FBric_operator.h FA_tool.h FA_itfX.h FA_Automator.cpp
 
 FA_Auto: $(source)
 	g++ -o FA_Auto FA_Automator.cpp

@@ -5,12 +5,12 @@
 
 #include "global.h"
 #include "FBric_operator.h"
-#include "FA_tools.h"
+#include "FA_tool.h"
 
 using namespace std;
 
 /**************************************************/
-//   读取conf文件
+//   读取 conf文件
 /**************************************************/
 int FA_Read_Conf(char *version, char *ex_month, char *cr_month, char *nx_month)
 {
@@ -64,7 +64,47 @@ int FA_Read_Conf(char *version, char *ex_month, char *cr_month, char *nx_month)
 }
 
 /**************************************************/
-//   检查 life.M 月度支出
+//   更新 life.M 月度收支
+/**************************************************/
+int FAitfX_Update_Month(const char *month_on, const char *month_under)
+{
+    string str_month_on("## life.M");
+    str_month_on += month_on;
+    string str_month_under("## life.M");
+    str_month_under += month_under;
+
+    int line_on = FA_Search_Line("./life.M.md", str_month_on.c_str());
+    int line_under = FA_Search_Line("./life.M.md", str_month_under.c_str());
+    int line_tvt = FA_Search_Line("./FA_TVT.md", str_month_on.c_str());
+    
+    int money_in_up = sm_StrMoneyFind_Month(FA_Print_Line_Index("./life.M.md", line_on + 1));
+    int money_out_up = FA_Line_Calculator("./life.M.md", line_on, line_under);
+    int money_rest_up = money_in_up + money_out_up;
+
+    cout << "----------------------------------------" << endl;
+    cout << "line_" << line_on + 1 << " // " << FA_Print_Line_Index("./life.M.md", line_on + 1) << endl;
+    cout << "line_" << line_on + 2 << " // " << FA_Print_Line_Index("./life.M.md", line_on + 2) << endl;
+    cout << "line_" << line_on + 3 << " // " << FA_Print_Line_Index("./life.M.md", line_on + 3) << endl;
+    cout << "### Check_Sum ### " << money_in_up << endl;
+    cout << "### Check_Sum ### " << money_out_up << endl;
+    cout << "### Check_Sum ### " << money_rest_up << endl;
+
+    FA_Sum_Modify("./life.M.md", line_on + 2, money_out_up, 3);
+    FA_Sum_Modify("./life.M.md", line_on + 3, money_rest_up, 3);
+
+    cout << "line_" << line_on + 1 << " // " << FA_Print_Line_Index("./life.M.md", line_on + 1) << endl;
+    cout << "line_" << line_on + 2 << " // " << FA_Print_Line_Index("./life.M.md", line_on + 2) << endl;
+    cout << "line_" << line_on + 3 << " // " << FA_Print_Line_Index("./life.M.md", line_on + 3) << endl;
+
+    FA_Sync_Month(line_on, line_tvt);
+
+    cout << "----------------------------------------" << endl;
+
+    return 0;
+}
+
+/**************************************************/
+//   检查 life.M 月度收支
 /**************************************************/
 int FAitfX_Check_Month(const char *month_on, const char *month_under)
 {
@@ -93,7 +133,7 @@ int FAitfX_Check_Month(const char *month_on, const char *month_under)
 }
 
 /**************************************************/
-//   更新FA_TVT
+//   更新 FA_TVT
 /**************************************************/
 int FA_Sum_Update_TVT()
 {
@@ -188,7 +228,7 @@ int FA_Sum_Update_TVT()
 }
 
 /**************************************************/
-//   检查FA_TVT
+//   检查 FA_TVT
 /**************************************************/
 int FA_Sum_Check_TVT()
 {
@@ -275,7 +315,7 @@ int FA_Sum_Check_TVT()
 }
 
 /**************************************************/
-//   检查DK
+//   检查 DK
 /**************************************************/
 int FAitfX_Check_DK()
 {
@@ -293,7 +333,7 @@ int FAitfX_Check_DK()
 }
 
 /**************************************************/
-//   检查NS
+//   检查 NS
 /**************************************************/
 int FAitfX_Check_NS()
 {
@@ -311,7 +351,7 @@ int FAitfX_Check_NS()
 }
 
 /**************************************************/
-//   检查lottery
+//   检查 lottery
 /**************************************************/
 int FAitfX_Check_lottery()
 {
@@ -329,7 +369,7 @@ int FAitfX_Check_lottery()
 }
 
 /**************************************************/
-//   .md文件全备份
+//   .md文件 全备份
 /**************************************************/
 int FAitfX_BackUp(const char *bak_file_path)
 {
