@@ -18,14 +18,15 @@ using namespace std;
 /*--------------------  int & char处理函数 @ 番茄  --------------------*/
 /*-------------------------------------------------------------------*/
 
-/* * * * * *  char check  * * * * * */
+/**************************************************/
+//   检查 char型 数字格式
+/**************************************************/
 int char0check(const char *num_char)
 {
     string pattern_NumCheck = "^(\\+|-?)(\\d+)$";
     regex RE_NumCheck(pattern_NumCheck);
 
-    string str_NumCheck;
-    str_NumCheck += num_char;
+    string str_NumCheck = string(num_char);
 
     if( !regex_match(str_NumCheck, RE_NumCheck) )
     {

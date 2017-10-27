@@ -315,18 +315,47 @@ int FA_Sum_Check_TVT()
 }
 
 /**************************************************/
-//   更新 DK
+//   增加 DK支出
 /**************************************************/
-int FAitfX_Update_DK(const int value, const char *content)
+int FAitfX_Modify_DK(const int value, const char *content)
 {
     int line_begin = FA_Search_Line("./DK.md", "# Digital Kingdom");
     int line_end = FA_Search_Line("./DK.md", "## Total");
+    int line_tag = FA_Search_Line("./FA_TVT.md", "## DK");
 
-    int money_sum = FA_Line_Calculator("./DK.md", line_begin, line_end);
+    FA_Line_Add("./DK.md", line_end-1, false, value, content);
+    int value_sum = FA_Line_Calculator("./DK.md", line_begin, line_end+1);
+
+    FA_Sum_Modify("DK.md", (line_end+3), value_sum, 2);
+    FA_Sum_Modify("FA_TVT.md", (line_tag+1), value_sum, 1);
+
+    cout << "----------------------------------------" << endl;
+    cout << "line_" << line_end+3 << " // " << FA_Print_Line_Index("./DK.md", line_end+3) << endl;
+    cout << "----------------------------------------" << endl;
+
+    return 0;
+}
+
+/**************************************************/
+//   更新 DK支出
+/**************************************************/
+int FAitfX_Update_DK()
+{
+    int line_begin = FA_Search_Line("./DK.md", "# Digital Kingdom");
+    int line_end = FA_Search_Line("./DK.md", "## Total");
+    int line_tag = FA_Search_Line("./FA_TVT.md", "## DK");
+
+    int value_sum = FA_Line_Calculator("./DK.md", line_begin, line_end);
 
     cout << "----------------------------------------" << endl;
     cout << "line_" << line_end+2 << " // " << FA_Print_Line_Index("./DK.md", line_end+2) << endl;
-    cout << "### Check_Sum ### " << money_sum << endl;
+    cout << "### Check_Sum ### " << value_sum << endl;
+
+    FA_Sum_Modify("DK.md", (line_end+2), value_sum, 2);
+    FA_Sum_Modify("FA_TVT.md", (line_tag+1), value_sum, 1);
+
+    cout << "line_" << line_end+2 << " // " << FA_Print_Line_Index("./DK.md", line_end+2) << endl;
+
     cout << "----------------------------------------" << endl;
 
     return 0;

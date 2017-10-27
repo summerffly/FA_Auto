@@ -35,7 +35,7 @@ int main(int argc, char **argv, char *env[])
     cout << "----------------------------------------" << endl;
     cout << "----------------------------------------" << endl;
     cout << "| |         Version: " << version << "_LTU" << "         | |" << endl;
-    cout << "| |       Previous Month: " << ex_month << "         | |" << endl;    
+    cout << "| |       Previous Month: " << ex_month << "         | |" << endl;
     cout << "| |        Current Month: " << cr_month << "         | |" << endl;
     cout << "| |          Next Month: " << nx_month << "          | |" << endl;
     cout << "----------------------------------------" << endl;
@@ -81,50 +81,36 @@ int main(int argc, char **argv, char *env[])
             break;
         }
 
-        /* * * * * * * * * * * * * * * * * * * * * * */
-        /* * * * * * * *   显示md文件   * * * * * * * */
-        /* * * * * * * * * * * * * * * * * * * * * * */
-        if( CMD_argv.begin()->compare(CMD_PRINT) == 0 )
+        /**************************************************/
+        //   显示 .md文件
+        /**************************************************/
+        if((CMD_argv.begin()->compare(CMD_PRINT) == 0)\
+            && (CMD_argv.size() == 2))
         {
-            if(CMD_argv.size() != 2)
-            {
-                cout << "CMD is incomplete !" << endl;
-                cout << "----------------------------------------" << endl;
-
-                continue;
-            }
-
-            gettimeofday(&tst, NULL);   ////////////////////////////// TimePoint_START
+            gettimeofday(&tst, NULL);
 
             cout << "----------------------------------------" << endl;
             FA_Print_File(CMD_argv.at(CMD_argc-1).c_str());
             cout << "----------------------------------------" << endl;  
             
-            gettimeofday(&ted, NULL);   ////////////////////////////// TimePoint_END
+            gettimeofday(&ted, NULL);
             showtcost(tst, ted);
             cout << "----------------------------------------" << endl;
 
             continue;
         }
 
-        /* * * * * * * * * * * * * * * * * * * * * * */
-        /* * * * * * * *    搜索单行    * * * * * * * */
-        /* * * * * * * * * * * * * * * * * * * * * * */
-        else if( CMD_argv.begin()->compare(CMD_SEARCH) == 0 )
+        /**************************************************/
+        //   搜索 .md文件 单行
+        /**************************************************/
+        else if((CMD_argv.begin()->compare(CMD_SEARCH) == 0)\
+                && (CMD_argv.size() == 3))
         {
-            if(CMD_argv.size() != 3)
-            {
-                cout << "CMD is incomplete !" << endl;
-                cout << "----------------------------------------" << endl;
-
-                continue;
-            }
-
-            gettimeofday(&tst, NULL);   ////////////////////////////// TimePoint_START
+            gettimeofday(&tst, NULL);
 
             FA_Print_Line_Key(CMD_argv.at(1).c_str(), CMD_argv.at(2).c_str());
 
-            gettimeofday(&ted, NULL);   ////////////////////////////// TimePoint_END
+            gettimeofday(&ted, NULL);
             showtcost(tst, ted);
             cout << "----------------------------------------" << endl;
 
@@ -170,11 +156,52 @@ int main(int argc, char **argv, char *env[])
         /**************************************************/
         //   更新 上月收支
         /**************************************************/
-        else if( CMD_argv.begin()->compare(CMD_SU_EXMN) == 0 )
+        else if((CMD_argv.begin()->compare(CMD_UPDATE) == 0)\
+                && (CMD_argv.at(1).compare(CMD_MONTH) == 0)\
+                && (CMD_argv.at(2).compare(CMD_EX) == 0)\
+                && (CMD_argv.size() == 3))
+        {
+            gettimeofday(&tst, NULL);
+    
+            FAitfX_Update_Month(ex_month, cr_month);
+    
+            gettimeofday(&ted, NULL);
+            showtcost(tst, ted);
+            cout << "----------------------------------------" << endl;
+
+            continue;
+        }
+
+        /**************************************************/
+        //   检查 上月收支
+        /**************************************************/
+        else if((CMD_argv.begin()->compare(CMD_CHECK) == 0)\
+                && (CMD_argv.at(1).compare(CMD_MONTH) == 0)\
+                && (CMD_argv.at(2).compare(CMD_EX) == 0)\
+                && (CMD_argv.size() == 3))
         {
             gettimeofday(&tst, NULL);
             
-            FAitfX_Update_Month(ex_month, cr_month);
+            FAitfX_Check_Month(ex_month, cr_month);
+            
+            gettimeofday(&ted, NULL);
+            showtcost(tst, ted);
+            cout << "----------------------------------------" << endl;
+
+            continue;
+        }
+
+        /**************************************************/
+        //   更新 上月收支
+        /**************************************************/
+        else if((CMD_argv.begin()->compare(CMD_CHECK) == 0)\
+                && (CMD_argv.at(1).compare(CMD_MONTH) == 0)\
+                && (CMD_argv.at(2).compare(CMD_EX) == 0)\
+                && (CMD_argv.size() == 3))
+        {
+            gettimeofday(&tst, NULL);
+            
+            FAitfX_Check_Month(ex_month, cr_month);
             
             gettimeofday(&ted, NULL);
             showtcost(tst, ted);
@@ -440,7 +467,7 @@ int main(int argc, char **argv, char *env[])
             cout << "DK >>> ";
             cin >> content;
 
-            gettimeofday(&tst, NULL);   ////////////////////////////// TimePoint_START
+            gettimeofday(&tst, NULL);
 
             int line_this = FA_Search_Line("DK.md", "# Digital Kingdom");
             int line_next = FA_Search_Line("DK.md", "## Total");
@@ -453,7 +480,7 @@ int main(int argc, char **argv, char *env[])
             FA_Sum_Modify("DK.md", (line_next+3), money_sum, 2);
             FA_Sum_Modify("FA_TVT.md", (line_tag+1), money_sum, 1);
 
-            gettimeofday(&ted, NULL);   ////////////////////////////// TimePoint_END
+            gettimeofday(&ted, NULL);
             showtcost(tst, ted);
             cout << "----------------------------------------" << endl;
 
@@ -468,7 +495,13 @@ int main(int argc, char **argv, char *env[])
                 && (CMD_argv.at(1).compare(CMD_DK) == 0)\
                 && (CMD_argv.size() == 2))
         {
+            gettimeofday(&tst, NULL);
+            
             FAitfX_Check_DK();
+            
+            gettimeofday(&ted, NULL);
+            showtcost(tst, ted);
+            cout << "----------------------------------------" << endl;
 
             continue;
         }
@@ -518,7 +551,13 @@ int main(int argc, char **argv, char *env[])
                 && (CMD_argv.at(1).compare(CMD_NS) == 0)\
                 && (CMD_argv.size() == 2))
         {
+            gettimeofday(&tst, NULL);
+            
             FAitfX_Check_NS();
+            
+            gettimeofday(&ted, NULL);
+            showtcost(tst, ted);
+            cout << "----------------------------------------" << endl;
 
             continue;
         }
@@ -605,7 +644,13 @@ int main(int argc, char **argv, char *env[])
                 && (CMD_argv.at(1).compare(CMD_LOTTERY) == 0)\
                 && (CMD_argv.size() == 2))
         {
+            gettimeofday(&tst, NULL);
+            
             FAitfX_Check_lottery();
+            
+            gettimeofday(&ted, NULL);
+            showtcost(tst, ted);
+            cout << "----------------------------------------" << endl;
 
             continue;
         }
@@ -623,14 +668,14 @@ int main(int argc, char **argv, char *env[])
             if(char0check(money) != 0)
                 continue;
 
-            gettimeofday(&tst, NULL);   ////////////////////////////// TimePoint_START
+            gettimeofday(&tst, NULL);
 
             int line_bank = FA_Search_Line("FA_TVT.md", "广发银行");
             int line_alirest = FA_Search_Line("FA_TVT.md", "余额宝");
 
             FA_Balance("FA_TVT.md", line_bank, line_alirest, char2int(money), true);
 
-            gettimeofday(&ted, NULL);   ////////////////////////////// TimePoint_END
+            gettimeofday(&ted, NULL);
             showtcost(tst, ted);
             cout << "----------------------------------------" << endl;
 
@@ -688,9 +733,9 @@ int main(int argc, char **argv, char *env[])
         /* * * * * * * * * * * * * * * * * * * * * * */
         else if( CMD_argv.begin()->compare(CMD_TEST) == 0 )
         {
-            //FAitfX_Check_Month("09", "10");
-            FAitfX_Update_Month(cr_month, nx_month);
-            continue;   
+            FAitfX_Update_DK();
+
+            continue;  
         }
 
         else
