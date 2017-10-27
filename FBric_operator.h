@@ -21,32 +21,20 @@ using namespace std;
 /* * * * * *  char check  * * * * * */
 int char0check(const char *num_char)
 {
-    if( (num_char[0] != '+') && (num_char[0] != '-') && ((num_char[0] < '0') || ('9' < num_char[0])) )
+    string pattern_NumCheck = "^(\\+|-?)(\\d+)$";
+    regex RE_NumCheck(pattern_NumCheck);
+
+    string str_NumCheck;
+    str_NumCheck += num_char;
+
+    if( !regex_match(str_NumCheck, RE_NumCheck) )
     {
         cout << "----------------------------------------" << endl;
-        cout << ">>>         1st Format Error         <<<" << endl;
+        cout << ">>>        Number Format Error       <<<" << endl;
         cout << "----------------------------------------" << endl;
         return -1;
     }
-    
-    for(int i=1; ; i++)
-    {
-        if(num_char[i] == '\0')
-            break;
-        
-        if( ('0' <= num_char[i])&(num_char[i] <= '9') )
-        {
-            continue;
-        }
-        else
-        {
-            cout << "----------------------------------------" << endl;
-            cout << ">>>         2nd Format Error         <<<" << endl;
-            cout << "----------------------------------------" << endl;
-            return -2;
-        }
-    }
-    
+
     return 0;
 }
 

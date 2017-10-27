@@ -59,7 +59,7 @@ int FA_Read_Conf(char *version, char *ex_month, char *cr_month, char *nx_month)
     }
     
     ifile.close();
-        
+    
     return 0;
 }
 
@@ -133,7 +133,7 @@ int FAitfX_Check_Month(const char *month_on, const char *month_under)
 }
 
 /**************************************************/
-//   更新 FA_TVT
+//   更新 FA_TVT (需要调整)
 /**************************************************/
 int FA_Sum_Update_TVT()
 {
@@ -228,7 +228,7 @@ int FA_Sum_Update_TVT()
 }
 
 /**************************************************/
-//   检查 FA_TVT
+//   检查 FA_TVT (需要调整)
 /**************************************************/
 int FA_Sum_Check_TVT()
 {
@@ -311,6 +311,24 @@ int FA_Sum_Check_TVT()
         }
     }
     
+    return 0;
+}
+
+/**************************************************/
+//   更新 DK
+/**************************************************/
+int FAitfX_Update_DK(const int value, const char *content)
+{
+    int line_begin = FA_Search_Line("./DK.md", "# Digital Kingdom");
+    int line_end = FA_Search_Line("./DK.md", "## Total");
+
+    int money_sum = FA_Line_Calculator("./DK.md", line_begin, line_end);
+
+    cout << "----------------------------------------" << endl;
+    cout << "line_" << line_end+2 << " // " << FA_Print_Line_Index("./DK.md", line_end+2) << endl;
+    cout << "### Check_Sum ### " << money_sum << endl;
+    cout << "----------------------------------------" << endl;
+
     return 0;
 }
 

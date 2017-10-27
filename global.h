@@ -79,6 +79,8 @@ const char *CMD_UPDATE = "update";
 const char *CMD_MONTH = "month";
 const char *CMD_TVT = "tvt";
 
+const char *CMD_EX = "ex";
+
 const char *CMD_SC_MN = "check-month";
 const char *CMD_SC_TVT = "check-tvt";
 

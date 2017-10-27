@@ -30,7 +30,6 @@ int FA_Print_File(const char *file_name)
     return 0;
 }
 
-
 /**************************************************/
 //   搜索.md文件某一行
 /**************************************************/
@@ -84,7 +83,6 @@ int FA_Search_Line(const char *file_name, const char *line_key)
         return -2;
     }
 }
-
 
 /**************************************************/
 //   打印.md文件某一行 (按照关键字)
@@ -442,7 +440,7 @@ int FA_Sum_Modify(const char *file_name, const int line_id, const int money, int
 
 int FA_Balance(const char *file_name, const int line_a, const int line_b, const int money_mod, const bool bFlag)
 {
-    string strLine[MAX_LINE];    
+    string strLine[MAX_LINE];
     int line_index = 1;
     
     if( ReadFile(file_name, strLine, line_index) == -1 )
