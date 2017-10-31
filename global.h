@@ -81,10 +81,7 @@ const char *CMD_TVT = "tvt";
 
 const char *CMD_EX = "ex";
 
-const char *CMD_SC_MN = "check-month";
 const char *CMD_SC_TVT = "check-tvt";
-
-const char *CMD_SU_MN = "update-month";
 const char *CMD_SU_TVT = "update-tvt";
 
 const char *CMD_SU_EXMN = "update-ex-month";

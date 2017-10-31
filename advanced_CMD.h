@@ -40,17 +40,17 @@ int CMD_Line_Parser(char *CMD_ad_buffer, int &CMD_argc, vector<string> &CMD_argv
 }
 
 
-double showtcost(struct timeval tst, struct timeval ted)
+double showtcost(struct timeval tv_begin, struct timeval tv_end)
 {
-    long tcost_us;
-    double tcost_ms;
+    long tv_pass_us;
+    double tv_pass_ms;
 
-    tcost_us = (ted.tv_sec-tst.tv_sec) * 1000000 + ted.tv_usec-tst.tv_usec;
-    tcost_ms = (double)tcost_us/1000;
+    tv_pass_us = (tv_end.tv_sec-tv_begin.tv_sec) * 1000000 + tv_end.tv_usec-tv_begin.tv_usec;
+    tv_pass_ms = (double)tv_pass_us/1000;
 
-    cout << "STEP TIME COST: " << tcost_ms << " ms" << endl;
+    cout << "STEP TIME COST: " << tv_pass_ms << " ms" << endl;
 
-    return tcost_ms;
+    return tv_pass_ms;
 }
 
 

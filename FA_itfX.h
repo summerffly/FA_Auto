@@ -315,46 +315,47 @@ int FA_Sum_Check_TVT()
 }
 
 /**************************************************/
-//   增加 DK支出
+//   增加 分项.md 支出
 /**************************************************/
-int FAitfX_Modify_DK(const int value, const char *content)
+int FAitfX_Modify_Title(const char *file_name, const char *file_title, const char *tvt_title,\
+                        const int value, const char *content)
 {
-    int line_begin = FA_Search_Line("./DK.md", "# Digital Kingdom");
-    int line_end = FA_Search_Line("./DK.md", "## Total");
-    int line_tag = FA_Search_Line("./FA_TVT.md", "## DK");
+    int line_begin = FA_Search_Line(file_name, file_title);
+    int line_end = FA_Search_Line(file_name, "## Total");
+    int line_tag = FA_Search_Line("./FA_TVT.md", tvt_title);
 
-    FA_Line_Add("./DK.md", line_end-1, false, value, content);
-    int value_sum = FA_Line_Calculator("./DK.md", line_begin, line_end+1);
+    FA_Line_Add(file_name, line_end-1, false, value, content);
+    int value_sum = FA_Line_Calculator(file_name, line_begin, line_end+1);
 
-    FA_Sum_Modify("DK.md", (line_end+3), value_sum, 2);
-    FA_Sum_Modify("FA_TVT.md", (line_tag+1), value_sum, 1);
+    FA_Sum_Modify(file_name, (line_end+3), value_sum, 2);   // line_next需要+3，因为加了新的一行
+    FA_Sum_Modify("./FA_TVT.md", (line_tag+1), value_sum, 1);
 
     cout << "----------------------------------------" << endl;
-    cout << "line_" << line_end+3 << " // " << FA_Print_Line_Index("./DK.md", line_end+3) << endl;
+    cout << "line_" << line_end+3 << " // " << FA_Print_Line_Index(file_name, line_end+3) << endl;
     cout << "----------------------------------------" << endl;
 
     return 0;
 }
 
 /**************************************************/
-//   更新 DK支出
+//   更新 分项.md 支出
 /**************************************************/
-int FAitfX_Update_DK()
+int FAitfX_Update_Title(const char *file_name, const char *file_title, const char *tvt_title)
 {
-    int line_begin = FA_Search_Line("./DK.md", "# Digital Kingdom");
-    int line_end = FA_Search_Line("./DK.md", "## Total");
-    int line_tag = FA_Search_Line("./FA_TVT.md", "## DK");
+    int line_begin = FA_Search_Line(file_name, file_title);
+    int line_end = FA_Search_Line(file_name, "## Total");
+    int line_tag = FA_Search_Line("./FA_TVT.md", tvt_title);
 
-    int value_sum = FA_Line_Calculator("./DK.md", line_begin, line_end);
+    int value_sum = FA_Line_Calculator(file_name, line_begin, line_end);
 
     cout << "----------------------------------------" << endl;
-    cout << "line_" << line_end+2 << " // " << FA_Print_Line_Index("./DK.md", line_end+2) << endl;
+    cout << "line_" << line_end+2 << " // " << FA_Print_Line_Index(file_name, line_end+2) << endl;
     cout << "### Check_Sum ### " << value_sum << endl;
 
-    FA_Sum_Modify("DK.md", (line_end+2), value_sum, 2);
-    FA_Sum_Modify("FA_TVT.md", (line_tag+1), value_sum, 1);
+    FA_Sum_Modify(file_name, (line_end+2), value_sum, 2);
+    FA_Sum_Modify("./FA_TVT.md", (line_tag+1), value_sum, 1);
 
-    cout << "line_" << line_end+2 << " // " << FA_Print_Line_Index("./DK.md", line_end+2) << endl;
+    cout << "line_" << line_end+2 << " // " << FA_Print_Line_Index(file_name, line_end+2) << endl;
 
     cout << "----------------------------------------" << endl;
 
@@ -362,53 +363,17 @@ int FAitfX_Update_DK()
 }
 
 /**************************************************/
-//   检查 DK
+//   检查 分项.md 支出
 /**************************************************/
-int FAitfX_Check_DK()
+int FAitfX_Check_Title(const char *file_name, const char *file_title, const char *tvt_title)
 {
-    int line_begin = FA_Search_Line("./DK.md", "# Digital Kingdom");
-    int line_end = FA_Search_Line("./DK.md", "## Total");
+    int line_begin = FA_Search_Line(file_name, file_title);
+    int line_end = FA_Search_Line(file_name, "## Total");
 
-    int money_sum = FA_Line_Calculator("./DK.md", line_begin, line_end);
-
-    cout << "----------------------------------------" << endl;
-    cout << "line_" << line_end+2 << " // " << FA_Print_Line_Index("./DK.md", line_end+2) << endl;
-    cout << "### Check_Sum ### " << money_sum << endl;
-    cout << "----------------------------------------" << endl;
-
-    return 0;
-}
-
-/**************************************************/
-//   检查 NS
-/**************************************************/
-int FAitfX_Check_NS()
-{
-    int line_begin = FA_Search_Line("./NS.md", "# New Style");
-    int line_end = FA_Search_Line("./NS.md", "## Total");
-
-    int money_sum = FA_Line_Calculator("./NS.md", line_begin, line_end);
+    int money_sum = FA_Line_Calculator(file_name, line_begin, line_end);
 
     cout << "----------------------------------------" << endl;
-    cout << "line_" << line_end+2 << " // " << FA_Print_Line_Index("./NS.md", line_end+2) << endl;
-    cout << "### Check_Sum ### " << money_sum << endl;
-    cout << "----------------------------------------" << endl;
-
-    return 0;
-}
-
-/**************************************************/
-//   检查 lottery
-/**************************************************/
-int FAitfX_Check_lottery()
-{
-    int line_begin = FA_Search_Line("./lottery.md", "# lottery");
-    int line_end = FA_Search_Line("./lottery.md", "## Total");
-
-    int money_sum = FA_Line_Calculator("./lottery.md", line_begin, line_end);
-
-    cout << "----------------------------------------" << endl;
-    cout << "line_" << line_end+2 << " // " << FA_Print_Line_Index("./lottery.md", line_end+2) << endl;
+    cout << "line_" << line_end+2 << " // " << FA_Print_Line_Index(file_name, line_end+2) << endl;
     cout << "### Check_Sum ### " << money_sum << endl;
     cout << "----------------------------------------" << endl;
 
