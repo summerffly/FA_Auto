@@ -64,6 +64,31 @@ int FA_Read_Conf(char *version, char *ex_month, char *cr_month, char *nx_month)
 }
 
 /**************************************************/
+//   修改 life.M 月度支出
+/**************************************************/
+int FAitfX_Modify_Month(const char *month_on, const char *month_under,\
+                        const unsigned int value, const char *line_key)
+{
+    string str_month_on("## life.M");
+    str_month_on += month_on;
+    string str_month_under("## life.M");
+    str_month_under += month_under;
+
+    int line_on = FA_Search_Line("./life.M.md", str_month_on.c_str());
+    int line_under = FA_Search_Line("./life.M.md", str_month_under.c_str());
+
+    int line_tag = FA_Print_Line_Area("./life.M.md", line_key, line_on, line_under);
+    if(line_tag < 0)
+    {
+        return -1;
+    }
+
+    FA_Line_Modify("./life.M.md", line_tag, value);
+
+    return 0;
+}
+
+/**************************************************/
 //   更新 life.M 月度收支
 /**************************************************/
 int FAitfX_Update_Month(const char *month_on, const char *month_under)
@@ -131,6 +156,53 @@ int FAitfX_Check_Month(const char *month_on, const char *month_under)
 
     return 0;
 }
+
+#if 0
+/**************************************************/
+//   增加 子项.md 支出
+/**************************************************/
+int FAitfX_Modify_SubMonth(const char *file_name, const char *file_title, const char *tvt_title,\
+                           const char *month_on, const char *month_under,\
+                           const unsigned int value, const char *content)
+{
+    string str_month_on("## life.M");
+    str_month_on += month_on;
+    string str_month_under("## life.M");
+    str_month_under += month_under;
+
+    int line_on = FA_Search_Line("./life.M.md", str_month_on.c_str());
+    int line_under = FA_Search_Line("./life.M.md", str_month_under.c_str());
+    int line_tvt = FA_Search_Line("./FA_TVT.md", str_month_on.c_str());
+
+    int line_this = FA_Search_Line("life.M.md", cr_month_str.c_str());
+    int line_next = FA_Search_Line("life.M.md", nx_month_str.c_str());
+
+    char line_key[32];
+    char mod_money[8];
+    int line_tag = 0;
+
+    cout << "Line-Key >>> ";
+    cin >> line_key;
+
+    line_tag = FA_Print_Line_Area("life.M.md", line_key, line_this, line_next);
+    if(line_tag < 0)
+        continue;
+
+    cout << "Mod-Money >>> ";
+    cin >> mod_money;
+
+    if(char0check(mod_money) != 0)
+    {
+        continue;
+    }
+
+    FA_Line_Modify("life.M.md", line_tag, char2int(mod_money));
+
+    return 0;
+}
+#endif
+
+
 
 /**************************************************/
 //   更新 FA_TVT (需要调整)

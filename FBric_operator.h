@@ -14,9 +14,6 @@
 
 using namespace std;
 
-/*-------------------------------------------------------------------*/
-/*--------------------  int & char处理函数 @ 番茄  --------------------*/
-/*-------------------------------------------------------------------*/
 
 /**************************************************/
 //   检查 char型 数字格式
@@ -39,67 +36,47 @@ int char0check(const char *num_char)
     return 0;
 }
 
-
-/* * * * * *  char to int  * * * * * */
+/**************************************************/
+//   char型 转换 int型
+/**************************************************/
 int char2int(const char *num_char)
 {
-    int num_flag = 0;
-    int num_int = 0;
-    
-    if(num_char[0] == '+')
+    return atoi(num_char);
+}
+
+/**************************************************/
+//   int型 转换 char型
+/**************************************************/
+char *int2char(const int num_int)
+{
+    char *num_char = new char[8];     // tips 番茄@20170813 - 支持到十万级
+    if(num_int > 0)
     {
-        num_flag = 1;
-        
-        for(int i=1; ; i++)
-        {
-            if(num_char[i] == '\0')
-                break;
-            
-            num_int = (num_char[i] - 48) + num_int*10;
-        }
+        sprintf(num_char, "+%d", num_int);
     }
-    else if(num_char[0] == '-')
+    else if(num_int < 0)
     {
-        num_flag = -1;
-        
-        for(int i=1; ; i++)
-        {
-            if(num_char[i] == '\0')
-                break;
-            
-            num_int = (num_char[i] - 48) + num_int*10;
-        }
-    }
-    else if(('0' <= num_char[0])&(num_char[0] <= '9'))
-    {
-        num_flag = 1;
-        
-        for(int i=0; ; i++)
-        {
-            if(num_char[i] == '\0')
-                break;
-            
-            num_int = (num_char[i] - 48) + num_int*10;
-        }
+        sprintf(num_char, "%d", num_int);
     }
     else
     {
-        cout << "char2int error" << endl;
-        return -1;
+        sprintf(num_char, "-%d", num_int);
     }
     
-    return (num_flag * num_int);
-}
-
-
-/* * * * * *  int to char  * * * * * */
-char *int2char(const int num_int)
-{
-    char *num_char = new char[8];     // tip 番茄@20170813 - 支持到十万级
-    sprintf(num_char, "%d", num_int);
     return num_char;
 }
 
+/**************************************************/
+//   unsigned int型 转换 char型
+/**************************************************/
+char *uint2char(const unsigned int num_int)
+{
+    char *num_char = new char[8];     // tips 番茄@20170813 - 支持到十万级
+
+    sprintf(num_char, "%d", num_int);
+    
+    return num_char;
+}
 
 /*-------------------------------------------------------------*/
 /*--------------------  File处理函数 @ 番茄  --------------------*/
@@ -408,15 +385,7 @@ int sm_StrMoneyModify_Top(string &str, int money_new)
     
     str = str.substr(0, (m_tag-1));
     
-    if(money_new>=0)
-    {
-        str += "+";
-        str += int2char(money_new);
-    }
-    else
-    {
-        str += int2char(money_new);
-    }
+    str += int2char(money_new);
     
     return 0;
 }
@@ -430,17 +399,9 @@ int sm_StrMoneyModify_Title(string &str, int money_new)
     strcpy(str_char, str.c_str());
     
     str = str.substr(0, 2);
-    
-    if(money_new>=0)
-    {
-        str += "+";
-        str += int2char(money_new);
-    }
-    else
-    {
-        str += int2char(money_new);
-    }
-    
+
+    str += int2char(money_new);
+
     return 0;
 }
 
@@ -469,16 +430,8 @@ int sm_StrMoneyModify_Month(string &str, int money_new)
     }
     
     str = str.substr(0, (m_tag-1));
-    
-    if(money_new>=0)
-    {
-        str += "+";
-        str += int2char(money_new);
-    }
-    else
-    {
-        str += int2char(money_new);
-    }
+
+    str += int2char(money_new);
     
     return 0;
 }
@@ -502,6 +455,10 @@ int sm_StrMoneyModify_Line(string &str, int money_new)
     }
     
     str.erase(1, (m_index+2));
+    str.insert(1, int2char(money_new));
+    str.insert(2, " ");
+
+    #if 0
     if(money_new>0)
     {
         str.insert(1, "+ ");
@@ -512,6 +469,7 @@ int sm_StrMoneyModify_Line(string &str, int money_new)
         str.insert(1, "- ");
         str.insert(3, int2char((-1)*money_new));
     }
+    #endif
     
     return 0;
 }
@@ -531,7 +489,7 @@ string sm_StrGenerator_Line(const bool pnFlag, const unsigned int value, const c
     {
         str += "`+ ";
     }
-    str += int2char(value);
+    str += uint2char(value);
     str += "` ";
     str += line_char;
     
