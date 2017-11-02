@@ -16,7 +16,7 @@ using namespace std;
 
 /*-------------------- RegEx Library --------------------*/
 
-string pattern_cv = "^Current Version = \\d\\.\\d$";
+string pattern_cv = "^Current Version = \\d\\.\\d+$";
 regex RE_cv(pattern_cv);
 
 string pattern_pm = "^Previous Month = \\d{2}$";

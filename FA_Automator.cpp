@@ -34,7 +34,7 @@ int main(int argc, char **argv, char *env[])
     cout << "| |      >>>  番茄_summer  <<<       | |" << endl;
     cout << "----------------------------------------" << endl;
     cout << "----------------------------------------" << endl;
-    cout << "| |         Version: " << version << "_LTU" << "         | |" << endl;
+    cout << "| |        Version: " << version << "_LTU" << "         | |" << endl;
     cout << "| |       Previous Month: " << ex_month << "         | |" << endl;
     cout << "| |        Current Month: " << cr_month << "         | |" << endl;
     cout << "| |          Next Month: " << nx_month << "          | |" << endl;
@@ -298,11 +298,11 @@ int main(int argc, char **argv, char *env[])
         /* * * * * * * * * * * * * * * * * * * * * * */
         else if( CMD_argv.begin()->compare(CMD_SC_TVT) == 0 )        
         {
-            gettimeofday(&tv_begin, NULL);   ////////////////////////////// TimePoint_START
+            gettimeofday(&tv_begin, NULL);
 
             FA_Sum_Check_TVT();
 
-            gettimeofday(&tv_end, NULL);   ////////////////////////////// TimePoint_END
+            gettimeofday(&tv_end, NULL);
             showtcost(tv_begin, tv_end);
             cout << "----------------------------------------" << endl;
 
@@ -314,11 +314,11 @@ int main(int argc, char **argv, char *env[])
         /* * * * * * * * * * * * * * * * * * * * * * */
         else if( CMD_argv.begin()->compare(CMD_SU_TVT) == 0 )        
         {
-            gettimeofday(&tv_begin, NULL);   ////////////////////////////// TimePoint_START
+            gettimeofday(&tv_begin, NULL);
 
             FA_Sum_Update_TVT();
 
-            gettimeofday(&tv_end, NULL);   ////////////////////////////// TimePoint_END
+            gettimeofday(&tv_end, NULL);
             showtcost(tv_begin, tv_end);
             cout << "----------------------------------------" << endl;
 
@@ -368,6 +368,7 @@ int main(int argc, char **argv, char *env[])
 
         /**************************************************/
         //   增加 NS 支出
+        //   CMD-> ns 200 优衣库
         /**************************************************/
         else if((CMD_argv.begin()->compare(CMD_NS) == 0)\
                 && (CMD_argv.size() == 3))
@@ -406,76 +407,19 @@ int main(int argc, char **argv, char *env[])
             continue;
         }
 
-        /* * * * * * * * * * * * * * * * * * * * * * */
-        /* * * * * * *   计算lottery收支  * * * * * * */
+        /**************************************************/
+        //   修改&更新 lottery.md 收支
         //   e.g.-> lottery -- 128 201711102
-        /* * * * * * * * * * * * * * * * * * * * * * */
-        else if( CMD_argv.begin()->compare(CMD_LOTTERY) == 0 )
+        //   e.g.-> lottery ++ 3000 201711102
+        /**************************************************/
+        else if((CMD_argv.begin()->compare(CMD_LOTTERY) == 0)\
+                && (CMD_argv.size() == 4))
         {
-            if(CMD_argv.size() != 4)
-            {
-                cout << "CMD is incomplete !" << endl;
-                cout << "----------------------------------------" << endl;
+            gettimeofday(&tv_begin, NULL);
 
-                continue;
-            }
+            FAitfX_lottery(CMD_argv.at(1), char2int(CMD_argv.at(2).c_str()), CMD_argv.at(3).c_str());
 
-            gettimeofday(&tv_begin, NULL);   ////////////////////////////// TimePoint_START
-
-            bool pnFlag = false;
-            string money;
-            unsigned int value = 0;
-            string strInsetLine;
-
-            money = CMD_argv.at(2);
-
-            if( (CMD_argv.at(1).compare("++")) && (CMD_argv.at(1).compare("--")) )
-                continue;
-
-            if( char0check(money.c_str()) != 0 )
-                continue;
-
-            if( strlen(CMD_argv.at(3).c_str()) != 8 )
-                continue;
-            
-            if( CMD_argv.at(1).compare("++") == 0 )
-            {
-                pnFlag = true;
-                strInsetLine += "足彩收入_";
-                strInsetLine += CMD_argv.at(3);
-            }
-            else
-            {
-                pnFlag = false;
-                strInsetLine += "足彩支出_";
-                strInsetLine += CMD_argv.at(3);
-            }
-
-            int line_this = FA_Search_Line("lottery.md", "# lottery");
-            int line_next = FA_Search_Line("lottery.md", "## Total");
-            int line_tag = FA_Search_Line("FA_TVT.md", "## lottery");
-            
-            FA_Line_Add("lottery.md", (line_next-1), pnFlag, char2int(money.c_str()), strInsetLine.c_str());
-            int money_sum = FA_Line_Calculator("lottery.md", line_this, line_next);
-
-            FA_Sum_Modify("lottery.md", (line_next+3), money_sum, 2);
-            FA_Sum_Modify("FA_TVT.md", (line_tag+1), money_sum, 1);
-
-            FA_Sum_Update_TVT();
-
-            int line_bank = FA_Search_Line("FA_TVT.md", "广发银行");
-            int line_alirest = FA_Search_Line("FA_TVT.md", "余额宝");
-
-            if( CMD_argv.at(1).compare("++") == 0 )
-            {
-                FA_Balance("FA_TVT.md", line_bank, line_alirest, char2int(money.c_str()), false);
-            }
-            else
-            {
-                FA_Balance("FA_TVT.md", line_bank, line_alirest, char2int(money.c_str()), true);
-            }
-
-            gettimeofday(&tv_end, NULL);   ////////////////////////////// TimePoint_END
+            gettimeofday(&tv_end, NULL);
             showtcost(tv_begin, tv_end);
             cout << "----------------------------------------" << endl;
 
@@ -484,6 +428,7 @@ int main(int argc, char **argv, char *env[])
 
         /**************************************************/
         //   检查 lottery 收支
+        //   CMD-> check lottery
         /**************************************************/
         else if((CMD_argv.begin()->compare(CMD_CHECK) == 0)\
                 && (CMD_argv.at(1).compare(CMD_LOTTERY) == 0)\
@@ -559,6 +504,7 @@ int main(int argc, char **argv, char *env[])
 
         /**************************************************/
         //   BackUp 全备份
+        //   CMD-> bakup
         /**************************************************/
         else if( CMD_argv.begin()->compare(CMD_BACKUP) == 0 )
         {
@@ -578,9 +524,6 @@ int main(int argc, char **argv, char *env[])
         /**************************************************/
         else if( CMD_argv.begin()->compare(CMD_TEST) == 0 )
         {
-            FAitfX_Modify_SubMonth("./sa.M.md", "sa.M", cr_month, nx_month,\
-                                char2int(CMD_argv.at(1).c_str()), CMD_argv.at(2).c_str());
-
             continue;
         }
 

@@ -9,59 +9,6 @@
 
 using namespace std;
 
-/**************************************************/
-//   读取 conf文件
-/**************************************************/
-int FA_Read_Conf(char *version, char *ex_month, char *cr_month, char *nx_month)
-{
-    char buffer[64];
-    string strLine[16];
-    int line_index = 1;
-    
-    ifstream ifile("./FA.conf");
-
-    if(!ifile.is_open())
-    {
-        cout << "----------------------------------------" << endl;
-        cout << ">>>          Read Conf Error         <<<" << endl;
-        cout << "----------------------------------------" << endl;
-        return -1;
-    }
-    
-    // tip 番茄@20170817 - 直接对内存进行操作，需要注意风险，特别是更改格式以后
-    while(!ifile.eof())
-    {
-        ifile.getline(buffer, MAX_LINE_CHAR);
-        strLine[line_index] = buffer;
-        
-        if( regex_match(strLine[line_index], RE_cv) )
-        {
-            memmove(version, buffer+18, 4);
-            continue;
-        }
-        else if( regex_match(strLine[line_index], RE_pm) )
-        {
-            memmove(ex_month, buffer+17, 3);            
-            continue;
-        }
-        else if( regex_match(strLine[line_index], RE_cm) )
-        {
-            memmove(cr_month, buffer+16, 3);            
-            continue;
-        }
-        else if( regex_match(strLine[line_index], RE_nm) )
-        {
-            memmove(nx_month, buffer+13, 3);              
-            continue;
-        }
-        
-        line_index++;
-    }
-    
-    ifile.close();
-    
-    return 0;
-}
 
 /**************************************************/
 //   修改 life.M 月度支出
@@ -188,188 +135,6 @@ int FAitfX_Modify_SubMonth(const char *file_name, const char *title_key,\
 
 
 /**************************************************/
-//   更新 FA_TVT (需要调整)
-/**************************************************/
-int FA_Sum_Update_TVT()
-{
-    string strLine[MAX_LINE];    
-    int line_index = 1;
-    int money_sum = 0;
-    
-    if( ReadFile("FA_TVT.md", strLine, line_index) == -1 )
-    {
-        return -1;
-    }
-
-    for(int i = 1; i <= line_index; i++)
-    {
-        if( regex_match(strLine[i], RE_ofi) )
-        {
-            money_sum += sm_StrMoneyFind_Top(strLine[i]);
-            continue;
-        }
-        else if( regex_match(strLine[i], RE_lottery) )
-        {
-            money_sum += sm_StrMoneyFind_Title(strLine[i+1]);
-            continue;
-        }
-        else if( regex_match(strLine[i], RE_dk) )
-        {
-            money_sum += sm_StrMoneyFind_Title(strLine[i+1]);
-            continue;
-        }
-        else if( regex_match(strLine[i], RE_ns) )
-        {
-            money_sum += sm_StrMoneyFind_Title(strLine[i+1]);
-            continue;
-        }
-        else if( regex_match(strLine[i], RE_month) )
-        {
-            money_sum += sm_StrMoneyFind_Month(strLine[i+3]);
-            continue;
-        }
-        else if( regex_match(strLine[i], RE_cfi) )
-        {
-            cout << "----------------------------------------" << endl;  
-            cout << "line_" << i << " // " << strLine[i].c_str() << endl;
-            cout << "Sum_Check_SZ: " << money_sum << endl;
-            cout << "----------------------------------------" << endl;
-            sm_StrMoneyModify_Top(strLine[i], money_sum);            
-            continue;
-        }
-        else if( regex_match(strLine[i], RE_de_one) )
-        {
-            money_sum += sm_StrMoneyFind_Line(strLine[i]);
-            continue;
-        }
-        else if( regex_match(strLine[i], RE_de_mobike) )
-        {
-            money_sum += sm_StrMoneyFind_Line(strLine[i]);
-            continue;
-        }
-        else if( regex_match(strLine[i], RE_de_ofo) )
-        {
-            money_sum += sm_StrMoneyFind_Line(strLine[i]);
-            continue;
-        }
-        else if( regex_match(strLine[i], RE_loan) )
-        {
-            money_sum += sm_StrMoneyFind_Line(strLine[i]);
-            continue;
-        }
-        else if( regex_match(strLine[i], RE_bank) )
-        {
-            cout << "line_" << i << " // " << strLine[i].c_str() << endl;
-            money_sum -= sm_StrMoneyFind_Top(strLine[i]);
-            continue;
-        }
-        else if( regex_match(strLine[i], RE_alirest) )
-        {
-            cout << "line_" << i << " // " << strLine[i].c_str() << endl;
-            cout << "Sum_Check_SZ: " << money_sum << endl;
-            cout << "----------------------------------------" << endl;
-            sm_StrMoneyModify_Top(strLine[i], money_sum);                        
-            continue;
-        }
-    }
-
-    WirteFile("FA_TVT.md", strLine, line_index);   
-    
-    cout << "----------------------------------------" << endl;
-    cout << ">>>           SZ-SUM UPDATED         <<<" << endl;
-    cout << "----------------------------------------" << endl;
-    
-    return 0;
-}
-
-/**************************************************/
-//   检查 FA_TVT (需要调整)
-/**************************************************/
-int FA_Sum_Check_TVT()
-{
-    string strLine[MAX_LINE];    
-    int line_index = 1;
-    int money_sum = 0;
-    
-    if( ReadFile("FA_TVT.md", strLine, line_index) == -1 )
-    {
-        return -1;
-    }
-
-    for(int i = 1; i <= line_index; i++)
-    {
-        if( regex_match(strLine[i], RE_ofi) )
-        {
-            money_sum += sm_StrMoneyFind_Top(strLine[i]);
-            continue;
-        }
-        else if( regex_match(strLine[i], RE_lottery) )
-        {
-            money_sum += sm_StrMoneyFind_Title(strLine[i+1]);
-            continue;
-        }
-        else if( regex_match(strLine[i], RE_dk) )
-        {
-            money_sum += sm_StrMoneyFind_Title(strLine[i+1]);
-            continue;
-        }
-        else if( regex_match(strLine[i], RE_ns) )
-        {
-            money_sum += sm_StrMoneyFind_Title(strLine[i+1]);
-            continue;
-        }
-        else if( regex_match(strLine[i], RE_month) )
-        {
-            money_sum += sm_StrMoneyFind_Month(strLine[i+3]);
-            continue;
-        }
-        else if( regex_match(strLine[i], RE_cfi) )
-        {
-            cout << "----------------------------------------" << endl;  
-            cout << "line_" << i << " // " << strLine[i].c_str() << endl;
-            cout << "Sum_Check_SZ: " << money_sum << endl;
-            cout << "----------------------------------------" << endl;
-            continue;
-        }
-        else if( regex_match(strLine[i], RE_de_one) )
-        {
-            money_sum += sm_StrMoneyFind_Line(strLine[i]);
-            continue;
-        }
-        else if( regex_match(strLine[i], RE_de_mobike) )
-        {
-            money_sum += sm_StrMoneyFind_Line(strLine[i]);
-            continue;
-        }
-        else if( regex_match(strLine[i], RE_de_ofo) )
-        {
-            money_sum += sm_StrMoneyFind_Line(strLine[i]);
-            continue;
-        }
-        else if( regex_match(strLine[i], RE_loan) )
-        {
-            money_sum += sm_StrMoneyFind_Line(strLine[i]);
-            continue;
-        }
-        else if( regex_match(strLine[i], RE_bank) )
-        {
-            cout << "line_" << i << " // " << strLine[i].c_str() << endl;
-            money_sum -= sm_StrMoneyFind_Top(strLine[i]);
-            continue;
-        }
-        else if( regex_match(strLine[i], RE_alirest) )
-        {
-            cout << "line_" << i << " // " << strLine[i].c_str() << endl;
-            cout << "Sum_Check_SZ: " << money_sum << endl;
-            cout << "----------------------------------------" << endl;
-            continue;
-        }
-    }
-    
-    return 0;
-}
-
-/**************************************************/
 //   增加 TVT_分项.md 支出
 /**************************************************/
 int FAitfX_Modify_Title(const char *file_name, const char *file_title, const char *tvt_title,\
@@ -391,6 +156,7 @@ int FAitfX_Modify_Title(const char *file_name, const char *file_title, const cha
 
     return 0;
 }
+
 
 /**************************************************/
 //   更新 TVT_分项.md 支出
@@ -431,6 +197,61 @@ int FAitfX_Check_Title(const char *file_name, const char *file_title, const char
     cout << "line_" << line_end+2 << " // " << FA_Print_Line_Index(file_name, line_end+2) << endl;
     cout << "### Check_Sum ### " << money_sum << endl;
     cout << "----------------------------------------" << endl;
+
+    return 0;
+}
+
+
+/**************************************************/
+//   修改&更新 lottery.md 收支
+/**************************************************/
+int FAitfX_lottery(const string lo_flag, const unsigned int value, const char *lo_date)
+{
+    bool pnFlag = false;
+    string strInsetLine;
+
+    if( (lo_flag.compare("++")) && (lo_flag.compare("--")) )
+        return -1;
+
+    if( strlen(lo_date) != 8 )
+        return -1;
+    
+    if( lo_flag.compare("++") == 0 )
+    {
+        pnFlag = true;
+        strInsetLine += "足彩收入_";
+        strInsetLine += lo_date;
+    }
+    else
+    {
+        pnFlag = false;
+        strInsetLine += "足彩支出_";
+        strInsetLine += lo_date;
+    }
+
+    int line_on = FA_Search_Line("./lottery.md", "# lottery");
+    int line_under = FA_Search_Line("./lottery.md", "## Total");
+    int lottery_tag = FA_Search_Line("./FA_TVT.md", "## lottery");
+    
+    FA_Line_Add("./lottery.md", (line_under-1), pnFlag, value, strInsetLine.c_str());
+    int value_sum = FA_Line_Calculator("./lottery.md", line_on, line_under+1);
+
+    FA_Sum_Modify("./lottery.md", (line_under+3), value_sum, 2);
+    FA_Sum_Modify("./FA_TVT.md", (lottery_tag+1), value_sum, 1);
+
+    FA_Sum_Update_TVT();
+
+    int line_bank = FA_Search_Line("./FA_TVT.md", "广发银行");
+    int line_alirest = FA_Search_Line("./FA_TVT.md", "余额宝");
+
+    if( pnFlag )
+    {
+        FA_Balance("./FA_TVT.md", line_bank, line_alirest, value, false);
+    }
+    else
+    {
+        FA_Balance("./FA_TVT.md", line_bank, line_alirest, value, true);
+    }
 
     return 0;
 }
