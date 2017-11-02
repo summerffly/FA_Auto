@@ -85,6 +85,9 @@ int FAitfX_Modify_Month(const char *month_on, const char *month_under,\
 
     FA_Line_Modify("./life.M.md", line_tag, value);
 
+    cout << "line_" << line_tag << " // " << FA_Print_Line_Index("./life.M.md", line_tag) << endl;
+    cout << "----------------------------------------" << endl;
+
     return 0;
 }
 
@@ -157,51 +160,31 @@ int FAitfX_Check_Month(const char *month_on, const char *month_under)
     return 0;
 }
 
-#if 0
+
 /**************************************************/
-//   增加 子项.md 支出
+//   增加 life_子项.md 支出
 /**************************************************/
-int FAitfX_Modify_SubMonth(const char *file_name, const char *file_title, const char *tvt_title,\
+int FAitfX_Modify_SubMonth(const char *file_name, const char *title_key,\
                            const char *month_on, const char *month_under,\
                            const unsigned int value, const char *content)
 {
-    string str_month_on("## life.M");
+    string str_month_on(title_key);
     str_month_on += month_on;
-    string str_month_under("## life.M");
+    string str_month_under(title_key);
     str_month_under += month_under;
 
-    int line_on = FA_Search_Line("./life.M.md", str_month_on.c_str());
-    int line_under = FA_Search_Line("./life.M.md", str_month_under.c_str());
-    int line_tvt = FA_Search_Line("./FA_TVT.md", str_month_on.c_str());
+    int line_on = FA_Search_Line(file_name, str_month_on.c_str());
+    int line_under = FA_Search_Line(file_name, str_month_under.c_str());
+    int line_life = FA_Search_Line("./life.M.md", str_month_on.c_str());
 
-    int line_this = FA_Search_Line("life.M.md", cr_month_str.c_str());
-    int line_next = FA_Search_Line("life.M.md", nx_month_str.c_str());
+    FA_Line_Add(file_name, (line_under-1), false, value, content);
+    int value_sum = FA_Line_Calculator(file_name, line_on, line_under+1);
+    FA_Sum_Modify(file_name, (line_on+1), value_sum, 1);
 
-    char line_key[32];
-    char mod_money[8];
-    int line_tag = 0;
-
-    cout << "Line-Key >>> ";
-    cin >> line_key;
-
-    line_tag = FA_Print_Line_Area("life.M.md", line_key, line_this, line_next);
-    if(line_tag < 0)
-        continue;
-
-    cout << "Mod-Money >>> ";
-    cin >> mod_money;
-
-    if(char0check(mod_money) != 0)
-    {
-        continue;
-    }
-
-    FA_Line_Modify("life.M.md", line_tag, char2int(mod_money));
+    FA_Sum_Modify("./life.M.md", line_life, value_sum, 4);
 
     return 0;
 }
-#endif
-
 
 
 /**************************************************/
@@ -387,7 +370,7 @@ int FA_Sum_Check_TVT()
 }
 
 /**************************************************/
-//   增加 分项.md 支出
+//   增加 TVT_分项.md 支出
 /**************************************************/
 int FAitfX_Modify_Title(const char *file_name, const char *file_title, const char *tvt_title,\
                         const int value, const char *content)
@@ -410,7 +393,7 @@ int FAitfX_Modify_Title(const char *file_name, const char *file_title, const cha
 }
 
 /**************************************************/
-//   更新 分项.md 支出
+//   更新 TVT_分项.md 支出
 /**************************************************/
 int FAitfX_Update_Title(const char *file_name, const char *file_title, const char *tvt_title)
 {
@@ -435,7 +418,7 @@ int FAitfX_Update_Title(const char *file_name, const char *file_title, const cha
 }
 
 /**************************************************/
-//   检查 分项.md 支出
+//   检查 TVT_分项.md 支出
 /**************************************************/
 int FAitfX_Check_Title(const char *file_name, const char *file_title, const char *tvt_title)
 {
@@ -453,7 +436,7 @@ int FAitfX_Check_Title(const char *file_name, const char *file_title, const char
 }
 
 /**************************************************/
-//   .md文件 全备份
+//   全备份 .md文件
 /**************************************************/
 int FAitfX_BackUp(const char *bak_file_path)
 {

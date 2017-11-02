@@ -287,7 +287,7 @@ int FA_Print_Line_Area(const char *file_name, const char *line_key, const int li
 }
 
 /**************************************************/
-//   同步 life.M 月度支出
+//   同步 <<< FA_TVT <-> life.M >>> 月度支出
 /**************************************************/
 int FA_Sync_Month(const int line_tag_life, const int line_tag_sz)
 {
@@ -345,9 +345,9 @@ int FA_Line_Modify(const char *file_name, const int line_id, const int money_mod
         return -2;
     }
     
-    cout << "----------------------------------------" << endl;
-    cout << ">>>           LINE MODIFIED          <<<" << endl;
-    cout << "----------------------------------------" << endl;
+    //cout << "----------------------------------------" << endl;
+    //cout << ">>>           LINE MODIFIED          <<<" << endl;
+    //cout << "----------------------------------------" << endl;
     
     return 0;
 }
@@ -424,6 +424,10 @@ int FA_Sum_Modify(const char *file_name, const int line_id, const int money, int
     else if( 3 == mod_tag )
     {
         sm_StrMoneyModify_Month(strLine[line_id], money);
+    }
+    else if( 4 == mod_tag )
+    {
+        sm_StrMoneyModify_Line(strLine[line_id], money);
     }
     
     if(WirteFile(file_name, strLine, line_index) == -1)
