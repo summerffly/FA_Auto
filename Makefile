@@ -1,12 +1,10 @@
 
-source = global.h advanced_CMD.h FBric_operator.h FA_tool.h FA_itfX.h FA_Automator.cpp
+Header = global.h advanced_CMD.h
+TriLayer = FBric_operator.h FA_tool.h FA_itfX.h
 
-FA_Auto: $(source)
-	g++ -o FA_Auto FA_Automator.cpp
-
-FA_VeX.o: FA_VeX.cpp
-	g++ -c FA_VeX.cpp
+FA_Auto: $(Header) $(TriLayer) FA_Automator.cpp
+	g++ -o ../FA_Auto FA_Automator.cpp
 
 .PHONY:clean
 clean:
-	rm FA_Auto
+	rm ../FA_Auto

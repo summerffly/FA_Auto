@@ -81,12 +81,12 @@ int FAitfX_Update_Month(const char *month_on, const char *month_under)
 /**************************************************/
 //   检查 life.M 月度收支
 /**************************************************/
-int FAitfX_Check_Month(const char *month_on, const char *month_under)
+int FAitfX_Check_Month(const char *month_on)
 {
     string str_month_on("## life.M");
     str_month_on += month_on;
     string str_month_under("## life.M");
-    str_month_under += month_under;
+    str_month_under += GenNextMonth(month_on);
 
     int line_on = FA_Search_Line("./life.M.md", str_month_on.c_str());
     int line_under = FA_Search_Line("./life.M.md", str_month_under.c_str());

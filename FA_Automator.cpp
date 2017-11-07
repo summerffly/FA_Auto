@@ -168,7 +168,7 @@ int main(int argc, char **argv, char *env[])
         {
             gettimeofday(&tv_begin, NULL);
 
-            FAitfX_Check_Month(cr_month, nx_month);
+            FAitfX_Check_Month(cr_month);
             
             gettimeofday(&tv_end, NULL);
             showtcost(tv_begin, tv_end);
@@ -208,7 +208,7 @@ int main(int argc, char **argv, char *env[])
         {
             gettimeofday(&tv_begin, NULL);
             
-            FAitfX_Check_Month(ex_month, cr_month);
+            FAitfX_Check_Month(ex_month);
             
             gettimeofday(&tv_end, NULL);
             showtcost(tv_begin, tv_end);
@@ -524,6 +524,9 @@ int main(int argc, char **argv, char *env[])
         /**************************************************/
         else if( CMD_argv.begin()->compare(CMD_TEST) == 0 )
         {
+            //cout << "Pre: " << GenPreMonth(CMD_argv.at(1).c_str()) << endl;            
+            //cout << "Next: " << GenNextMonth(CMD_argv.at(1).c_str()) << endl;
+
             continue;
         }
 

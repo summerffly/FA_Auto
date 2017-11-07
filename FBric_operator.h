@@ -16,6 +16,114 @@ using namespace std;
 
 
 /**************************************************/
+//   生成 下个月份
+/**************************************************/
+string GenNextMonth(const char *cur_month)
+{
+    unsigned int int_cur_month = atoi(cur_month);
+    string str_nx_month;
+
+    switch(int_cur_month)
+    {
+        case 1:
+            str_nx_month += "02";
+            break;
+        case 2:
+            str_nx_month += "03";
+            break;
+        case 3:
+            str_nx_month += "04";
+            break;
+        case 4:
+            str_nx_month += "05";
+            break;
+        case 5:
+            str_nx_month += "06";
+            break;
+        case 6:
+            str_nx_month += "07";
+            break;
+        case 7:
+            str_nx_month += "08";
+            break;
+        case 8:
+            str_nx_month += "09";
+            break;
+        case 9:
+            str_nx_month += "10";
+            break;
+        case 10:
+            str_nx_month += "11";
+            break;
+        case 11:
+            str_nx_month += "12";
+            break;
+        case 12:
+            str_nx_month += "01";
+            break;
+        default:
+            break;
+    }
+
+    return str_nx_month;
+}
+
+
+/**************************************************/
+//   生成 上个月份
+/**************************************************/
+string GenPreMonth(const char *cur_month)
+{
+    unsigned int int_cur_month = atoi(cur_month);
+    string str_pre_month;
+
+    switch(int_cur_month)
+    {
+        case 1:
+            str_pre_month += "12";
+            break;
+        case 2:
+            str_pre_month += "01";
+            break;
+        case 3:
+            str_pre_month += "02";
+            break;
+        case 4:
+            str_pre_month += "03";
+            break;
+        case 5:
+            str_pre_month += "04";
+            break;
+        case 6:
+            str_pre_month += "05";
+            break;
+        case 7:
+            str_pre_month += "06";
+            break;
+        case 8:
+            str_pre_month += "07";
+            break;
+        case 9:
+            str_pre_month += "08";
+            break;
+        case 10:
+            str_pre_month += "09";
+            break;
+        case 11:
+            str_pre_month += "10";
+            break;
+        case 12:
+            str_pre_month += "11";
+            break;
+        default:
+            break;
+    }
+
+    return str_pre_month;
+}
+
+
+/**************************************************/
 //   检查 char型 数字格式
 /**************************************************/
 int char0check(const char *num_char)
