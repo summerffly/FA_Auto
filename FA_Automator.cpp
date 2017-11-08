@@ -15,15 +15,13 @@ using namespace std;
 struct timeval tv_begin,tv_end;
 
 char *version = new char[10];
-char *ex_month = new char[3];
 char *cr_month = new char[3];
-char *nx_month = new char[3];
 
 
 //----- Main入口-----//
 int main(int argc, char **argv, char *env[])
 {
-    if( FA_Read_Conf(version, ex_month, cr_month, nx_month) == -1 )
+    if( FA_Read_Conf(version, cr_month) == -1 )
     {
         return -1;
     }
@@ -35,9 +33,7 @@ int main(int argc, char **argv, char *env[])
     cout << "----------------------------------------" << endl;
     cout << "----------------------------------------" << endl;
     cout << "| |        Version: " << version << "_LTU" << "         | |" << endl;
-    cout << "| |       Previous Month: " << ex_month << "         | |" << endl;
     cout << "| |        Current Month: " << cr_month << "         | |" << endl;
-    cout << "| |          Next Month: " << nx_month << "          | |" << endl;
     cout << "----------------------------------------" << endl;
     cout << "----------------------------------------" << endl;
 
@@ -130,7 +126,7 @@ int main(int argc, char **argv, char *env[])
         {
             gettimeofday(&tv_begin, NULL);
 
-            FAitfX_Modify_Month(cr_month, nx_month, char2int(CMD_argv.at(1).c_str()), CMD_argv.at(2).c_str());
+            FAitfX_Modify_Month(cr_month, char2int(CMD_argv.at(1).c_str()), CMD_argv.at(2).c_str());
 
             gettimeofday(&tv_end, NULL);
             showtcost(tv_begin, tv_end);
@@ -149,7 +145,7 @@ int main(int argc, char **argv, char *env[])
         {
             gettimeofday(&tv_begin, NULL);
             
-            FAitfX_Update_Month(cr_month, nx_month);
+            FAitfX_Update_Month(cr_month);
             
             gettimeofday(&tv_end, NULL);
             showtcost(tv_begin, tv_end);
@@ -188,7 +184,7 @@ int main(int argc, char **argv, char *env[])
         {
             gettimeofday(&tv_begin, NULL);
     
-            FAitfX_Update_Month(ex_month, cr_month);
+            FAitfX_Update_Month(GenPreMonth(cr_month).c_str());
     
             gettimeofday(&tv_end, NULL);
             showtcost(tv_begin, tv_end);
@@ -207,8 +203,8 @@ int main(int argc, char **argv, char *env[])
                 && (CMD_argv.size() == 3))
         {
             gettimeofday(&tv_begin, NULL);
-            
-            FAitfX_Check_Month(ex_month);
+
+            FAitfX_Check_Month(GenPreMonth(cr_month).c_str());
             
             gettimeofday(&tv_end, NULL);
             showtcost(tv_begin, tv_end);
@@ -226,7 +222,7 @@ int main(int argc, char **argv, char *env[])
         {
             gettimeofday(&tv_begin, NULL);
     
-            FAitfX_Modify_SubMonth("./Books.M.md", "Books.M", cr_month, nx_month,\
+            FAitfX_Modify_SubMonth("./Books.M.md", "Books.M", cr_month,\
                                    char2int(CMD_argv.at(1).c_str()), CMD_argv.at(2).c_str());
     
             gettimeofday(&tv_end, NULL);
@@ -245,7 +241,7 @@ int main(int argc, char **argv, char *env[])
         {
             gettimeofday(&tv_begin, NULL);
     
-            FAitfX_Modify_SubMonth("./KEEP.M.md", "KEEP.M", cr_month, nx_month,\
+            FAitfX_Modify_SubMonth("./KEEP.M.md", "KEEP.M", cr_month,\
                                    char2int(CMD_argv.at(1).c_str()), CMD_argv.at(2).c_str());
     
             gettimeofday(&tv_end, NULL);
@@ -264,7 +260,7 @@ int main(int argc, char **argv, char *env[])
         {
             gettimeofday(&tv_begin, NULL);
     
-            FAitfX_Modify_SubMonth("./TB.M.md", "TB.M", cr_month, nx_month,\
+            FAitfX_Modify_SubMonth("./TB.M.md", "TB.M", cr_month,\
                                    char2int(CMD_argv.at(1).c_str()), CMD_argv.at(2).c_str());
     
             gettimeofday(&tv_end, NULL);
@@ -283,7 +279,7 @@ int main(int argc, char **argv, char *env[])
         {
             gettimeofday(&tv_begin, NULL);
 
-            FAitfX_Modify_SubMonth("./sa.M.md", "sa.M", cr_month, nx_month,\
+            FAitfX_Modify_SubMonth("./sa.M.md", "sa.M", cr_month,\
                                    char2int(CMD_argv.at(1).c_str()), CMD_argv.at(2).c_str());
 
             gettimeofday(&tv_end, NULL);
@@ -293,14 +289,16 @@ int main(int argc, char **argv, char *env[])
             continue;
         }
 
-        /* * * * * * * * * * * * * * * * * * * * * * */
-        /* * * * * * * *   检查TVT支出  * * * * * * * */
-        /* * * * * * * * * * * * * * * * * * * * * * */
-        else if( CMD_argv.begin()->compare(CMD_SC_TVT) == 0 )        
+        /**************************************************/
+        //   更新 FA_TVT
+        /**************************************************/
+        else if((CMD_argv.begin()->compare(CMD_UPDATE) == 0)\
+                && (CMD_argv.at(1).compare(CMD_TVT) == 0)\
+                && (CMD_argv.size() == 2))
         {
             gettimeofday(&tv_begin, NULL);
 
-            FA_Sum_Check_TVT();
+            FAitfX_Update_TVT();
 
             gettimeofday(&tv_end, NULL);
             showtcost(tv_begin, tv_end);
@@ -309,14 +307,16 @@ int main(int argc, char **argv, char *env[])
             continue;
         }
 
-        /* * * * * * * * * * * * * * * * * * * * * * */
-        /* * * * * * * *   更新TVT支出  * * * * * * * */
-        /* * * * * * * * * * * * * * * * * * * * * * */
-        else if( CMD_argv.begin()->compare(CMD_SU_TVT) == 0 )        
+        /**************************************************/
+        //   检查 FA_TVT
+        /**************************************************/
+        else if((CMD_argv.begin()->compare(CMD_CHECK) == 0)\
+                && (CMD_argv.at(1).compare(CMD_TVT) == 0)\
+                && (CMD_argv.size() == 2))     
         {
             gettimeofday(&tv_begin, NULL);
 
-            FA_Sum_Update_TVT();
+            FAitfX_Check_TVT();
 
             gettimeofday(&tv_end, NULL);
             showtcost(tv_begin, tv_end);
@@ -445,60 +445,22 @@ int main(int argc, char **argv, char *env[])
             continue;
         }
 
-        /* * * * * * * * * * * * * * * * * * * * * * */
-        /* * * * * * * *   balance操作  * * * * * * * */
-        /* * * * * * * * * * * * * * * * * * * * * * */
-        else if( CMD_argv.begin()->compare(CMD_BALANCE) == 0 )
+        /**************************************************/
+        //   balance 操作
+        //   CMD-> balance ++ 100   // 广发银行 +100
+        //   CMD-> balance -- 200   // 广发银行 -200
+        /**************************************************/
+        else if((CMD_argv.begin()->compare(CMD_BALANCE) == 0)
+                && (CMD_argv.size() == 3))
         {
-            char money[8];
-
-            cout << "Money >>> ";
-            cin >> money;
-
-            if(char0check(money) != 0)
-                continue;
-
             gettimeofday(&tv_begin, NULL);
 
-            int line_bank = FA_Search_Line("FA_TVT.md", "广发银行");
-            int line_alirest = FA_Search_Line("FA_TVT.md", "余额宝");
-
-            FA_Balance("FA_TVT.md", line_bank, line_alirest, char2int(money), true);
+            FAitfX_Balance(char2int(CMD_argv.at(2).c_str()), CMD_argv.at(1).c_str());
 
             gettimeofday(&tv_end, NULL);
             showtcost(tv_begin, tv_end);
             cout << "----------------------------------------" << endl;
 
-            cin.ignore();
-            continue;
-        }
-
-        /* * * * * * * * * * * * * * * * * * * * * * */
-        /* * * * * * *    rebalance操作   * * * * * * */
-        /* * * * * * * * * * * * * * * * * * * * * * */
-        else if( CMD_argv.begin()->compare(CMD_REBALANCE) == 0 )
-        {
-            char money[8];
-
-            cout << "Money >>> ";
-            cin >> money;
-
-            if(char0check(money) != 0)
-                continue;
-
-            
-            gettimeofday(&tv_begin, NULL);   ////////////////////////////// TimePoint_START
-            
-            int line_bank = FA_Search_Line("FA_TVT.md", "广发银行");
-            int line_alirest = FA_Search_Line("FA_TVT.md", "余额宝");
-
-            FA_Balance("FA_TVT.md", line_bank, line_alirest, char2int(money), false);
-
-            gettimeofday(&tv_end, NULL);   ////////////////////////////// TimePoint_END
-            showtcost(tv_begin, tv_end);
-            cout << "----------------------------------------" << endl;
-
-            cin.ignore();
             continue;
         }
 
@@ -506,7 +468,8 @@ int main(int argc, char **argv, char *env[])
         //   BackUp 全备份
         //   CMD-> bakup
         /**************************************************/
-        else if( CMD_argv.begin()->compare(CMD_BACKUP) == 0 )
+        else if((CMD_argv.begin()->compare(CMD_BACKUP) == 0)\
+                && (CMD_argv.size() == 1))
         {
             gettimeofday(&tv_begin, NULL);
 
@@ -524,8 +487,28 @@ int main(int argc, char **argv, char *env[])
         /**************************************************/
         else if( CMD_argv.begin()->compare(CMD_TEST) == 0 )
         {
-            //cout << "Pre: " << GenPreMonth(CMD_argv.at(1).c_str()) << endl;            
-            //cout << "Next: " << GenNextMonth(CMD_argv.at(1).c_str()) << endl;
+            cout << "FA Analysis:" << endl;
+
+            cout << "M09: ";
+            for(int i = 0; i < 35; i++)
+            {
+                cout << "|";
+            }
+            cout << "3520" << endl;
+
+            cout << "M10: ";
+            for(int i = 0; i < 50; i++)
+            {
+                cout << "|";
+            }
+            cout << "5021" << endl;
+
+            cout << "M11: ";
+            for(int i = 0; i < 40; i++)
+            {
+                cout << "|";
+            }
+            cout << "4022" << endl;
 
             continue;
         }

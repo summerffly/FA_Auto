@@ -11,15 +11,32 @@ using namespace std;
 
 
 /**************************************************/
+//   更新 FA_TVT
+/**************************************************/
+void FAitfX_Update_TVT()
+{
+    FA_Sum_Update_TVT();
+}
+
+
+/**************************************************/
+//   检查 FA_TVT
+/**************************************************/
+void FAitfX_Check_TVT()
+{
+    FA_Sum_Check_TVT();
+}
+
+
+/**************************************************/
 //   修改 life.M 月度支出
 /**************************************************/
-int FAitfX_Modify_Month(const char *month_on, const char *month_under,\
-                        const unsigned int value, const char *line_key)
+int FAitfX_Modify_Month(const char *month_on, const unsigned int value, const char *line_key)
 {
     string str_month_on("## life.M");
     str_month_on += month_on;
     string str_month_under("## life.M");
-    str_month_under += month_under;
+    str_month_under += GenNextMonth(month_on);
 
     int line_on = FA_Search_Line("./life.M.md", str_month_on.c_str());
     int line_under = FA_Search_Line("./life.M.md", str_month_under.c_str());
@@ -38,15 +55,16 @@ int FAitfX_Modify_Month(const char *month_on, const char *month_under,\
     return 0;
 }
 
+
 /**************************************************/
 //   更新 life.M 月度收支
 /**************************************************/
-int FAitfX_Update_Month(const char *month_on, const char *month_under)
+int FAitfX_Update_Month(const char *month_on)
 {
     string str_month_on("## life.M");
     str_month_on += month_on;
     string str_month_under("## life.M");
-    str_month_under += month_under;
+    str_month_under += GenNextMonth(month_on);
 
     int line_on = FA_Search_Line("./life.M.md", str_month_on.c_str());
     int line_under = FA_Search_Line("./life.M.md", str_month_under.c_str());
@@ -77,6 +95,7 @@ int FAitfX_Update_Month(const char *month_on, const char *month_under)
 
     return 0;
 }
+
 
 /**************************************************/
 //   检查 life.M 月度收支
@@ -111,14 +130,13 @@ int FAitfX_Check_Month(const char *month_on)
 /**************************************************/
 //   增加 life_子项.md 支出
 /**************************************************/
-int FAitfX_Modify_SubMonth(const char *file_name, const char *title_key,\
-                           const char *month_on, const char *month_under,\
+int FAitfX_Modify_SubMonth(const char *file_name, const char *title_key, const char *month_on,\
                            const unsigned int value, const char *content)
 {
     string str_month_on(title_key);
     str_month_on += month_on;
     string str_month_under(title_key);
-    str_month_under += month_under;
+    str_month_under += GenNextMonth(month_on);
 
     int line_on = FA_Search_Line(file_name, str_month_on.c_str());
     int line_under = FA_Search_Line(file_name, str_month_under.c_str());
@@ -182,6 +200,7 @@ int FAitfX_Update_Title(const char *file_name, const char *file_title, const cha
 
     return 0;
 }
+
 
 /**************************************************/
 //   检查 TVT_分项.md 支出
@@ -255,6 +274,32 @@ int FAitfX_lottery(const string lo_flag, const unsigned int value, const char *l
 
     return 0;
 }
+
+
+/**************************************************/
+//   balance 操作
+/**************************************************/
+int FAitfX_Balance(const unsigned int mod_value, const string bFlag)
+{
+    bool pnFlag = false;
+
+    if( bFlag.compare("++") == 0 )
+    {
+        pnFlag = false;
+    }
+    else
+    {
+        pnFlag = true;
+    }
+    
+    int line_bank = FA_Search_Line("./FA_TVT.md", "广发银行");
+    int line_alirest = FA_Search_Line("./FA_TVT.md", "余额宝");
+
+    FA_Balance("./FA_TVT.md", line_bank, line_alirest, mod_value, pnFlag);
+
+    return 0;
+}
+
 
 /**************************************************/
 //   全备份 .md文件

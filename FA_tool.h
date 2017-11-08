@@ -12,7 +12,7 @@ using namespace std;
 /**************************************************/
 //   读取 conf文件
 /**************************************************/
-int FA_Read_Conf(char *version, char *ex_month, char *cr_month, char *nx_month)
+int FA_Read_Conf(char *version, char *cr_month)
 {
     char buffer[64];
     string strLine[16];
@@ -39,22 +39,12 @@ int FA_Read_Conf(char *version, char *ex_month, char *cr_month, char *nx_month)
             memmove(version, buffer+18, 5);
             continue;
         }
-        else if( regex_match(strLine[line_index], RE_pm) )
-        {
-            memmove(ex_month, buffer+17, 3);            
-            continue;
-        }
         else if( regex_match(strLine[line_index], RE_cm) )
         {
             memmove(cr_month, buffer+16, 3);            
             continue;
         }
-        else if( regex_match(strLine[line_index], RE_nm) )
-        {
-            memmove(nx_month, buffer+13, 3);              
-            continue;
-        }
-        
+
         line_index++;
     }
     
@@ -372,7 +362,7 @@ int FA_Sync_Month(const int line_tag_life, const int line_tag_sz)
 
 
 /**************************************************/
-//   更新 FA_TVT (需要调整)
+//   更新 FA_TVT
 /**************************************************/
 int FA_Sum_Update_TVT()
 {
@@ -380,7 +370,7 @@ int FA_Sum_Update_TVT()
     int line_index = 1;
     int money_sum = 0;
     
-    if( ReadFile("FA_TVT.md", strLine, line_index) == -1 )
+    if( ReadFile("./FA_TVT.md", strLine, line_index) == -1 )
     {
         return -1;
     }
@@ -468,7 +458,7 @@ int FA_Sum_Update_TVT()
 
 
 /**************************************************/
-//   检查 FA_TVT (需要调整)
+//   检查 FA_TVT
 /**************************************************/
 int FA_Sum_Check_TVT()
 {
@@ -476,7 +466,7 @@ int FA_Sum_Check_TVT()
     int line_index = 1;
     int money_sum = 0;
     
-    if( ReadFile("FA_TVT.md", strLine, line_index) == -1 )
+    if( ReadFile("./FA_TVT.md", strLine, line_index) == -1 )
     {
         return -1;
     }

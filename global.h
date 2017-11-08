@@ -81,11 +81,6 @@ const char *CMD_TVT = "tvt";
 
 const char *CMD_EX = "ex";
 
-const char *CMD_SC_TVT = "check-tvt";
-const char *CMD_SU_TVT = "update-tvt";
-
-const char *CMD_SU_EXMN = "update-ex-month";
-
 const char *CMD_LIFE = "life";
 
 const char *CMD_BOOK = "book";
@@ -97,8 +92,7 @@ const char *CMD_DK = "dk";
 const char *CMD_NS = "ns";
 const char *CMD_LOTTERY = "lottery";
 
-const char *CMD_BALANCE = "balance";          // 广发银行-- 余额宝++
-const char *CMD_REBALANCE = "rebalance";      // 广发银行++ 余额宝--
+const char *CMD_BALANCE = "balance";
 
 const char *CMD_BACKUP = "bakup";
 
