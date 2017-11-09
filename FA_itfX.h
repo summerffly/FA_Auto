@@ -153,6 +153,49 @@ int FAitfX_Modify_SubMonth(const char *file_name, const char *title_key, const c
 
 
 /**************************************************/
+//   更新 life_子项.md 支出
+/**************************************************/
+int FAitfX_Update_SubMonth(const char *file_name, const char *title_key, const char *month_on)
+{
+    string str_month_on(title_key);
+    str_month_on += month_on;
+    string str_month_under(title_key);
+    str_month_under += GenNextMonth(month_on);
+
+    int line_on = FA_Search_Line(file_name, str_month_on.c_str());
+    int line_under = FA_Search_Line(file_name, str_month_under.c_str());
+    int line_life = FA_Search_Line("./life.M.md", str_month_on.c_str());
+
+    int value_sum = FA_Line_Calculator(file_name, line_on, line_under);
+    FA_Sum_Modify(file_name, (line_on+1), value_sum, 1);
+    FA_Sum_Modify("./life.M.md", line_life, value_sum, 4);
+
+    return 0;
+}
+
+
+/**************************************************/
+//   检查 life_子项.md 支出
+/**************************************************/
+int FAitfX_Check_SubMonth(const char *file_name, const char *title_key, const char *month_on)
+{
+    string str_month_on(title_key);
+    str_month_on += month_on;
+    string str_month_under(title_key);
+    str_month_under += GenNextMonth(month_on);
+
+    int line_on = FA_Search_Line(file_name, str_month_on.c_str());
+    int line_under = FA_Search_Line(file_name, str_month_under.c_str());
+
+    int value_sum = FA_Line_Calculator(file_name, line_on, line_under);
+    cout << "line_" << line_on + 1 << " // " << FA_Print_Line_Index(file_name, line_on + 1) << endl;
+    cout << "### Check_Sum ### " << value_sum << endl;
+
+    return 0;
+}
+
+
+/**************************************************/
 //   增加 TVT_分项.md 支出
 /**************************************************/
 int FAitfX_Modify_Title(const char *file_name, const char *file_title, const char *tvt_title,\

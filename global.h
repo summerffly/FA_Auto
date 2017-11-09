@@ -73,16 +73,17 @@ regex RE_end(pattern_end);
 const char *CMD_PRINT = "print";
 const char *CMD_SEARCH = "search";
 
-const char *CMD_CHECK = "check";
 const char *CMD_UPDATE = "update";
+const char *CMD_CHECK = "check";
 
 const char *CMD_MONTH = "month";
-const char *CMD_TVT = "tvt";
+const char *CMD_EXMONTH = "exmonth";
 
-const char *CMD_EX = "ex";
+const char *CMD_TVT = "tvt";
 
 const char *CMD_LIFE = "life";
 
+const char *CMD_SUNMONTH = "submonth";
 const char *CMD_BOOK = "book";
 const char *CMD_TB = "tb";
 const char *CMD_KEEP = "keep";

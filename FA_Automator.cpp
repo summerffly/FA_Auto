@@ -50,7 +50,7 @@ int main(int argc, char **argv, char *env[])
         // 判断是否输入空行
         if( CMD_Line_Parser(advanced_CMD, CMD_argc, CMD_argv) == -1 )
         {
-            cout << "CMD is blank line !" << endl;
+            cout << ">>> CMD is blank line !" << endl;
             cout << "----------------------------------------" << endl;
             
             continue;
@@ -59,7 +59,7 @@ int main(int argc, char **argv, char *env[])
         // 判断是否输入撤销CMD
         if( CMD_argv.back().compare(CMD_CANCEL) == 0 )
         {
-            cout << "CMD canceled !" << endl;
+            cout << ">>> CMD canceled !" << endl;
             cout << "----------------------------------------" << endl;
             
             continue;
@@ -136,16 +136,27 @@ int main(int argc, char **argv, char *env[])
         }
 
         /**************************************************/
-        //   更新 当月 收支
-        //   CMD-> update month
+        //   更新 当月/上月 收支
+        //   CMD-> update month/exmonth
         /**************************************************/
         else if((CMD_argv.begin()->compare(CMD_UPDATE) == 0)\
-                && (CMD_argv.at(1).compare(CMD_MONTH) == 0)\
+                && ((CMD_argv.at(1).compare(CMD_MONTH) == 0)||(CMD_argv.at(1).compare(CMD_EXMONTH) == 0)) \
                 && (CMD_argv.size() == 2))
         {
             gettimeofday(&tv_begin, NULL);
             
-            FAitfX_Update_Month(cr_month);
+            if( CMD_argv.at(1).compare(CMD_MONTH) == 0 )
+            {
+                FAitfX_Update_Month(cr_month);
+            }
+            else if( CMD_argv.at(1).compare(CMD_EXMONTH) == 0 )
+            {
+                FAitfX_Update_Month(GenPreMonth(cr_month).c_str());
+            }
+            else
+            {
+                cout << ">>> CMD Param Error!" << endl;
+            }
             
             gettimeofday(&tv_end, NULL);
             showtcost(tv_begin, tv_end);
@@ -155,16 +166,27 @@ int main(int argc, char **argv, char *env[])
         }
 
         /**************************************************/
-        //   检查 当月 收支
-        //   CMD-> check month
+        //   检查 当月/上月 收支
+        //   CMD-> check month/exmonth
         /**************************************************/
         else if((CMD_argv.begin()->compare(CMD_CHECK) == 0)\
-                && (CMD_argv.at(1).compare(CMD_MONTH) == 0)\
+                && ((CMD_argv.at(1).compare(CMD_MONTH) == 0)||(CMD_argv.at(1).compare(CMD_EXMONTH) == 0)) \
                 && (CMD_argv.size() == 2))
         {
             gettimeofday(&tv_begin, NULL);
 
-            FAitfX_Check_Month(cr_month);
+            if( CMD_argv.at(1).compare(CMD_MONTH) == 0 )
+            {
+                FAitfX_Check_Month(cr_month);
+            }
+            else if( CMD_argv.at(1).compare(CMD_EXMONTH) == 0 )
+            {
+                FAitfX_Check_Month(GenPreMonth(cr_month).c_str());
+            }
+            else
+            {
+                cout << ">>> CMD Param Error!" << endl;
+            }
             
             gettimeofday(&tv_end, NULL);
             showtcost(tv_begin, tv_end);
@@ -174,118 +196,122 @@ int main(int argc, char **argv, char *env[])
         }
 
         /**************************************************/
-        //   更新 上月 收支
-        //   CMD-> update month ex
+        //   增加 life_子项.md 支出
+        //   CMD-> submonth book 100 《史记》
+        //   CMD-> submonth keep 100 云南白药
+        //   CMD-> submonth tb 100 居家小物
+        //   CMD-> submonth sa 100 红包
+        /**************************************************/
+        else if((CMD_argv.begin()->compare(CMD_SUNMONTH) == 0)\
+                && (CMD_argv.size() == 4))
+        {
+            gettimeofday(&tv_begin, NULL);
+    
+            if( CMD_argv.at(1).compare(CMD_BOOK) == 0 )
+            {
+                FAitfX_Modify_SubMonth("./Books.M.md", "Books.M", cr_month,\
+                                        char2int(CMD_argv.at(2).c_str()), CMD_argv.at(3).c_str());
+            }
+            else if( CMD_argv.at(1).compare(CMD_KEEP) == 0 )
+            {
+                FAitfX_Modify_SubMonth("./KEEP.M.md", "KEEP.M", cr_month,\
+                                        char2int(CMD_argv.at(2).c_str()), CMD_argv.at(3).c_str());
+            }
+            else if( CMD_argv.at(1).compare(CMD_TB) == 0 )
+            {
+                FAitfX_Modify_SubMonth("./TB.M.md", "TB.M", cr_month,\
+                                        char2int(CMD_argv.at(2).c_str()), CMD_argv.at(3).c_str());
+            }
+            else if( CMD_argv.at(1).compare(CMD_SA) == 0 )
+            {
+                FAitfX_Modify_SubMonth("./sa.M.md", "sa.M", cr_month,\
+                                        char2int(CMD_argv.at(2).c_str()), CMD_argv.at(3).c_str());
+            }
+            else
+            {
+                cout << ">>> CMD Param Error!" << endl;
+            }
+
+            gettimeofday(&tv_end, NULL);
+            showtcost(tv_begin, tv_end);
+            cout << "----------------------------------------" << endl;
+             
+            continue;
+        }
+
+        /**************************************************/
+        //   更新 life_子项.md 支出
+        //   CMD-> update submonth book/keep/tb/sa
         /**************************************************/
         else if((CMD_argv.begin()->compare(CMD_UPDATE) == 0)\
-                && (CMD_argv.at(1).compare(CMD_MONTH) == 0)\
-                && (CMD_argv.at(2).compare(CMD_EX) == 0)\
+                && (CMD_argv.at(1).compare(CMD_SUNMONTH) == 0)\
                 && (CMD_argv.size() == 3))
         {
             gettimeofday(&tv_begin, NULL);
     
-            FAitfX_Update_Month(GenPreMonth(cr_month).c_str());
-    
+            if( CMD_argv.at(2).compare(CMD_BOOK) == 0 )
+            {
+                FAitfX_Update_SubMonth("./Books.M.md", "Books.M", cr_month);
+            }
+            else if( CMD_argv.at(2).compare(CMD_KEEP) == 0 )
+            {
+                FAitfX_Update_SubMonth("./KEEP.M.md", "KEEP.M", cr_month);
+            }
+            else if( CMD_argv.at(2).compare(CMD_TB) == 0 )
+            {
+                FAitfX_Update_SubMonth("./TB.M.md", "TB.M", cr_month);
+            }
+            else if( CMD_argv.at(2).compare(CMD_SA) == 0 )
+            {
+                FAitfX_Update_SubMonth("./sa.M.md", "sa.M", cr_month);
+            }
+            else
+            {
+                cout << ">>> CMD Param Error!" << endl;
+            }
+
             gettimeofday(&tv_end, NULL);
             showtcost(tv_begin, tv_end);
             cout << "----------------------------------------" << endl;
-
+             
             continue;
         }
 
         /**************************************************/
-        //   检查 上月 收支
-        //   CMD-> check month ex
+        //   检查 life_子项.md 支出
+        //   CMD-> check submonth book/keep/tb/sa
         /**************************************************/
         else if((CMD_argv.begin()->compare(CMD_CHECK) == 0)\
-                && (CMD_argv.at(1).compare(CMD_MONTH) == 0)\
-                && (CMD_argv.at(2).compare(CMD_EX) == 0)\
-                && (CMD_argv.size() == 3))
-        {
-            gettimeofday(&tv_begin, NULL);
-
-            FAitfX_Check_Month(GenPreMonth(cr_month).c_str());
-            
-            gettimeofday(&tv_end, NULL);
-            showtcost(tv_begin, tv_end);
-            cout << "----------------------------------------" << endl;
-
-            continue;
-        }
-
-        /**************************************************/
-        //   增加 Books.M 支出
-        //   CMD-> book 100 《史记》
-        /**************************************************/
-        else if((CMD_argv.begin()->compare(CMD_BOOK) == 0)\
+                && (CMD_argv.at(1).compare(CMD_SUNMONTH) == 0)\
                 && (CMD_argv.size() == 3))
         {
             gettimeofday(&tv_begin, NULL);
     
-            FAitfX_Modify_SubMonth("./Books.M.md", "Books.M", cr_month,\
-                                   char2int(CMD_argv.at(1).c_str()), CMD_argv.at(2).c_str());
-    
-            gettimeofday(&tv_end, NULL);
-            showtcost(tv_begin, tv_end);
-            cout << "----------------------------------------" << endl;
-             
-            continue;
-        }
+            if( CMD_argv.at(2).compare(CMD_BOOK) == 0 )
+            {
+                FAitfX_Check_SubMonth("./Books.M.md", "Books.M", cr_month);
+            }
+            else if( CMD_argv.at(2).compare(CMD_KEEP) == 0 )
+            {
+                FAitfX_Check_SubMonth("./KEEP.M.md", "KEEP.M", cr_month);
+            }
+            else if( CMD_argv.at(2).compare(CMD_TB) == 0 )
+            {
+                FAitfX_Check_SubMonth("./TB.M.md", "TB.M", cr_month);
+            }
+            else if( CMD_argv.at(2).compare(CMD_SA) == 0 )
+            {
+                FAitfX_Check_SubMonth("./sa.M.md", "sa.M", cr_month);
+            }
+            else
+            {
+                cout << ">>> CMD Param Error!" << endl;
+            }
 
-        /**************************************************/
-        //   增加 KEEP.M 支出
-        //   CMD-> keep 100 云南白药
-        /**************************************************/
-        else if((CMD_argv.begin()->compare(CMD_KEEP) == 0)\
-                && (CMD_argv.size() == 3))
-        {
-            gettimeofday(&tv_begin, NULL);
-    
-            FAitfX_Modify_SubMonth("./KEEP.M.md", "KEEP.M", cr_month,\
-                                   char2int(CMD_argv.at(1).c_str()), CMD_argv.at(2).c_str());
-    
             gettimeofday(&tv_end, NULL);
             showtcost(tv_begin, tv_end);
             cout << "----------------------------------------" << endl;
              
-            continue;
-        }
-
-        /**************************************************/
-        //   增加 TB.M 支出
-        //   CMD-> tb 100 sth
-        /**************************************************/
-        else if((CMD_argv.begin()->compare(CMD_TB) == 0)\
-                && (CMD_argv.size() == 3))
-        {
-            gettimeofday(&tv_begin, NULL);
-    
-            FAitfX_Modify_SubMonth("./TB.M.md", "TB.M", cr_month,\
-                                   char2int(CMD_argv.at(1).c_str()), CMD_argv.at(2).c_str());
-    
-            gettimeofday(&tv_end, NULL);
-            showtcost(tv_begin, tv_end);
-            cout << "----------------------------------------" << endl;
-             
-            continue;
-        }
-
-        /**************************************************/
-        //   增加 sa.M 支出
-        //   CMD-> sa 100 红包
-        /**************************************************/
-        else if((CMD_argv.begin()->compare(CMD_SA) == 0)\
-                && (CMD_argv.size() == 3))
-        {
-            gettimeofday(&tv_begin, NULL);
-
-            FAitfX_Modify_SubMonth("./sa.M.md", "sa.M", cr_month,\
-                                   char2int(CMD_argv.at(1).c_str()), CMD_argv.at(2).c_str());
-
-            gettimeofday(&tv_end, NULL);
-            showtcost(tv_begin, tv_end);
-            cout << "----------------------------------------" << endl;
-         
             continue;
         }
 
@@ -409,8 +435,8 @@ int main(int argc, char **argv, char *env[])
 
         /**************************************************/
         //   修改&更新 lottery.md 收支
-        //   e.g.-> lottery -- 128 201711102
-        //   e.g.-> lottery ++ 3000 201711102
+        //   CMD-> lottery -- 128 201711102
+        //   CMD-> lottery ++ 3000 201711102
         /**************************************************/
         else if((CMD_argv.begin()->compare(CMD_LOTTERY) == 0)\
                 && (CMD_argv.size() == 4))
