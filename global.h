@@ -89,12 +89,12 @@ const char *CMD_TB = "tb";
 const char *CMD_KEEP = "keep";
 const char *CMD_SA = "sa";
 
+const char *CMD_TITLE = "title";
 const char *CMD_DK = "dk";
 const char *CMD_NS = "ns";
 const char *CMD_LOTTERY = "lottery";
 
 const char *CMD_BALANCE = "balance";
-
 const char *CMD_BACKUP = "bakup";
 
 const char *CMD_TEST = "test";

@@ -11,14 +11,14 @@
 
 using namespace std;
 
-//----- 全局变量区 -----//
+
+//***** 全局变量区 *****//
 struct timeval tv_begin,tv_end;
 
 char *version = new char[10];
 char *cr_month = new char[3];
 
-
-//----- Main入口-----//
+//********** Main入口 **********//
 int main(int argc, char **argv, char *env[])
 {
     if( FA_Read_Conf(version, cr_month) == -1 )
@@ -352,7 +352,7 @@ int main(int argc, char **argv, char *env[])
         }
 
         /**************************************************/
-        //   增加 DK 支出
+        //   增加 & 更新 DK 支出
         //   CMD-> dk 5000 iPhone
         /**************************************************/
         else if((CMD_argv.begin()->compare(CMD_DK) == 0)\
@@ -374,26 +374,7 @@ int main(int argc, char **argv, char *env[])
         }
 
         /**************************************************/
-        //   检查 DK 支出
-        //   CMD-> check dk
-        /**************************************************/
-        else if((CMD_argv.begin()->compare(CMD_CHECK) == 0)\
-                && (CMD_argv.at(1).compare(CMD_DK) == 0)\
-                && (CMD_argv.size() == 2))
-        {
-            gettimeofday(&tv_begin, NULL);
-            
-            FAitfX_Check_Title("./DK.md", "# Digital Kingdom", "## DK");
-            
-            gettimeofday(&tv_end, NULL);
-            showtcost(tv_begin, tv_end);
-            cout << "----------------------------------------" << endl;
-
-            continue;
-        }
-
-        /**************************************************/
-        //   增加 NS 支出
+        //   增加 & 更新 NS 支出
         //   CMD-> ns 200 优衣库
         /**************************************************/
         else if((CMD_argv.begin()->compare(CMD_NS) == 0)\
@@ -415,26 +396,7 @@ int main(int argc, char **argv, char *env[])
         }
 
         /**************************************************/
-        //   检查 NS 支出
-        //   CMD-> check ns
-        /**************************************************/
-        else if((CMD_argv.begin()->compare(CMD_CHECK) == 0)\
-                && (CMD_argv.at(1).compare(CMD_NS) == 0)\
-                && (CMD_argv.size() == 2))
-        {
-            gettimeofday(&tv_begin, NULL);
-            
-            FAitfX_Check_Title("./NS.md", "# New Style", "## NS");
-            
-            gettimeofday(&tv_end, NULL);
-            showtcost(tv_begin, tv_end);
-            cout << "----------------------------------------" << endl;
-
-            continue;
-        }
-
-        /**************************************************/
-        //   修改&更新 lottery.md 收支
+        //   增加 & 更新 lottery 收支
         //   CMD-> lottery -- 128 201711102
         //   CMD-> lottery ++ 3000 201711102
         /**************************************************/
@@ -453,16 +415,65 @@ int main(int argc, char **argv, char *env[])
         }
 
         /**************************************************/
-        //   检查 lottery 收支
-        //   CMD-> check lottery
+        //   更新 TVT_分项 收支
+        //   CMD-> update title dk/ns/lottery
         /**************************************************/
-        else if((CMD_argv.begin()->compare(CMD_CHECK) == 0)\
-                && (CMD_argv.at(1).compare(CMD_LOTTERY) == 0)\
-                && (CMD_argv.size() == 2))
+        else if((CMD_argv.begin()->compare(CMD_UPDATE) == 0)\
+                && (CMD_argv.at(1).compare(CMD_TITLE) == 0)\
+                && (CMD_argv.size() == 3))
         {
             gettimeofday(&tv_begin, NULL);
             
-            FAitfX_Check_Title("./lottery.md", "# lottery", "## lottery");
+            if( CMD_argv.at(2).compare(CMD_DK) == 0 )
+            {
+                FAitfX_Update_Title("./DK.md", "# Digital Kingdom", "## DK");
+            }
+            else if( CMD_argv.at(2).compare(CMD_NS) == 0 )
+            {
+                FAitfX_Update_Title("./NS.md", "# New Style", "## NS");
+            }
+            else if( CMD_argv.at(2).compare(CMD_LOTTERY) == 0 )
+            {
+                FAitfX_Update_Title("./lottery.md", "# lottery", "## lottery");
+            }
+            else
+            {
+                cout << ">>> CMD Param Error!" << endl;
+            }
+            
+            gettimeofday(&tv_end, NULL);
+            showtcost(tv_begin, tv_end);
+            cout << "----------------------------------------" << endl;
+
+            continue;
+        }
+
+        /**************************************************/
+        //   检查 TVT_分项 收支
+        //   CMD-> check title dk/ns/lottery
+        /**************************************************/
+        else if((CMD_argv.begin()->compare(CMD_CHECK) == 0)\
+                && (CMD_argv.at(1).compare(CMD_TITLE) == 0)\
+                && (CMD_argv.size() == 3))
+        {
+            gettimeofday(&tv_begin, NULL);
+            
+            if( CMD_argv.at(2).compare(CMD_DK) == 0 )
+            {
+                FAitfX_Check_Title("./DK.md", "# Digital Kingdom", "## DK");
+            }
+            else if( CMD_argv.at(2).compare(CMD_NS) == 0 )
+            {
+                FAitfX_Check_Title("./NS.md", "# New Style", "## NS");
+            }
+            else if( CMD_argv.at(2).compare(CMD_LOTTERY) == 0 )
+            {
+                FAitfX_Check_Title("./lottery.md", "# lottery", "## lottery");
+            }
+            else
+            {
+                cout << ">>> CMD Param Error!" << endl;
+            }
             
             gettimeofday(&tv_end, NULL);
             showtcost(tv_begin, tv_end);

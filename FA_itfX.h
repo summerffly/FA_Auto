@@ -265,7 +265,7 @@ int FAitfX_Check_Title(const char *file_name, const char *file_title, const char
 
 
 /**************************************************/
-//   修改&更新 lottery.md 收支
+//   增加 & 更新 lottery 收支
 /**************************************************/
 int FAitfX_lottery(const string lo_flag, const unsigned int value, const char *lo_date)
 {
