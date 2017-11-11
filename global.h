@@ -97,6 +97,7 @@ const char *CMD_LOTTERY = "lottery";
 const char *CMD_BALANCE = "balance";
 const char *CMD_BACKUP = "bakup";
 
+const char *CMD_TEMP = "temp";
 const char *CMD_TEST = "test";
 
 const char *CMD_CANCEL = "cancel";

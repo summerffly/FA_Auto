@@ -520,10 +520,39 @@ int main(int argc, char **argv, char *env[])
         }
 
         /**************************************************/
+        //   检查 .md文件 收支
+        //   CMD-> check temp
+        /**************************************************/
+        else if((CMD_argv.begin()->compare(CMD_CHECK) == 0)\
+                && (CMD_argv.at(1).compare(CMD_TEMP) == 0)\
+                && (CMD_argv.size() == 2))
+        {
+            gettimeofday(&tv_begin, NULL);
+
+            FAitfX_CheckFile("./temp.Nov.md", "# temp.Nov", "---");
+            
+            gettimeofday(&tv_end, NULL);
+            showtcost(tv_begin, tv_end);
+            cout << "----------------------------------------" << endl;
+
+            continue;
+        }
+
+        /**************************************************/
         //   TEST
         /**************************************************/
         else if( CMD_argv.begin()->compare(CMD_TEST) == 0 )
         {
+            int line_begin = FA_Search_Line("./temp.Nov.md", "# temp.Nov");
+            int line_end = FA_Search_Line("./temp.Nov.md", "---");
+        
+            int value_sum = FA_Line_Calculator("./temp.Nov.md", line_begin, line_end);
+        
+            cout << "----------------------------------------" << endl;
+            cout << "### Check_Sum ### " << value_sum << endl;
+            cout << "----------------------------------------" << endl;
+
+            #if 0
             cout << "FA Analysis:" << endl;
 
             cout << "M09: ";
@@ -546,6 +575,7 @@ int main(int argc, char **argv, char *env[])
                 cout << "|";
             }
             cout << "4022" << endl;
+            #endif
 
             continue;
         }

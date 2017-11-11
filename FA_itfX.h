@@ -11,6 +11,24 @@ using namespace std;
 
 
 /**************************************************/
+//   检查 .md文件 收支
+/**************************************************/
+int FAitfX_CheckFile(const char *file_name, const char *file_title_begin, const char *file_title_end)
+{
+    int line_tag_begin = FA_Search_Line(file_name, file_title_begin);
+    int line_tag_end = FA_Search_Line(file_name, file_title_end);
+
+    int value_sum = FA_Line_Calculator(file_name, line_tag_begin, line_tag_end);
+
+    cout << "----------------------------------------" << endl;
+    cout << "### Check_Sum ### " << value_sum << endl;
+    cout << "----------------------------------------" << endl;
+
+    return 0;
+}
+
+
+/**************************************************/
 //   更新 FA_TVT
 /**************************************************/
 void FAitfX_Update_TVT()
