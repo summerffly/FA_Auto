@@ -6,6 +6,7 @@
 #include "global.h"
 #include "FBric_operator.h"
 #include "FA_tool.h"
+#include <map>
 
 using namespace std;
 
@@ -140,6 +141,102 @@ int FAitfX_Check_Month(const char *month_on)
     cout << "### Check_Sum ### " << money_out_chk << endl;
     cout << "### Check_Sum ### " << money_rest_chk << endl;
     cout << "----------------------------------------" << endl;
+
+    return 0;
+}
+
+
+/**************************************************/
+//   对比分析 月度支出
+/**************************************************/
+// tips 20171115 - 目前最大只支持12个月
+int FAitfX_Analysis_Month(const char *sub_key, const char *month_on)
+{
+    char *temp_month = new char[3];
+    memcpy(temp_month, "09", 3);
+
+    string str_temp_month_on;
+    string str_temp_month_under;
+    int line_temp_begin = 0;
+    int line_temp_end = 0;
+    int line_temp_tag = 0;
+    unsigned int line_temp_value = 0;
+    string str_line_temp;
+
+    map<int, unsigned int> submap;
+    
+    while(1)
+    {
+        str_temp_month_on.clear();
+        str_temp_month_under.clear();
+        str_temp_month_on += "## life.M";
+        str_temp_month_on += temp_month;
+        str_temp_month_under += "## life.M";
+        str_temp_month_under += GenNextMonth(temp_month);
+
+        int line_temp_begin = FA_Search_Line("./life.M.md", str_temp_month_on.c_str());
+        int line_temp_end = FA_Search_Line("./life.M.md", str_temp_month_under.c_str());
+        int line_temp_tag = FA_Search_Line_Area_Pure("./life.M.md", sub_key, line_temp_begin, line_temp_end);
+
+        if(line_temp_tag > 0)
+        {
+            str_line_temp.clear();
+            str_line_temp += FA_Print_Line_Index("./life.M.md", line_temp_tag);
+
+            line_temp_value = 0;
+            if(str_line_temp.at(0) == '>')
+            {
+                line_temp_value = (-1) * sm_StrMoneyFind_Month(str_line_temp);
+            }
+            else if(str_line_temp.at(0) == '`')
+            {
+                line_temp_value = (-1) * sm_StrMoneyFind_Line(str_line_temp);
+            }
+
+            submap.insert(pair<int, unsigned int>(atoi(temp_month), line_temp_value));
+        }
+
+        memcpy(temp_month, GenNextMonth(temp_month).c_str(), 3);
+        if(temp_month == GenNextMonth(month_on))
+        {
+            break;
+        }
+    }
+
+    unsigned int max_value = 0;
+    map<int, unsigned int>::iterator mapIter = submap.begin();
+    while(mapIter != submap.end())
+    {
+        if(mapIter->second > max_value)
+        {
+            max_value = mapIter->second;
+        }
+        mapIter++;
+    }
+    double scale_rate = (double)50 / max_value;
+
+    mapIter = submap.begin();
+    while(mapIter != submap.end())
+    {
+        if(mapIter->first < 10)
+        {
+            cout << "0";
+        }
+        cout << mapIter->first << "月/" << sub_key << ": ";
+
+        int scale_i = 0;
+        int scale_max = scale_rate * mapIter->second;
+        while(scale_i <= scale_max)
+        {
+            cout << "|";
+            scale_i++;
+        }
+        cout << " " << mapIter->second << endl;
+
+        mapIter++;
+    }
+
+    delete []temp_month;
 
     return 0;
 }

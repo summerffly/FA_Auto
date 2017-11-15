@@ -8,11 +8,13 @@
 
 using namespace std;
 
+
 /*--------------------  DEFINE Library  --------------------*/
 
 #define MAX_COMMAND     128     // 命令最大字符数
 #define MAX_LINE_CHAR   128     // 每行最大字符数
 #define MAX_LINE        256     // 最大支持行数
+
 
 /*-------------------- RegEx Library --------------------*/
 
@@ -75,6 +77,8 @@ const char *CMD_SEARCH = "search";
 
 const char *CMD_UPDATE = "update";
 const char *CMD_CHECK = "check";
+
+const char *CMD_ANALYSIS = "analysis";
 
 const char *CMD_MONTH = "month";
 const char *CMD_EXMONTH = "exmonth";

@@ -539,43 +539,29 @@ int main(int argc, char **argv, char *env[])
         }
 
         /**************************************************/
+        //   对比分析 月度支出
+        //   CMD-> analysis 支出
+        /**************************************************/
+        else if((CMD_argv.begin()->compare(CMD_ANALYSIS) == 0)\
+                && (CMD_argv.size() == 2))
+        {
+            gettimeofday(&tv_begin, NULL);
+
+            FAitfX_Analysis_Month(CMD_argv.at(1).c_str(), cr_month);
+            
+            gettimeofday(&tv_end, NULL);
+            showtcost(tv_begin, tv_end);
+            cout << "----------------------------------------" << endl;
+
+            continue;
+        }
+
+        /**************************************************/
         //   TEST
         /**************************************************/
         else if( CMD_argv.begin()->compare(CMD_TEST) == 0 )
         {
-            int line_begin = FA_Search_Line("./temp.Nov.md", "# temp.Nov");
-            int line_end = FA_Search_Line("./temp.Nov.md", "---");
-        
-            int value_sum = FA_Line_Calculator("./temp.Nov.md", line_begin, line_end);
-        
-            cout << "----------------------------------------" << endl;
-            cout << "### Check_Sum ### " << value_sum << endl;
-            cout << "----------------------------------------" << endl;
-
-            #if 0
-            cout << "FA Analysis:" << endl;
-
-            cout << "M09: ";
-            for(int i = 0; i < 35; i++)
-            {
-                cout << "|";
-            }
-            cout << "3520" << endl;
-
-            cout << "M10: ";
-            for(int i = 0; i < 50; i++)
-            {
-                cout << "|";
-            }
-            cout << "5021" << endl;
-
-            cout << "M11: ";
-            for(int i = 0; i < 40; i++)
-            {
-                cout << "|";
-            }
-            cout << "4022" << endl;
-            #endif
+            //FAitfX_Analysis_Month(CMD_argv.at(1).c_str(), cr_month);
 
             continue;
         }

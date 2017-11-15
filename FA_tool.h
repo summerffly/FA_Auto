@@ -36,7 +36,7 @@ int FA_Read_Conf(char *version, char *cr_month)
         
         if( regex_match(strLine[line_index], RE_cv) )
         {
-            memmove(version, buffer+18, 5);
+            memmove(version, buffer+18, 4);
             continue;
         }
         else if( regex_match(strLine[line_index], RE_cm) )
@@ -212,6 +212,55 @@ string FA_Print_Line_Index(const char *file_name, const int line_id)
     }
 
     return strLine[line_id];
+}
+
+
+/**************************************************/
+//   两行区间内 搜索.md文件某一行 (纯净版API)
+/**************************************************/
+int FA_Search_Line_Area_Pure(const char *file_name, const char *line_key, const int line_start, const int line_end)
+{
+    string strLine[MAX_LINE];    
+    int line_index = 1;       // 每一行的标志 从1开始计数 返回0可能有别的用途
+    int line_counter = 0;     // 匹配行的计数器
+    int line_tag = 0;         // 匹配行的标志
+
+    string str_key = line_key;
+    string pattern_key = "^.*" + str_key + ".*$";
+    regex RE_key(pattern_key);
+    
+    if( ReadFile(file_name, strLine, line_index) == -1 )
+    {
+        return -1;
+    }
+
+    for(int i = line_start; i <= line_end; i++)
+    {
+        if( regex_match(strLine[i], RE_key) )
+        {
+            if( line_counter == 0 )
+            {
+                line_tag = i;
+            }
+            line_counter++;
+        }
+    }
+    
+    if(line_counter > 0)
+    {
+        if(line_counter == 1)
+        {
+            return line_tag;
+        }
+        else
+        {
+            return -2;
+        }
+    }
+    else
+    {
+        return -3;
+    }
 }
 
 
