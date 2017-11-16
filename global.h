@@ -21,14 +21,11 @@ using namespace std;
 string pattern_cv = "^Current Version = \\d\\.\\d+$";
 regex RE_cv(pattern_cv);
 
-string pattern_pm = "^Previous Month = \\d{2}$";
-regex RE_pm(pattern_pm);
+string pattern_om = "^Origin Month = \\d{2}$";
+regex RE_om(pattern_om);
 
 string pattern_cm = "^Current Month = \\d{2}$";
 regex RE_cm(pattern_cm);
-
-string pattern_nm = "^Next Month = \\d{2}$";
-regex RE_nm(pattern_nm);
 
 string pattern_month = "^## life.M\\d{2}$";
 regex RE_month(pattern_month);

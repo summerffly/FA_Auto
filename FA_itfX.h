@@ -150,10 +150,10 @@ int FAitfX_Check_Month(const char *month_on)
 //   对比分析 月度支出
 /**************************************************/
 // tips 20171115 - 目前最大只支持12个月
-int FAitfX_Analysis_Month(const char *sub_key, const char *month_on)
+int FAitfX_Analysis_Month(const char *sub_key, const char *month_origin, const char *month_on)
 {
     char *temp_month = new char[3];
-    memcpy(temp_month, "09", 3);
+    memcpy(temp_month, month_origin, 3);
 
     string str_temp_month_on;
     string str_temp_month_under;
@@ -186,11 +186,25 @@ int FAitfX_Analysis_Month(const char *sub_key, const char *month_on)
             line_temp_value = 0;
             if(str_line_temp.at(0) == '>')
             {
-                line_temp_value = (-1) * sm_StrMoneyFind_Month(str_line_temp);
+                if( sm_StrMoneyFind_Month(str_line_temp) < 0)
+                {
+                    line_temp_value = (-1) * sm_StrMoneyFind_Month(str_line_temp);
+                }
+                else
+                {
+                    line_temp_value = sm_StrMoneyFind_Month(str_line_temp);
+                }
             }
             else if(str_line_temp.at(0) == '`')
             {
-                line_temp_value = (-1) * sm_StrMoneyFind_Line(str_line_temp);
+                if( sm_StrMoneyFind_Line(str_line_temp) < 0 )
+                {
+                    line_temp_value = (-1) * sm_StrMoneyFind_Line(str_line_temp);
+                }
+                else
+                {
+                    line_temp_value = sm_StrMoneyFind_Line(str_line_temp);
+                }
             }
 
             submap.insert(pair<int, unsigned int>(atoi(temp_month), line_temp_value));
@@ -201,6 +215,12 @@ int FAitfX_Analysis_Month(const char *sub_key, const char *month_on)
         {
             break;
         }
+    }
+
+    if(submap.size() == 0)
+    {
+        cout << ">>> KeyWord Not Found!" << endl;
+        return -1;
     }
 
     unsigned int max_value = 0;
@@ -231,7 +251,34 @@ int FAitfX_Analysis_Month(const char *sub_key, const char *month_on)
             cout << "|";
             scale_i++;
         }
-        cout << " " << mapIter->second << endl;
+        cout << " " << mapIter->second;
+
+        if(mapIter == submap.begin())
+        {
+            cout << " (-%)" << endl;
+        }
+        else
+        {
+            double growth_rate = 0;
+            mapIter--;
+            double pm_value = mapIter->second;
+            mapIter++;
+            double cm_value = mapIter->second;
+            growth_rate = (cm_value - pm_value)/pm_value;
+            
+            if( growth_rate > 0)
+            {
+                cout << " (+" << (int)(growth_rate*100) << "%)" << endl;
+            }
+            else if( growth_rate == 0)
+            {
+                cout << " (==)" << endl;
+            }
+            else
+            {
+                cout << " (" << (int)(growth_rate*100) << "%)" << endl;
+            }
+        }
 
         mapIter++;
     }

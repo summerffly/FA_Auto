@@ -16,12 +16,13 @@ using namespace std;
 struct timeval tv_begin,tv_end;
 
 char *version = new char[10];
+char *or_month = new char[3];
 char *cr_month = new char[3];
 
 //********** Main入口 **********//
 int main(int argc, char **argv, char *env[])
 {
-    if( FA_Read_Conf(version, cr_month) == -1 )
+    if( FA_Read_Cfg(version, or_month, cr_month) == -1 )
     {
         return -1;
     }
@@ -32,7 +33,8 @@ int main(int argc, char **argv, char *env[])
     cout << "| |      >>>  番茄_summer  <<<       | |" << endl;
     cout << "----------------------------------------" << endl;
     cout << "----------------------------------------" << endl;
-    cout << "| |        Version: " << version << "_LTU" << "         | |" << endl;
+    cout << "| |        Version: " << version << "_LTU" << "          | |" << endl;
+    cout << "| |        Origin Month: " << or_month << "          | |" << endl;
     cout << "| |        Current Month: " << cr_month << "         | |" << endl;
     cout << "----------------------------------------" << endl;
     cout << "----------------------------------------" << endl;
@@ -50,7 +52,7 @@ int main(int argc, char **argv, char *env[])
         // 判断是否输入空行
         if( CMD_Line_Parser(advanced_CMD, CMD_argc, CMD_argv) == -1 )
         {
-            cout << ">>> CMD is blank line !" << endl;
+            cout << ">>> CMD is blank line!" << endl;
             cout << "----------------------------------------" << endl;
             
             continue;
@@ -59,7 +61,7 @@ int main(int argc, char **argv, char *env[])
         // 判断是否输入撤销CMD
         if( CMD_argv.back().compare(CMD_CANCEL) == 0 )
         {
-            cout << ">>> CMD canceled !" << endl;
+            cout << ">>> CMD canceled!" << endl;
             cout << "----------------------------------------" << endl;
             
             continue;
@@ -235,7 +237,7 @@ int main(int argc, char **argv, char *env[])
             gettimeofday(&tv_end, NULL);
             showtcost(tv_begin, tv_end);
             cout << "----------------------------------------" << endl;
-             
+            
             continue;
         }
 
@@ -547,7 +549,7 @@ int main(int argc, char **argv, char *env[])
         {
             gettimeofday(&tv_begin, NULL);
 
-            FAitfX_Analysis_Month(CMD_argv.at(1).c_str(), cr_month);
+            FAitfX_Analysis_Month(CMD_argv.at(1).c_str(), or_month, cr_month);
             
             gettimeofday(&tv_end, NULL);
             showtcost(tv_begin, tv_end);
@@ -561,7 +563,7 @@ int main(int argc, char **argv, char *env[])
         /**************************************************/
         else if( CMD_argv.begin()->compare(CMD_TEST) == 0 )
         {
-            //FAitfX_Analysis_Month(CMD_argv.at(1).c_str(), cr_month);
+            cout << or_month << endl;
 
             continue;
         }

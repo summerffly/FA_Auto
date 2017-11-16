@@ -12,13 +12,13 @@ using namespace std;
 /**************************************************/
 //   读取 conf文件
 /**************************************************/
-int FA_Read_Conf(char *version, char *cr_month)
+int FA_Read_Cfg(char *version, char *or_month, char *cr_month)
 {
     char buffer[64];
     string strLine[16];
     int line_index = 1;
     
-    ifstream ifile("./FA.conf");
+    ifstream ifile("./FA.cfg");
 
     if(!ifile.is_open())
     {
@@ -39,9 +39,14 @@ int FA_Read_Conf(char *version, char *cr_month)
             memmove(version, buffer+18, 4);
             continue;
         }
+        else if( regex_match(strLine[line_index], RE_om) )
+        {
+            memmove(or_month, buffer+15, 3);
+            continue;
+        }
         else if( regex_match(strLine[line_index], RE_cm) )
         {
-            memmove(cr_month, buffer+16, 3);            
+            memmove(cr_month, buffer+16, 3);
             continue;
         }
 
