@@ -520,6 +520,7 @@ int FAitfX_BackUp(const char *bak_file_path)
     FA_BackUp("./sa.M.md", bak_file_path);
     FA_BackUp("./DK.md", bak_file_path);
     FA_BackUp("./NS.md", bak_file_path);
+    FA_BackUp("./travel.md", bak_file_path);
     FA_BackUp("./lottery.md", bak_file_path);
     cout << "----------------------------------------" << endl;
 
