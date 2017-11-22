@@ -451,6 +451,11 @@ int FA_Sum_Update_TVT()
             money_sum += sm_StrMoneyFind_Title(strLine[i+1]);
             continue;
         }
+        else if( regex_match(strLine[i], RE_travel) )
+        {
+            money_sum += sm_StrMoneyFind_Title(strLine[i+1]);
+            continue;
+        }
         else if( regex_match(strLine[i], RE_month) )
         {
             money_sum += sm_StrMoneyFind_Month(strLine[i+3]);
@@ -543,6 +548,11 @@ int FA_Sum_Check_TVT()
             continue;
         }
         else if( regex_match(strLine[i], RE_ns) )
+        {
+            money_sum += sm_StrMoneyFind_Title(strLine[i+1]);
+            continue;
+        }
+        else if( regex_match(strLine[i], RE_travel) )
         {
             money_sum += sm_StrMoneyFind_Title(strLine[i+1]);
             continue;

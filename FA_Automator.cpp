@@ -398,6 +398,28 @@ int main(int argc, char **argv, char *env[])
         }
 
         /**************************************************/
+        //   增加 & 更新 travel 支出
+        //   CMD-> travel 1000 飞行
+        /**************************************************/
+        else if((CMD_argv.begin()->compare(CMD_TRAVEL) == 0)\
+                && (CMD_argv.size() == 3))
+        {
+            if(char0check(CMD_argv.at(1).c_str()) != 0)
+                continue;
+
+            gettimeofday(&tv_begin, NULL);
+
+            FAitfX_Modify_Title("./travel.md", "# travel", "## travel",\
+                                char2int(CMD_argv.at(1).c_str()), CMD_argv.at(2).c_str());
+
+            gettimeofday(&tv_end, NULL);
+            showtcost(tv_begin, tv_end);
+            cout << "----------------------------------------" << endl;
+
+            continue;
+        }
+
+        /**************************************************/
         //   增加 & 更新 lottery 收支
         //   CMD-> lottery -- 128 201711102
         //   CMD-> lottery ++ 3000 201711102
@@ -418,7 +440,7 @@ int main(int argc, char **argv, char *env[])
 
         /**************************************************/
         //   更新 TVT_分项 收支
-        //   CMD-> update title dk/ns/lottery
+        //   CMD-> update title dk/ns/travel/lottery
         /**************************************************/
         else if((CMD_argv.begin()->compare(CMD_UPDATE) == 0)\
                 && (CMD_argv.at(1).compare(CMD_TITLE) == 0)\
@@ -433,6 +455,10 @@ int main(int argc, char **argv, char *env[])
             else if( CMD_argv.at(2).compare(CMD_NS) == 0 )
             {
                 FAitfX_Update_Title("./NS.md", "# New Style", "## NS");
+            }
+            else if( CMD_argv.at(2).compare(CMD_TRAVEL) == 0 )
+            {
+                FAitfX_Update_Title("./travel.md", "# travel", "## travel");
             }
             else if( CMD_argv.at(2).compare(CMD_LOTTERY) == 0 )
             {
@@ -452,7 +478,7 @@ int main(int argc, char **argv, char *env[])
 
         /**************************************************/
         //   检查 TVT_分项 收支
-        //   CMD-> check title dk/ns/lottery
+        //   CMD-> check title dk/ns/travel/lottery
         /**************************************************/
         else if((CMD_argv.begin()->compare(CMD_CHECK) == 0)\
                 && (CMD_argv.at(1).compare(CMD_TITLE) == 0)\
@@ -467,6 +493,10 @@ int main(int argc, char **argv, char *env[])
             else if( CMD_argv.at(2).compare(CMD_NS) == 0 )
             {
                 FAitfX_Check_Title("./NS.md", "# New Style", "## NS");
+            }
+            else if( CMD_argv.at(2).compare(CMD_TRAVEL) == 0 )
+            {
+                FAitfX_Check_Title("./travel.md", "# travel", "## travel");
             }
             else if( CMD_argv.at(2).compare(CMD_LOTTERY) == 0 )
             {

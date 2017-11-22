@@ -45,6 +45,9 @@ regex RE_dk(pattern_dk);
 string pattern_ns = "^## NS$";
 regex RE_ns(pattern_ns);
 
+string pattern_travel = "^## travel$";
+regex RE_travel(pattern_travel);
+
 string pattern_de_one = "^.*押金_壹公寓$";
 regex RE_de_one(pattern_de_one);
 
@@ -94,6 +97,7 @@ const char *CMD_TITLE = "title";
 const char *CMD_DK = "dk";
 const char *CMD_NS = "ns";
 const char *CMD_LOTTERY = "lottery";
+const char *CMD_TRAVEL = "travel";
 
 const char *CMD_BALANCE = "balance";
 const char *CMD_BACKUP = "bakup";
