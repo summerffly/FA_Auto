@@ -90,8 +90,10 @@ int FA_Search_Line(const char *file_name, const char *line_key)
     int line_counter = 0;     // 匹配行的计数器
     int line_tag = 0;         // 匹配行的标志
 
-    string str_key = line_key;
-    string pattern_key = "^.*" + str_key + ".*$";
+    //string str_key = line_key;
+    //string pattern_key = "^.*" + str_key + ".*$";
+    smatch m;
+    string pattern_key = line_key;
     regex RE_key(pattern_key);
     
     if( ReadFile(file_name, strLine, line_index) == -1 )
@@ -101,7 +103,8 @@ int FA_Search_Line(const char *file_name, const char *line_key)
 
     for(int i = 1; i <= line_index; i++)
     {
-        if( regex_match(strLine[i], RE_key) )
+        //if( regex_match(strLine[i], RE_key) )
+        if( regex_search(strLine[i], m, RE_key) )
         {
             if( line_counter == 0 )
             {
@@ -144,8 +147,10 @@ int FA_Print_Line_Key(const char *file_name, const char *line_key)
     int line_counter = 0;             // 匹配行的计数器
     int line_tag[MAX_LINE] = {0};     // 匹配行的标志
 
-    string str_key = line_key;
-    string pattern_key = "^.*" + str_key + ".*$";
+    //string str_key = line_key;
+    //string pattern_key = "^.*" + str_key + ".*$";
+    smatch m;
+    string pattern_key = line_key;
     regex RE_key(pattern_key);
    
     if( ReadFile(file_name, strLine, line_index) == -1 )
@@ -155,7 +160,8 @@ int FA_Print_Line_Key(const char *file_name, const char *line_key)
 
     for(int i = 1; i <= line_index; i++)
     {
-        if( regex_match(strLine[i], RE_key) )
+        //if( regex_match(strLine[i], RE_key) )
+        if( regex_search(strLine[i], m, RE_key) )
         {
             line_counter++;
             line_tag[line_counter] = i;
@@ -230,8 +236,10 @@ int FA_Search_Line_Area_Pure(const char *file_name, const char *line_key, const 
     int line_counter = 0;     // 匹配行的计数器
     int line_tag = 0;         // 匹配行的标志
 
-    string str_key = line_key;
-    string pattern_key = "^.*" + str_key + ".*$";
+    //string str_key = line_key;
+    //string pattern_key = "^.*" + str_key + ".*$";
+    smatch m;
+    string pattern_key = line_key;
     regex RE_key(pattern_key);
     
     if( ReadFile(file_name, strLine, line_index) == -1 )
@@ -241,7 +249,8 @@ int FA_Search_Line_Area_Pure(const char *file_name, const char *line_key, const 
 
     for(int i = line_start; i <= line_end; i++)
     {
-        if( regex_match(strLine[i], RE_key) )
+        //if( regex_match(strLine[i], RE_key) )
+        if( regex_search(strLine[i], m, RE_key) )
         {
             if( line_counter == 0 )
             {
@@ -279,8 +288,10 @@ int FA_Search_Line_Area(const char *file_name, const char *line_key, const int l
     int line_counter = 0;     // 匹配行的计数器
     int line_tag = 0;         // 匹配行的标志
 
-    string str_key = line_key;
-    string pattern_key = "^.*" + str_key + ".*$";
+    //string str_key = line_key;
+    //string pattern_key = "^.*" + str_key + ".*$";
+    smatch m;
+    string pattern_key = line_key;
     regex RE_key(pattern_key);
     
     if( ReadFile(file_name, strLine, line_index) == -1 )
@@ -290,7 +301,8 @@ int FA_Search_Line_Area(const char *file_name, const char *line_key, const int l
 
     for(int i = line_start; i <= line_end; i++)
     {
-        if( regex_match(strLine[i], RE_key) )
+        //if( regex_match(strLine[i], RE_key) )
+        if( regex_search(strLine[i], m, RE_key) )
         {
             if( line_counter == 0 )
             {
@@ -334,8 +346,10 @@ int FA_Print_Line_Area(const char *file_name, const char *line_key, const int li
     int line_counter = 0;             // 匹配行的计数器
     int line_tag[MAX_LINE] = {0};     // 匹配行的标志
 
-    string str_key = line_key;
-    string pattern_key = "^.*" + str_key + ".*$";
+    //string str_key = line_key;
+    //string pattern_key = "^.*" + str_key + ".*$";
+    smatch m;
+    string pattern_key = line_key;
     regex RE_key(pattern_key);
    
     if( ReadFile(file_name, strLine, line_index) == -1 )
@@ -345,7 +359,8 @@ int FA_Print_Line_Area(const char *file_name, const char *line_key, const int li
 
     for(int i = line_start; i <= line_end; i++)
     {
-        if( regex_match(strLine[i], RE_key) )
+        //if( regex_match(strLine[i], RE_key) )
+        if( regex_search(strLine[i], m, RE_key) )
         {
             line_counter++;
             line_tag[line_counter] = i;
