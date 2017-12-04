@@ -128,7 +128,11 @@ int main(int argc, char **argv, char *env[])
         {
             gettimeofday(&tv_begin, NULL);
 
-            FAitfX_Modify_Month(cr_month, char2int(CMD_argv.at(1).c_str()), CMD_argv.at(2).c_str());
+            int ret = FAitfX_Modify_Month(cr_month, char2int(CMD_argv.at(1).c_str()), CMD_argv.at(2).c_str());
+            if(ret == 0)
+            {
+                FAitfX_Update_TVT();
+            }
 
             gettimeofday(&tv_end, NULL);
             showtcost(tv_begin, tv_end);
@@ -158,7 +162,10 @@ int main(int argc, char **argv, char *env[])
             else
             {
                 cout << ">>> CMD Param Error!" << endl;
+                continue;
             }
+
+            FAitfX_Update_TVT();
             
             gettimeofday(&tv_end, NULL);
             showtcost(tv_begin, tv_end);
@@ -188,6 +195,7 @@ int main(int argc, char **argv, char *env[])
             else
             {
                 cout << ">>> CMD Param Error!" << endl;
+                continue;
             }
             
             gettimeofday(&tv_end, NULL);
@@ -232,7 +240,11 @@ int main(int argc, char **argv, char *env[])
             else
             {
                 cout << ">>> CMD Param Error!" << endl;
+                continue;
             }
+
+            FAitfX_Update_Month(cr_month);
+            FAitfX_Update_TVT();
 
             gettimeofday(&tv_end, NULL);
             showtcost(tv_begin, tv_end);
@@ -270,7 +282,11 @@ int main(int argc, char **argv, char *env[])
             else
             {
                 cout << ">>> CMD Param Error!" << endl;
+                continue;
             }
+
+            FAitfX_Update_Month(cr_month);
+            FAitfX_Update_TVT();
 
             gettimeofday(&tv_end, NULL);
             showtcost(tv_begin, tv_end);
@@ -308,6 +324,7 @@ int main(int argc, char **argv, char *env[])
             else
             {
                 cout << ">>> CMD Param Error!" << endl;
+                continue;
             }
 
             gettimeofday(&tv_end, NULL);
@@ -367,6 +384,7 @@ int main(int argc, char **argv, char *env[])
 
             FAitfX_Modify_Title("./DK.md", "# Digital Kingdom", "## DK",\
                                 char2int(CMD_argv.at(1).c_str()), CMD_argv.at(2).c_str());
+            FAitfX_Update_TVT();
 
             gettimeofday(&tv_end, NULL);
             showtcost(tv_begin, tv_end);
@@ -389,6 +407,7 @@ int main(int argc, char **argv, char *env[])
 
             FAitfX_Modify_Title("./NS.md", "# New Style", "## NS",\
                                 char2int(CMD_argv.at(1).c_str()), CMD_argv.at(2).c_str());
+            FAitfX_Update_TVT();
 
             gettimeofday(&tv_end, NULL);
             showtcost(tv_begin, tv_end);
@@ -411,6 +430,7 @@ int main(int argc, char **argv, char *env[])
 
             FAitfX_Modify_Title("./travel.md", "# travel", "## travel",\
                                 char2int(CMD_argv.at(1).c_str()), CMD_argv.at(2).c_str());
+            FAitfX_Update_TVT();
 
             gettimeofday(&tv_end, NULL);
             showtcost(tv_begin, tv_end);
@@ -430,6 +450,7 @@ int main(int argc, char **argv, char *env[])
             gettimeofday(&tv_begin, NULL);
 
             FAitfX_lottery(CMD_argv.at(1), char2int(CMD_argv.at(2).c_str()), CMD_argv.at(3).c_str());
+            FAitfX_Update_TVT();
 
             gettimeofday(&tv_end, NULL);
             showtcost(tv_begin, tv_end);
@@ -467,7 +488,10 @@ int main(int argc, char **argv, char *env[])
             else
             {
                 cout << ">>> CMD Param Error!" << endl;
+                continue;
             }
+
+            FAitfX_Update_TVT();
             
             gettimeofday(&tv_end, NULL);
             showtcost(tv_begin, tv_end);
@@ -505,6 +529,7 @@ int main(int argc, char **argv, char *env[])
             else
             {
                 cout << ">>> CMD Param Error!" << endl;
+                continue;
             }
             
             gettimeofday(&tv_end, NULL);
@@ -557,11 +582,23 @@ int main(int argc, char **argv, char *env[])
         /**************************************************/
         else if((CMD_argv.begin()->compare(CMD_CHECK) == 0)\
                 && (CMD_argv.at(1).compare(CMD_TEMP) == 0)\
-                && (CMD_argv.size() == 2))
+                && (CMD_argv.size() == 3))
         {
             gettimeofday(&tv_begin, NULL);
 
-            FAitfX_CheckFile("./temp.Nov.md", "# temp.Nov", "---");
+            if( CMD_argv.at(2).compare("Dec") == 0 )
+            {
+                FAitfX_CheckFile("./temp.Dec.md", "# temp.Dec", "---");
+            }
+            else if( CMD_argv.at(2).compare("XM") == 0 )
+            {
+                FAitfX_CheckFile("./temp.travelXM.md", "# temp.travelXM", "---");
+            }
+            else
+            {
+                cout << ">>> CMD Param Error!" << endl;
+                continue;
+            }
             
             gettimeofday(&tv_end, NULL);
             showtcost(tv_begin, tv_end);
