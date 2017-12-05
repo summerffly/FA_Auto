@@ -160,6 +160,7 @@ int char2int(const char *num_char)
 char *int2char(const int num_int)
 {
     char *num_char = new char[8];     // tips 番茄@20170813 - 支持到十万级
+
     if(num_int > 0)
     {
         sprintf(num_char, "+%d", num_int);
@@ -173,6 +174,7 @@ char *int2char(const int num_int)
         sprintf(num_char, "-%d", num_int);
     }
     
+    delete []num_char;
     return num_char;
 }
 
@@ -186,6 +188,7 @@ char *uint2char(const unsigned int num_int)
 
     sprintf(num_char, "%d", num_int);
     
+    delete []num_char;
     return num_char;
 }
 
