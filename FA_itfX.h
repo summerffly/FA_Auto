@@ -264,7 +264,15 @@ int FAitfX_Analysis_Month(const char *sub_key, const char *month_origin, const c
             double pm_value = mapIter->second;
             mapIter++;
             double cm_value = mapIter->second;
-            growth_rate = (cm_value - pm_value)/pm_value;
+
+            if(pm_value == 0)
+            {
+                growth_rate = 0;
+            }
+            else
+            {
+                growth_rate = (cm_value - pm_value)/pm_value;
+            }
             
             if( growth_rate > 0)
             {
@@ -358,7 +366,7 @@ int FAitfX_Check_SubMonth(const char *file_name, const char *title_key, const ch
 
 
 /**************************************************/
-//   增加 TVT_分项.md 支出
+//   增加 & 更新 TVT_分项.md 支出
 /**************************************************/
 int FAitfX_Modify_Title(const char *file_name, const char *file_title, const char *tvt_title,\
                         const int value, const char *content)

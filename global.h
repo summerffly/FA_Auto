@@ -101,6 +101,7 @@ const char *CMD_TRAVEL = "travel";
 
 const char *CMD_BALANCE = "balance";
 const char *CMD_BACKUP = "bakup";
+const char *CMD_BACKUP_XP = "bakup-X";
 
 const char *CMD_TEMP = "temp";
 const char *CMD_TEST = "test";

@@ -131,6 +131,7 @@ int main(int argc, char **argv, char *env[])
             int ret = FAitfX_Modify_Month(cr_month, char2int(CMD_argv.at(1).c_str()), CMD_argv.at(2).c_str());
             if(ret == 0)
             {
+                FAitfX_Update_Month(cr_month);
                 FAitfX_Update_TVT();
             }
 
@@ -559,7 +560,7 @@ int main(int argc, char **argv, char *env[])
         }
 
         /**************************************************/
-        //   BackUp 全备份
+        //   BackUp 全备份 TVT.bak
         //   CMD-> bakup
         /**************************************************/
         else if((CMD_argv.begin()->compare(CMD_BACKUP) == 0)\
@@ -577,8 +578,26 @@ int main(int argc, char **argv, char *env[])
         }
 
         /**************************************************/
+        //   BackUp 全备份 X工程
+        //   CMD-> bakup-X
+        /**************************************************/
+        else if((CMD_argv.begin()->compare(CMD_BACKUP_XP) == 0)\
+                && (CMD_argv.size() == 1))
+        {
+            gettimeofday(&tv_begin, NULL);
+
+            FAitfX_BackUp("./../Desktop/FA_Auto_X/");
+
+            gettimeofday(&tv_end, NULL);
+            showtcost(tv_begin, tv_end);
+            cout << "----------------------------------------" << endl;
+
+            continue;
+        }
+
+        /**************************************************/
         //   检查 .md文件 收支
-        //   CMD-> check temp
+        //   CMD-> check temp Dec/XMtravel
         /**************************************************/
         else if((CMD_argv.begin()->compare(CMD_CHECK) == 0)\
                 && (CMD_argv.at(1).compare(CMD_TEMP) == 0)\
@@ -590,7 +609,7 @@ int main(int argc, char **argv, char *env[])
             {
                 FAitfX_CheckFile("./temp.Dec.md", "# temp.Dec", "---");
             }
-            else if( CMD_argv.at(2).compare("XM") == 0 )
+            else if( CMD_argv.at(2).compare("XMtravel") == 0 )
             {
                 FAitfX_CheckFile("./temp.travelXM.md", "# temp.travelXM", "---");
             }
